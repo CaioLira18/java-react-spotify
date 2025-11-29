@@ -1,38 +1,51 @@
 import { useEffect, useState } from "react";
 
-
 const Home = () => {
     const [artistas, setArtistas] = useState([]);
 
     const API_URL = "http://localhost:8080/api";
 
     useEffect(() => {
-        fetch(`${API_URL}/artistas`)
-        .then((response) => {
-            if (!response.ok) {
-            throw new Error("Erro ao buscar Artistas.");
-            }
-            return response.json();
-        })
-        .then((data) => setArtistas(data))
-        .catch((error) => {
-            console.error(error);
-            alert("Erro ao buscar Artistas.");
-        });
+        fetch(`${API_URL}/artists`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar Artistas.");
+                }
+                return response.json();
+            })
+            .then((data) => setArtistas(data))
+            .catch((error) => {
+                console.error(error);
+                alert("Erro ao buscar Artistas.");
+            });
     }, []);
 
-  return (
-    <div>
-      <div className="containerArtists">
-        <div className="artistsBox">
-            <div className="imageArtist">
-                <img src="" alt="" />
-                <p>Artista</p>
+    return (
+        <div>
+            <div className="artistas">
+
+                <div className="informationHeaderArtistas">
+                    <h1>Artistas</h1>
+                    <p>Mostrar Tudo</p>
+                </div>
+          
+                <div className="containerArtists">
+                    {artistas.map((artista) => (
+                        <div className="artistsBox" key={artista.id}>
+                            <div className="imageArtist">
+                                <img src={artista.profilePhoto} alt={artista.name} />
+                                <i className="fa-solid fa-circle-play"></i>
+                            </div>
+                            <div className="artistHomeInformation">
+                                <strong><a className="artistClass">{artista.name}</a></strong>
+                                <p>Artista</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
-      </div>
-    </div>
-  )
+    );
 }
 
-export default Home
+export default Home;

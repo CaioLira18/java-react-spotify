@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './css/Home.css'
 import './css/Header.css'
+import './css/Artistas.css'
+
 
 
 import App from './App.jsx'

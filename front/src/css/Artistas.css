@@ -1,0 +1,75 @@
+.containerArtists {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.artistas {
+    margin-top: 100px;
+}
+
+.informationHeaderArtistas  {
+    padding-left: 50px;
+}
+
+.artistsBox {
+    width: auto;
+    border-radius: 20px;
+    padding: 40px;
+}
+
+.artistsBox:hover {
+    background-color: rgb(105, 105, 105);
+}
+
+.imageArtist img {
+    width: 130px;
+    height: 130px; 
+    object-fit: cover; 
+    border-radius: 100%;
+    box-shadow: 0px 0px 5px black;
+}
+
+.artistClass {
+    width: 100%;
+    cursor: pointer;
+}
+
+.artistClass:hover {
+    border-bottom: 1px solid white;
+}
+
+.imageArtist {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+}
+
+.imageArtist img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0px 0px 10px black;
+    display: block;
+}
+
+.imageArtist i {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 45px;
+    color: #1ed760; /* Verde Spotify */
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
+}
+
+.imageArtist i:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
