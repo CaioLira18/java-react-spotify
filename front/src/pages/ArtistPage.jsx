@@ -4,9 +4,25 @@ import { useParams } from "react-router-dom";
 const ArtistPage = () => {
     const { id } = useParams();
     const [artista, setArtista] = useState(null);
+    const [songs, setSongs] = useState([]);
     const [toasts, setToasts] = useState([]);
-
     const API_URL = "http://localhost:8080/api";
+    const cont = 0;
+
+    useEffect(() => {
+        fetch(`${API_URL}/songs`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar Artistas.");
+                }
+                return response.json();
+            })
+            .then((data) => setSongs(data))
+            .catch((error) => {
+                console.error(error);
+                alert("Erro ao buscar Artistas.");
+            });
+    }, []);
 
     const showToast = (message, type = 'success') => {
         const toastId = Date.now();
@@ -104,6 +120,31 @@ const ArtistPage = () => {
                     <h1>{artista.name}</h1>
                     <h2>9 Milhões de Ouvintes Mensais</h2>
                 </div>
+            </div>
+
+            <div className="songsContainer">
+                <h1>Músicas Populares</h1>
+                {songs.map((song, index) => (
+                    song.artistName === artista.name && (
+                        <div className="musicsArtistPage" key={song.id}>
+                            <div className="musicsArtistBox">
+                                <div className="songContainer">
+                                    <h1>{index + 1}</h1>
+                                    <img src={song.cover} alt={song.name} />
+                                    <div className="songInformation">
+                                        <div className="informatitonSong">
+                                            <h1>{song.name}</h1>
+                                            <p>{song.artistName}</p>
+                                        </div>
+                                    </div>
+                                    <div className="otherInformation">
+                                        <p>{song.duration}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                ))}
             </div>
         </>
     );
