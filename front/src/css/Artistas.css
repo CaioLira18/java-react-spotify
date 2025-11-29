@@ -17,6 +17,7 @@
     width: auto;
     border-radius: 20px;
     padding: 40px;
+    transition: 0.3s all ease-in-out;
 }
 
 .artistsBox:hover {
