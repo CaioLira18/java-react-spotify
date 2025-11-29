@@ -37,7 +37,7 @@ const Home = () => {
                                 <i className="fa-solid fa-circle-play"></i>
                             </div>
                             <div className="artistHomeInformation">
-                                <strong><a className="artistClass">{artista.name}</a></strong>
+                                <strong><a href={`/artists/${artista.id}`} className="artistClass">{artista.name}</a></strong>
                                 <p>Artista</p>
                             </div>
                         </div>

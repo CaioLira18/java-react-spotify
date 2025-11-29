@@ -4,6 +4,8 @@ import './index.css'
 import './css/Home.css'
 import './css/Header.css'
 import './css/Artistas.css'
+import './css/ArtistIndividual.css'
+
 
 
 
