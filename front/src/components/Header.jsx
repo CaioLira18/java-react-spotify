@@ -1,32 +1,82 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Header = () => {
+
+   const [songs, setSongs] = useState([]);
+      const API_URL = "http://localhost:8080/api";
+      const cont = 0;
+  
+      useEffect(() => {
+          fetch(`${API_URL}/songs`)
+              .then((response) => {
+                  if (!response.ok) {
+                      throw new Error("Erro ao buscar Artistas.");
+                  }
+                  return response.json();
+              })
+              .then((data) => setSongs(data))
+              .catch((error) => {
+                  console.error(error);
+                  alert("Erro ao buscar Artistas.");
+              });
+      }, []);
+
   return (
     <div>
       <header>
         <div className="header">
-        <div className="headerInformations">
-          <h2>Sua Biblioteca</h2>
-          <div className="headerButtons">
-            <div className="buttonHeader">
-              <button><i class="fa-solid fa-plus"></i></button>
+          <div className="headerInformations">
+            <div className="titleHeader">
+              <i class="fa-solid fa-grip"></i>
+              <h2>Sua Biblioteca</h2>
             </div>
-            <div className="buttonHeader">
-              <button><i class="fa-solid fa-plus"></i></button>
-            </div>
-          </div>
-        </div>
-        <div className="optionsHeader">
-          <div className="boxOption">
-            <div className="boxImage">
-              <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764397364/ab67616d0000b273863856550e620740ad633d32_aovdtw.jpg" alt="" />
-            </div>
-            <div className="boxInformations">
-              <a href="">Title</a>
-              <p>Type - Artista</p>
+            <div className="headerButtons">
+              <div className="buttonHeader">
+                <button><i class="fa-solid fa-plus"></i></button>
+              </div>
+              <div className="buttonHeader">
+                <button><i class="fa-solid fa-plus"></i></button>
+              </div>
             </div>
           </div>
-        </div>
+          <div className="othersOptions">
+            <div className="otherOption">
+              <h1>Playlist</h1>
+            </div>
+            <div className="otherOption">
+              <h1>Podcast</h1>
+            </div>
+            <div className="otherOption">
+              <h1>Album</h1>
+            </div>
+          </div>
+
+          <div className="searchFilterOption">
+            <div className="search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" />
+            </div>
+            <div className="filter">
+              <select name="" id="">
+                <option value="">Recentes</option>
+              </select>
+              <i class="fa-solid fa-list"></i>
+            </div>
+          </div>
+
+          {songs.map(song => (
+          <div className="optionsHeader">
+            <div className="boxOption">
+              <div className="boxImage">
+                <img src={song.cover} alt="" />
+              </div>
+              <div className="boxInformations">
+                <a href="">{song.name}</a>
+                <p>{song.type === "MUSIC" ? 'Song' : 'Album'} - {song.artistName}</p>
+              </div>
+            </div>
+          </div>
+          ))}
         </div>
       </header>
     </div>

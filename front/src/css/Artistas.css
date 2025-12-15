@@ -16,12 +16,13 @@
 .artistsBox {
     width: auto;
     border-radius: 20px;
-    padding: 40px;
+    padding: 30px;
     transition: 0.3s all ease-in-out;
+    margin-top: 20px;
 }
 
 .artistsBox:hover {
-    background-color: rgb(105, 105, 105);
+    background-color: rgb(105, 105, 105, 0.2);
 }
 
 .imageArtist img {

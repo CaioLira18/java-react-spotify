@@ -1,12 +1,19 @@
 .header {
   width: 400px;
   height: 100vh;
-  background-color: #242424;
+  background-color: #121212;
   padding: 16px 0;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.titleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .headerInformations {
@@ -23,12 +30,65 @@
   gap: 50px;
 }
 
+.othersOptions {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 40px;
+}
 
+.otherOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2a2a2a;
+  width: 100px;
+  height: 30px;
+  font-size: 7px;
+  border-radius: 90px;
+  cursor: pointer;
+}
+
+.searchFilterOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.search input {
+  width: 200px;
+  height: 30px;
+  border-radius: 10px;
+  border: 1px solid white;
+  padding-left: 10px;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.filter select {
+  background-color: transparent;
+  border: none;
+}
 
 .buttonHeader button {
   width: 40px;
   height: 40px;
   border-radius: 99px;
+  background-color: #2a2a2a;
   border: 0;
 }
 
@@ -36,7 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .boxOption {
@@ -49,12 +109,23 @@
   transition: 0.3s all ease-in-out;
 }
 
+.boxInformations {
+  font-size: 12px;
+}
+
 .boxOption:hover {
-  background-color: gray;
+  background-color: #1f1f1f;
+}
+
+.boxImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .boxImage img {
-  width: 80px;
+  width: 60px;
+  margin-left: 10px;
   border-radius: 10px;
 }
 

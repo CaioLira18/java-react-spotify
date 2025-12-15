@@ -1,5 +1,6 @@
 package br.com.caio.spotify.application.entities;
 
+import br.com.caio.spotify.application.entities.enums.ContentEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +18,7 @@ public class Music {
     @Id
     @GeneratedValue(strategy=GenerationType.UUID)
     private String id;
-
+    private ContentEnum type;
     private String name;
     private String duration;
     private String cover;
