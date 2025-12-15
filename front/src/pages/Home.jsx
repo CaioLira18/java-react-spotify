@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Header from "../components/Header";
 
 const Home = () => {
     const [artistas, setArtistas] = useState([]);
@@ -22,26 +23,30 @@ const Home = () => {
 
     return (
         <div>
-            <div className="artistas">
+            <div className="homeFlex">
+                <Header />
 
-                <div className="informationHeaderArtistas">
-                    <h1>Artistas</h1>
-                    <p>Mostrar Tudo</p>
-                </div>
-          
-                <div className="containerArtists">
-                    {artistas.map((artista) => (
-                        <div className="artistsBox" key={artista.id}>
-                            <div className="imageArtist">
-                                <img src={artista.profilePhoto} alt={artista.name} />
-                                <i className="fa-solid fa-circle-play"></i>
+                <div className="artistas">
+
+                    <div className="informationHeaderArtistas">
+                        <h1>Artistas</h1>
+                        <p>Mostrar Tudo</p>
+                    </div>
+
+                    <div className="containerArtists">
+                        {artistas.map((artista) => (
+                            <div className="artistsBox" key={artista.id}>
+                                <div className="imageArtist">
+                                    <img src={artista.profilePhoto} alt={artista.name} />
+                                    <i className="fa-solid fa-circle-play"></i>
+                                </div>
+                                <div className="artistHomeInformation">
+                                    <strong><a href={`/artists/${artista.id}`} className="artistClass">{artista.name}</a></strong>
+                                    <p>Artista</p>
+                                </div>
                             </div>
-                            <div className="artistHomeInformation">
-                                <strong><a href={`/artists/${artista.id}`} className="artistClass">{artista.name}</a></strong>
-                                <p>Artista</p>
-                            </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

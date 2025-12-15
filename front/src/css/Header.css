@@ -1,5 +1,7 @@
-header {
-  background-color: #000;
+.header {
+  width: 400px;
+  height: 100vh;
+  background-color: #242424;
   padding: 16px 0;
   position: sticky;
   top: 0;
@@ -7,25 +9,53 @@ header {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.containerHeader {
-  max-width: 1200px;
-  padding: 0 40px;
-}
-
-.logoContainer {
+.headerInformations {
   display: flex;
-  align-items: start;
-  justify-content: start;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
 }
 
-.logoContainer img {
-  width: 150px;
-  transition: opacity 0.2s ease;
+.headerButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
 }
 
-.logoContainer img:hover {
-  opacity: 0.8;
-  cursor: pointer;
+
+
+.buttonHeader button {
+  width: 40px;
+  height: 40px;
+  border-radius: 99px;
+  border: 0;
+}
+
+.optionsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+}
+
+.boxOption {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  transition: 0.3s all ease-in-out;
+}
+
+.boxOption:hover {
+  background-color: gray;
+}
+
+.boxImage img {
+  width: 80px;
+  border-radius: 10px;
 }
 
 /* Responsivo para telas menores */
