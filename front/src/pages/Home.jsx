@@ -27,7 +27,10 @@ const Home = () => {
                 <Header />
 
                 <div className="artistas">
-
+                    <div className="buttonsHome">
+                        <button><strong>Adicionar Artista</strong></button>
+                        <button><strong>Adicionar Musica</strong></button>
+                    </div>
                     <div className="informationHeaderArtistas">
                         <h1>Artistas</h1>
                         <p>Mostrar Tudo</p>
