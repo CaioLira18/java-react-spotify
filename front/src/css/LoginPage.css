@@ -1,0 +1,268 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.auth-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #121212 0%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-box {
+  background: #000;
+  border-radius: 8px;
+  padding: 48px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width: 150px;
+    margin-bottom: 48px;
+}
+
+.auth-title {
+  color: #fff;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.auth-form {
+  margin-bottom: 32px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px;
+  background: #121212;
+  border: 1px solid #727272;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:hover {
+  border-color: #fff;
+}
+
+.form-input:focus {
+  border-color: #1db954;
+}
+
+.form-input::placeholder {
+  color: #6a6a6a;
+}
+
+.form-hint {
+  display: block;
+  color: #6a6a6a;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.remember-me {
+  margin-bottom: 32px;
+}
+
+.remember-me label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.remember-me span {
+  color: #fff;
+  font-size: 14px;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: #1db954;
+  border: none;
+  border-radius: 500px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 32px;
+}
+
+.btn-primary:hover {
+  transform: scale(1.04);
+  background: #1ed760;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.forgot-password {
+  display: block;
+  text-align: center;
+  color: #fff;
+  text-decoration: underline;
+  font-size: 14px;
+  margin-bottom: 32px;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: #1db954;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 32px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #292929;
+}
+
+.divider span {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.btn-social {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #727272;
+  border-radius: 500px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s;
+}
+
+.btn-social:hover {
+  border-color: #fff;
+  transform: scale(1.02);
+}
+
+.btn-social:active {
+  transform: scale(0.98);
+}
+
+.btn-social svg {
+  flex-shrink: 0;
+}
+
+.terms-text {
+  font-size: 11px;
+  color: #6a6a6a;
+  text-align: center;
+  margin: 32px 0;
+  line-height: 1.5;
+}
+
+.terms-text a {
+  color: #1db954;
+  text-decoration: none;
+}
+
+.terms-text a:hover {
+  text-decoration: underline;
+}
+
+.footer-link {
+  border-top: 1px solid #292929;
+  padding-top: 32px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.text-muted {
+  color: #6a6a6a;
+}
+
+.footer-link a {
+  color: #fff;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.footer-link a:hover {
+  color: #1db954;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .auth-box {
+    padding: 32px 24px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+
+  .logo {
+    width: 150px;
+    margin-bottom: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 16px;
+  }
+
+  .auth-box {
+    padding: 24px 16px;
+  }
+
+  .auth-title {
+    font-size: 20px;
+  }
+}

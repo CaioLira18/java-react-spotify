@@ -1,0 +1,41 @@
+.navBarContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navBarBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 80px;
+    background-color: black;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.loginBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 12px;
+    transition: 0.3s all ease-in-out;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.loginBox:hover {
+    background-color: gray;
+}
+
+.logoBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logoBox img {
+    width: 100px;
+}
