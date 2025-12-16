@@ -23,4 +23,5 @@ public class Music {
     private String duration;
     private String cover;
     private String artistName; 
+    private String musicUrl;
 }

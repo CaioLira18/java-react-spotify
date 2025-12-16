@@ -30,6 +30,11 @@ public class MusicService {
     public Optional<Music> updateMusic(String id, Music updatedMusic) {
         return musicRepository.findById(id).map(item -> {
             item.setName(updatedMusic.getName());
+            item.setArtistName(updatedMusic.getArtistName());
+            item.setDuration(updatedMusic.getDuration());
+            item.setCover(updatedMusic.getCover());
+            item.setType(updatedMusic.getType());
+            item.setMusicUrl(updatedMusic.getMusicUrl());
             return musicRepository.save(item);
         });
     }

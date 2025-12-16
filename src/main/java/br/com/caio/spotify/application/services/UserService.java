@@ -30,6 +30,8 @@ public class UserService {
     public Optional<User> updateItem(String id, User updatedItem) {
         return userRepository.findById(id).map(item -> {
             item.setName(updatedItem.getName());
+            item.setEmail(updatedItem.getEmail());
+            item.setListMusic(updatedItem.getListMusic());
             return userRepository.save(item);
         });
     }

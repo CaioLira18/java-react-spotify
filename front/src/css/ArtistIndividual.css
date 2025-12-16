@@ -117,7 +117,7 @@
     min-width: 0; /* Permite truncar texto */
 }
 
-.informatitonSong h1 {
+.songInformation h1 {
     font-size: 16px;
     font-weight: normal;
     color: white;
