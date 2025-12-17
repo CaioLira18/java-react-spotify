@@ -1,23 +1,21 @@
-import Header from './components/Header'
-import NavBar from './components/NavBar'
-import ArtistPage from './pages/ArtistPage'
+import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
-import { Route, Routes } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
+import ArtistPage from './pages/ArtistPage'
+import AppLayout from './components/AppLayout'
 
 function App() {
-
   return (
-    <div>
-      <NavBar />
-      <Routes>
+    <Routes>
+      <Route element={<AppLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/artists/:id" element={<ArtistPage />} />
-      </Routes>
-    </div>
+      </Route>
+
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+    </Routes>
   )
 }
 

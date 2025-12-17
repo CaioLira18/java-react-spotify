@@ -1,24 +1,169 @@
 * {
     color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+}
+
+.homeFlex {
+    margin-left: 400px;
+    margin-top: 80px;
+    padding: 40px;
+    min-height: calc(100vh - 80px);
+    background-color: #000;
+}
+
+.artistas {
+    width: 100%;
 }
 
 .buttonsHome {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 20px;
-    margin-top: 50px;
+    margin-bottom: 30px;
 }
 
 .buttonsHome button {
-    padding: 20px;
-    background-color: rgb(2, 27, 2);
+    padding: 15px 30px;
+    background-color: #1db954;
     border: none;
+    border-radius: 25px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
     transition: 0.3s all ease-in-out;
 }
 
 .buttonsHome button:hover {
-    border-radius: 10px;
-    background-color: rgb(4, 44, 4);
+    background-color: #1ed760;
+    transform: scale(1.05);
+}
+
+.informationHeaderArtistas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.informationHeaderArtistas h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+.informationHeaderArtistas p {
+    color: #b3b3b3;
     cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s all ease-in-out;
+}
+
+.informationHeaderArtistas p:hover {
+    color: white;
+}
+
+.containerArtists {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 24px;
+    padding: 20px 0;
+    width: 100%;
+}
+
+.artistsBox {
+    background-color: #181818;
+    padding: 16px;
+    border-radius: 8px;
+    transition: 0.3s all ease-in-out;
+    cursor: pointer;
+}
+
+.artistsBox:hover {
+    background-color: #282828;
+}
+
+.imageArtist {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #333;
+}
+
+.imageArtist img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.imageArtist i {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    font-size: 48px;
+    color: #1db954;
+    opacity: 0;
+    transition: 0.3s all ease-in-out;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.artistsBox:hover .imageArtist i {
+    opacity: 1;
+}
+
+.artistHomeInformation {
+    text-align: left;
+}
+
+.artistHomeInformation strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.artistHomeInformation strong a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.artistHomeInformation strong a:hover {
+    text-decoration: underline;
+}
+
+.artistHomeInformation p {
+    color: #b3b3b3;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Responsivo */
+@media (max-width: 1200px) {
+    .containerArtists {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .homeFlex {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .containerArtists {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 16px;
+    }
 }

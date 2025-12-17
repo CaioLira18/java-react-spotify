@@ -2,24 +2,24 @@ import React, { useEffect, useState } from 'react'
 
 const Header = () => {
 
-   const [songs, setSongs] = useState([]);
-      const API_URL = "http://localhost:8080/api";
-      const cont = 0;
-  
-      useEffect(() => {
-          fetch(`${API_URL}/songs`)
-              .then((response) => {
-                  if (!response.ok) {
-                      throw new Error("Erro ao buscar Artistas.");
-                  }
-                  return response.json();
-              })
-              .then((data) => setSongs(data))
-              .catch((error) => {
-                  console.error(error);
-                  alert("Erro ao buscar Artistas.");
-              });
-      }, []);
+  const [songs, setSongs] = useState([]);
+  const API_URL = "http://localhost:8080/api";
+  const cont = 0;
+
+  useEffect(() => {
+    fetch(`${API_URL}/songs`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar Artistas.");
+        }
+        return response.json();
+      })
+      .then((data) => setSongs(data))
+      .catch((error) => {
+        console.error(error);
+        alert("Erro ao buscar Artistas.");
+      });
+  }, []);
 
   return (
     <div>
@@ -29,14 +29,6 @@ const Header = () => {
             <div className="titleHeader">
               <i class="fa-solid fa-grip"></i>
               <h2>Sua Biblioteca</h2>
-            </div>
-            <div className="headerButtons">
-              <div className="buttonHeader">
-                <button><i class="fa-solid fa-plus"></i></button>
-              </div>
-              <div className="buttonHeader">
-                <button><i class="fa-solid fa-plus"></i></button>
-              </div>
             </div>
           </div>
           <div className="othersOptions">
@@ -65,18 +57,26 @@ const Header = () => {
           </div>
 
           {songs.map(song => (
-          <div className="optionsHeader">
-            <div className="boxOption">
-              <div className="boxImage">
-                <img src={song.cover} alt="" />
-              </div>
-              <div className="boxInformations">
-                <a href="">{song.name}</a>
-                <p>{song.type === "MUSIC" ? 'Song' : 'Album'} - {song.artistName}</p>
+            <div className="optionsHeader">
+              <div className="boxOption">
+                <div className="boxImage">
+                  <img src={song.cover} alt="" />
+                </div>
+                <div className="boxInformations">
+                  <a href="">{song.name}</a>
+                  <p>{song.type === "MUSIC" ? 'Song' : 'Album'} - {song.artistName}</p>
+                </div>
               </div>
             </div>
-          </div>
           ))}
+          <div className="headerButtons">
+            <div className="buttonHeader">
+              <button><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div className="buttonHeader">
+              <button><i class="fa-solid fa-plus"></i></button>
+            </div>
+          </div>
         </div>
       </header>
     </div>

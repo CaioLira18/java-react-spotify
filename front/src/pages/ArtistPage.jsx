@@ -46,11 +46,11 @@ const ArtistPage = () => {
 
     return (
         <>
+        <div className="artistFlex">
             <div className="artist-individual-container">
                 <div className="artist-header">
                     <img src={artista.bannerPhoto} alt="" />
                 </div>
-
                 <div className="artistInformation">
                     <div className="verificy">
                         <i className="fa-solid fa-certificate"></i>
@@ -62,7 +62,8 @@ const ArtistPage = () => {
             </div>
 
             <div className="songsContainer">
-                <h1>Músicas Populares</h1>
+                
+                <h2>Músicas Populares</h2>
 
                 {artistSongs.map((song, index) => (
                     <div className="musicsArtistPage" key={song.id}>
@@ -80,14 +81,19 @@ const ArtistPage = () => {
                     </div>
                 ))}
             </div>
+        </div>
 
+        <div className="player">
             {/* 🎧 PLAYER SEMPRE NO FINAL */}
             <MusicPlayer
                 playlist={artistSongs}
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
             />
+        </div>
+
         </>
+        
     );
 };
 

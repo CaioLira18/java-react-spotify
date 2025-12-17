@@ -5,6 +5,10 @@ const NavBar = () => {
     <div>
       <div className="navBarContainer">
         <div className="navBarBox">
+          <div className="optionsNavBar">
+            <a href="/"><i class="fa-solid fa-angle-left"></i></a>
+            <i class="fa-solid fa-angle-right"></i>
+          </div>
             <div className="logoBox">
                 <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp" alt="" />
             </div>

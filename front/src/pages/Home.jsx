@@ -24,16 +24,13 @@ const Home = () => {
     return (
         <div>
             <div className="homeFlex">
-                <Header />
-
                 <div className="artistas">
                     <div className="buttonsHome">
                         <button><strong>Adicionar Artista</strong></button>
                         <button><strong>Adicionar Musica</strong></button>
                     </div>
                     <div className="informationHeaderArtistas">
-                        <h1>Artistas</h1>
-                        <p>Mostrar Tudo</p>
+                        <h1>Seus Artistas Favoritos</h1>
                     </div>
 
                     <div className="containerArtists">
