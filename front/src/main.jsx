@@ -9,6 +9,8 @@ import './css/navBar.css'
 import './css/LoginPage.css'
 import './css/MusicPlayer.css'
 import './css/AppLayout.css'
+import './css/AdminPage.css'
+
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 

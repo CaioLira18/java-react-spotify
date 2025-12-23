@@ -5,6 +5,8 @@ const NavBar = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [name, setName] = useState('');
+  const [image, setImage] = useState('');
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -14,11 +16,19 @@ const NavBar = () => {
         setIsAuthenticated(true);
         setIsAdmin(parsedUser.role === 'ADMIN');
         setName(parsedUser.name || '');
+        setImage(parsedUser.image || '');
+
       } catch (err) {
         console.error("Erro ao processar usuário do localStorage", err);
       }
     }
   }, []);
+
+  async function handleLogout() {
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+  }
+
 
   return (
     <div>
@@ -39,11 +49,19 @@ const NavBar = () => {
           )}
           {isAuthenticated && (
             <div className="userBox">
-              <i class="fa-solid fa-user"></i>
-              <h1>{name}</h1>
+              <div className="userImage">
+                <img src={image} onError={() => console.log('Erro ao carregar imagem')} />
+              </div>
+              <div className="logout" onClick={handleLogout}>
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </div>
+              {isAdmin && (
+                <div className="adminButton">
+                  <a href="/adminPage"><button>Pagina de Admin</button></a>
+                </div>
+              )}
             </div>
           )}
-
         </div>
       </div>
     </div>

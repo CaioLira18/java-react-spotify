@@ -1,0 +1,42 @@
+.adminPageBox {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 100px auto 0;
+    overflow: hidden;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.adminPageBox img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.adminPageBox h2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 30px 20px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), transparent);
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.adminPageBox:hover {
+    transform: scale(1.05);
+}
+
+.adminPageBox:hover h2 {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8), transparent);
+    transition: 0.3 all ease-in-out;
+}

@@ -38,6 +38,7 @@ public class UserService {
             item.setName(updatedItem.getName());
             item.setEmail(updatedItem.getEmail());
             item.setPassword(updatedItem.getPassword());
+            item.setImage(updatedItem.getImage());
             item.setRole(updatedItem.getRole());
             item.setListMusic(updatedItem.getListMusic());
 

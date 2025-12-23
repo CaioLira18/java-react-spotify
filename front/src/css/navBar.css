@@ -95,15 +95,42 @@
 .userBox {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   cursor: pointer;
   padding: 10px;
-  background-color: gray;
   border-radius: 20px;
+}
+
+.userBox img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: transparent;
 }
 
 .userBox h1 {
   font-size: 13px;
+}
+
+.logout i {
+  transition: 0.2s all ease-in-out;
+}
+
+.logout i:hover {
+  color: red;
+}
+
+.adminButton button {
+  padding: 15px;
+  background-color: rgb(28, 76, 28);
+  border: none;
+  border-radius: 10px;
+}
+
+.adminButton button:hover {
+  background-color: rgb(18, 56, 18);
+  cursor: pointer;
 }
 
 /* Responsivo */
