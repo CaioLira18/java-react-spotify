@@ -92,6 +92,20 @@
   transition: color 0.2s ease;
 }
 
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  background-color: gray;
+  border-radius: 20px;
+}
+
+.userBox h1 {
+  font-size: 13px;
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .navBarBox {

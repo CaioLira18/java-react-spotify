@@ -46,29 +46,6 @@ body {
     transform: scale(1.05);
 }
 
-.informationHeaderArtistas {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 30px 0;
-}
-
-.informationHeaderArtistas h1 {
-    font-size: 28px;
-    margin: 0;
-}
-
-.informationHeaderArtistas p {
-    color: #b3b3b3;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.3s all ease-in-out;
-}
-
-.informationHeaderArtistas p:hover {
-    color: white;
-}
-
 .containerArtists {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

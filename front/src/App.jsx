@@ -4,6 +4,8 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ArtistPage from './pages/ArtistPage'
 import AppLayout from './components/AppLayout'
+import AddMusicPage from './pages/AddMusicPage'
+import AddArtistPage from './pages/AddArtistPage'
 
 function App() {
   return (
@@ -15,6 +17,9 @@ function App() {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/music" element={<AddMusicPage />} />
+      <Route path="/artist" element={<AddArtistPage />} />
+
     </Routes>
   )
 }
