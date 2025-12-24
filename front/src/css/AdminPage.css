@@ -1,3 +1,13 @@
+.adminPageContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 2fr));
+    gap: 200px;
+    padding: 40px 40px;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
 .adminPageBox {
     position: relative;
     width: 400px;

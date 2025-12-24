@@ -6,8 +6,6 @@ const AddArtistPage = () => {
   const [bannerPhoto, setBannerPhoto] = useState("");
   const [description, setDescription] = useState("");
 
-
-
   const API_URL = "http://localhost:8080/api";
 
   function addItem() {

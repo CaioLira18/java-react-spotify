@@ -68,10 +68,10 @@ const ArtistPage = () => {
                 {artistSongs.map((song, index) => (
                     <div className="musicsArtistPage" key={song.id}>
                         <div className="songContainer" onClick={() => setCurrentIndex(index)}>
-                            <h1>{index + 1}</h1>
+                            <h4>{index + 1}</h4>
                             <img src={song.cover} alt={song.name} />
                             <div className="songInformation">
-                                <h1>{song.name}</h1>
+                                <h4>{song.name}</h4>
                                 <p>{song.artistName}</p>
                             </div>
                             <div className="otherInformation">
