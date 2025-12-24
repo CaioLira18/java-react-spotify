@@ -5,8 +5,6 @@ import NavBar from './NavBar'
 const AppLayout = () => {
   return (
     <>
-      <NavBar />
-
       <div className="app-layout">
         <Header />
         <Outlet /> 

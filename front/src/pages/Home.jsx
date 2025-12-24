@@ -43,7 +43,7 @@ const Home = () => {
             <div className="homeFlex">
                 <div className="artistas">
                     <div className="informationHeaderArtistas">
-                        <h1>Seus Artistas Favoritos</h1>
+                        <h1>Artistas Populares</h1>
                     </div>
 
                     <div className="containerArtists">

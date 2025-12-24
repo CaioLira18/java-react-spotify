@@ -31,9 +31,16 @@ public class User {
     private UserEnum role;
 
     /**
-     * Lista de Musicas Favoritdas
+     * Lista de Musicas Favoritadas
     */
     @OneToMany(mappedBy="id")
     @JsonIgnore
     private List<Music> listMusic;
+
+    /**
+     * Lista de Artistas Favoritos
+    */
+    @OneToMany(mappedBy="id")
+    @JsonIgnore
+    private List<Artists> listArtists;
 }
