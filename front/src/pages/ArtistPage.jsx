@@ -8,6 +8,8 @@ const ArtistPage = () => {
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
   const [toasts, setToasts] = useState([])
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedSong, setSelectedSong] = useState(null)
 
   const API_URL = "http://localhost:8080/api"
 
@@ -35,6 +37,43 @@ const ArtistPage = () => {
     setToasts(prev => prev.filter(t => t.id !== id))
   }
 
+  const handlePlay = (index) => {
+    setPlaylist(artistSongs)
+    setCurrentIndex(index)
+  }
+
+  const modalMoreOptions = (song, e) => {
+    e.stopPropagation()
+    setSelectedSong(song)
+    setModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+    setSelectedSong(null)
+  }
+
+  const addToFavorites = async () => {
+    try {
+      const response = await fetch(`${API_URL}/favorites`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ songId: selectedSong.id })
+      })
+
+      if (response.ok) {
+        showToast('Música adicionada aos favoritos!', 'success')
+      } else {
+        showToast('Erro ao adicionar aos favoritos', 'error')
+      }
+    } catch (error) {
+      showToast('Erro ao adicionar aos favoritos', 'error')
+    }
+    closeModal()
+  }
+
   if (!artista) {
     return <h1>Carregando Artista...</h1>
   }
@@ -42,11 +81,6 @@ const ArtistPage = () => {
   const artistSongs = songs.filter(song =>
     song.artistsNames.some(artist => artist.name === artista.name)
   )
-
-  const handlePlay = (index) => {
-    setPlaylist(artistSongs)
-    setCurrentIndex(index)
-  }
 
   return (
     <>
@@ -91,11 +125,59 @@ const ArtistPage = () => {
 
                 <div className="otherInformation">
                   <p>{song.duration}</p>
+                  <p onClick={(e) => modalMoreOptions(song, e)}>
+                    <i className="fa-solid fa-ellipsis"></i>
+                  </p>
                 </div>
               </div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Modal */}
+      {modalOpen && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Opções</h3>
+              <button className="close-btn" onClick={closeModal}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {selectedSong && (
+                <div className="song-info">
+                  <img src={selectedSong.cover} alt={selectedSong.name} />
+                  <div>
+                    <h4>{selectedSong.name}</h4>
+                    <p>
+                      {selectedSong.artistsNames
+                        .map(artist => artist.name)
+                        .join(', ')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <button className="modal-option" onClick={addToFavorites}>
+                <i className="fa-solid fa-heart"></i>
+                <span>Adicionar aos Favoritos</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="toast-container">
+        {toasts.map(toast => (
+          <div key={toast.id} className={`toast toast-${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => removeToast(toast.id)}>×</button>
+          </div>
+        ))}
       </div>
     </>
   )

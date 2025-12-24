@@ -11,6 +11,8 @@ import './css/MusicPlayer.css'
 import './css/AppLayout.css'
 import './css/AdminPage.css'
 import './css/AddArtistPage.css'
+import './css/ModalMusic.css'
+
 
 
 import App from './App.jsx'
