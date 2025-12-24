@@ -7,6 +7,7 @@ const ArtistPage = () => {
 
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
+  const [playlists, setPlaylists] = useState([])
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
@@ -17,6 +18,13 @@ const ArtistPage = () => {
     fetch(`${API_URL}/songs`)
       .then(res => res.json())
       .then(data => setSongs(data))
+      .catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    fetch(`${API_URL}/playlists`)
+      .then(res => res.json())
+      .then(data => setPlaylists(data))
       .catch(console.error)
   }, [])
 
@@ -54,24 +62,7 @@ const ArtistPage = () => {
   }
 
   const addToFavorites = async () => {
-    try {
-      const response = await fetch(`${API_URL}/favorites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ songId: selectedSong.id })
-      })
 
-      if (response.ok) {
-        showToast('Música adicionada aos favoritos!', 'success')
-      } else {
-        showToast('Erro ao adicionar aos favoritos', 'error')
-      }
-    } catch (error) {
-      showToast('Erro ao adicionar aos favoritos', 'error')
-    }
-    closeModal()
   }
 
   if (!artista) {
@@ -80,6 +71,10 @@ const ArtistPage = () => {
 
   const artistSongs = songs.filter(song =>
     song.artistsNames.some(artist => artist.name === artista.name)
+  )
+
+  const artistPlaylists = playlists.filter(playlist =>
+    playlist.artistsNames.some(artist => artist.name === artista.name)
   )
 
   return (
@@ -128,6 +123,29 @@ const ArtistPage = () => {
                   <p onClick={(e) => modalMoreOptions(song, e)}>
                     <i className="fa-solid fa-ellipsis"></i>
                   </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="playlistsContainer">
+          <h2>Playlist Populares</h2>
+
+          {playlists.map((playlist, index) => (
+            <div className="playlistArtistPage" key={playlist.id}>
+              <div className="playlistContainer" onClick={() => handlePlay(index)}>
+                <div className="albumImage">
+                  <img src={playlist.cover} alt={playlist.name} />
+                </div>
+
+                <div className="playlistInformation">
+                  <h4>{playlist.name}</h4>
+                  <div className="albumCredits">
+                    <p>Album</p>
+                    <p> • </p>
+                    <p>{playlist.year}</p>
+                  </div>
                 </div>
               </div>
             </div>

@@ -13,7 +13,7 @@ const AdminPage = () => {
            <h2>Adicionar Musicas</h2></a>
         </div>
         <div className="adminPageBox">
-           <a href="/music"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
+           <a href="/playlist"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
            <h2>Adicionar Playlist</h2></a>
         </div>
       </div>

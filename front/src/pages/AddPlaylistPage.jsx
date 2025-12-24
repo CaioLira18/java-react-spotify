@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react'
 
-const AddMusicPage = () => {
+const AddPlaylistPage = () => {
   const API_URL = "http://localhost:8080/api";
 
   const [name, setName] = useState("");
   const [duration, setDuration] = useState("");
   const [cover, setCover] = useState("");
+  const [year, setYear] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("0");
   const [artists, setArtists] = useState([]);
+  const [songs, setSongs] = useState([]);
   const [artistsIds, setArtistsIds] = useState([]);
+  const [songsIds, setSongsIds] = useState([]);
+
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
@@ -21,14 +25,26 @@ const AddMusicPage = () => {
       .catch(() => alert("Erro ao buscar Artistas."));
   }, []);
 
+  useEffect(() => {
+    fetch(`${API_URL}/songs`)
+      .then(response => {
+        if (!response.ok) throw new Error();
+        return response.json();
+      })
+      .then(data => setSongs(data))
+      .catch(() => alert("Erro ao buscar Artistas."));
+  }, []);
+
   function addItem() {
     if (
       !name.trim() ||
       !duration.trim() ||
       !cover.trim() ||
-      !musicUrl.trim() ||
       !type.trim() ||
-      artistsIds.length === 0
+      !year.trim() ||
+      artistsIds.length === 0 ||
+      songsIds.length === 0
+
     ) {
       alert("Preencha os campos obrigatórios.");
       return;
@@ -38,12 +54,13 @@ const AddMusicPage = () => {
       name,
       duration,
       cover,
-      musicUrl,
       type,
-      artistsIds
+      year,
+      artistsIds,
+      songsIds
     };
 
-    fetch(`${API_URL}/songs`, {
+    fetch(`${API_URL}/playlists`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -59,9 +76,10 @@ const AddMusicPage = () => {
         setName("");
         setDuration("");
         setCover("");
-        setMusicUrl("");
         setType("");
+        setYear("");
         setArtistsIds([]);
+        setSongsIds([]);
       })
       .catch(() => alert("Erro ao adicionar."));
   }
@@ -78,7 +96,7 @@ const AddMusicPage = () => {
               />
             </div>
 
-            <h1>Adicionar Música</h1>
+            <h1>Adicionar Playlist</h1>
 
             {/* Nome */}
             <div className="inputBox">
@@ -112,6 +130,18 @@ const AddMusicPage = () => {
                 <input value={duration} onChange={(e) => setDuration(e.target.value)} />
               </div>
             </div>
+
+            {/* Ano */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Ano de Lançamento</h2>
+              </div>
+              <div className="inputArea">
+                <input value={year} onChange={(e) => setYear(e.target.value)} />
+              </div>
+            </div>
+
 
             {/* Artistas */}
             <div className="inputBox">
@@ -157,6 +187,50 @@ const AddMusicPage = () => {
               </div>
             </div>
 
+            {/* Musicas */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Musicas</h2>
+              </div>
+              <div className="inputArea">
+                <select
+                  multiple
+                  className="form-input"
+                  value={songsIds}
+                  onChange={(e) => {
+                    const values = Array.from(
+                      e.target.selectedOptions,
+                      option => option.value
+                    );
+                    setSongsIds(values);
+                  }}
+                >
+                  {songs.map(song => (
+                    <option key={song.id} value={song.id}>
+                      {song.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Musicas Selecionadas */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Musicas Selecionadas</h2>
+              </div>
+              <div className="inputArea">
+                <ul>
+                  {songsIds.map(id => {
+                    const song = songs.find(s => s.id === id);
+                    return <li key={id}>{song?.name}</li>;
+                  })}
+                </ul>
+              </div>
+            </div>
+
             {/* Tipo */}
             <div className="inputBox">
               <div className="textLogo">
@@ -165,20 +239,8 @@ const AddMusicPage = () => {
               </div>
               <div className="inputArea">
                 <select className='form-input' value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="MUSIC">Musica</option>
                   <option value="ALBUM">Album</option>
                 </select>
-              </div>
-            </div>
-
-            {/* Música URL */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Musica Url</h2>
-              </div>
-              <div className="inputArea">
-                <input value={musicUrl} onChange={(e) => setMusicUrl(e.target.value)} />
               </div>
             </div>
 
@@ -193,4 +255,4 @@ const AddMusicPage = () => {
   );
 }
 
-export default AddMusicPage;
+export default AddPlaylistPage;
