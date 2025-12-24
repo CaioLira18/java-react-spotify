@@ -64,7 +64,7 @@ const Header = () => {
                 </div>
                 <div className="boxInformations">
                   <a href="">{song.name}</a>
-                  <p>{song.type === "MUSIC" ? 'Song' : 'Album'} - {song.artistName}</p>
+                  <p>{song.type === "MUSIC" ? 'Song' : 'Album'} - {song.artistsNames.map(artist => artist.name).join(', ')}</p>
                 </div>
               </div>
             </div>

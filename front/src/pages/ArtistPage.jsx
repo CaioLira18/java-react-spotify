@@ -39,61 +39,61 @@ const ArtistPage = () => {
         return <h1>Carregando Artista...</h1>;
     }
 
-    // ✅ Agora é seguro
-    const artistSongs = songs.filter(
-        song => song.artistName === artista.name
+    const artistSongs = songs.filter(song =>
+        song.artistsNames.some(artist => artist.name === artista.name)
     );
+
 
     return (
         <>
-        <div className="artistFlex">
-            <div className="artist-individual-container">
-                <div className="artist-header">
-                    <img src={artista.bannerPhoto} alt="" />
-                </div>
-                <div className="artistInformation">
-                    <div className="verificy">
-                        <i className="fa-solid fa-certificate"></i>
-                        <p>Artista Verificado</p>
+            <div className="artistFlex">
+                <div className="artist-individual-container">
+                    <div className="artist-header">
+                        <img src={artista.bannerPhoto} alt="" />
                     </div>
-                    <h1>{artista.name}</h1>
-                    <h2>9 Milhões de Ouvintes Mensais</h2>
+                    <div className="artistInformation">
+                        <div className="verificy">
+                            <i className="fa-solid fa-certificate"></i>
+                            <p>Artista Verificado</p>
+                        </div>
+                        <h1>{artista.name}</h1>
+                        <h2>9 Milhões de Ouvintes Mensais</h2>
+                    </div>
                 </div>
-            </div>
 
-            <div className="songsContainer">
-                
-                <h2>Músicas Populares</h2>
+                <div className="songsContainer">
 
-                {artistSongs.map((song, index) => (
-                    <div className="musicsArtistPage" key={song.id}>
-                        <div className="songContainer" onClick={() => setCurrentIndex(index)}>
-                            <h4>{index + 1}</h4>
-                            <img src={song.cover} alt={song.name} />
-                            <div className="songInformation">
-                                <h4>{song.name}</h4>
-                                <p>{song.artistName}</p>
-                            </div>
-                            <div className="otherInformation">
-                                <p>{song.duration}</p>
+                    <h2>Músicas Populares</h2>
+
+                    {artistSongs.map((song, index) => (
+                        <div className="musicsArtistPage" key={song.id}>
+                            <div className="songContainer" onClick={() => setCurrentIndex(index)}>
+                                <h4>{index + 1}</h4>
+                                <img src={song.cover} alt={song.name} />
+                                <div className="songInformation">
+                                    <h4>{song.name}</h4>
+                                    <p>{song.artistsNames.map(artist => artist.name).join(', ')}</p>
+                                </div>
+                                <div className="otherInformation">
+                                    <p>{song.duration}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
-        </div>
 
-        <div className="player">
-            {/* 🎧 PLAYER SEMPRE NO FINAL */}
-            <MusicPlayer
-                playlist={artistSongs}
-                currentIndex={currentIndex}
-                setCurrentIndex={setCurrentIndex}
-            />
-        </div>
+            <div className="player">
+                {/* 🎧 PLAYER SEMPRE NO FINAL */}
+                <MusicPlayer
+                    playlist={artistSongs}
+                    currentIndex={currentIndex}
+                    setCurrentIndex={setCurrentIndex}
+                />
+            </div>
 
         </>
-        
+
     );
 };
 

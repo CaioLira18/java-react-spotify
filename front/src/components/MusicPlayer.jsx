@@ -101,7 +101,7 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
                 <img src={currentSong.cover} alt={currentSong.name} />
                 <div>
                     <strong>{currentSong.name}</strong>
-                    <p>{currentSong.artistName}</p>
+                    <p>{currentSong.artistsNames.map(artist => artist.name).join(', ')}</p>
                 </div>
             </div>
 
