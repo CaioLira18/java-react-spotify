@@ -33,13 +33,13 @@ const Header = () => {
           </div>
           <div className="othersOptions">
             <div className="otherOption">
-              <h1>Playlist</h1>
+              <h2>Playlist</h2>
             </div>
             <div className="otherOption">
-              <h1>Podcast</h1>
+              <h2>Podcast</h2>
             </div>
             <div className="otherOption">
-              <h1>Album</h1>
+              <h2>Album</h2>
             </div>
           </div>
 

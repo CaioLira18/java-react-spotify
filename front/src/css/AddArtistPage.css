@@ -1,0 +1,259 @@
+
+/* Container principal - alinhado com layout Spotify */
+.containerItem {
+  background: #121212;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+/* Cabeçalho da página */
+h1:first-child {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #fff;
+  letter-spacing: -0.04em;
+}
+
+/* Box do formulário - card estilo Spotify */
+.boxItem {
+  background: #181818;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  transition: background 0.3s ease;
+}
+
+.boxItem:hover {
+  background: #1f1f1f;
+}
+
+.boxItem h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #fff;
+  letter-spacing: -0.04em;
+}
+
+/* Input boxes */
+.inputBox {
+  margin-bottom: 20px;
+}
+
+.textLogo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.textLogo i {
+  color: #1db954;
+  font-size: 0.9rem;
+}
+
+.textLogo h2 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* Input area */
+.inputArea {
+  position: relative;
+}
+
+.inputArea input {
+  width: 100%;
+  padding: 12px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: 'Circular', 'Spotify Circular', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inputArea input:focus {
+  background: #000;
+  border-color: #fff;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.inputArea input::placeholder {
+  color: #6a6a6a;
+}
+
+.inputArea input:hover {
+  border-color: #535353;
+}
+
+/* Botão de adicionar - estilo exato do Spotify */
+.addItemButton {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.addItemButton button {
+  background: #1db954;
+  color: #000;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 500px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: 'Circular', 'Spotify Circular', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.addItemButton button:hover {
+  background: #1ed760;
+  transform: scale(1.04);
+}
+
+.addItemButton button:active {
+  background: #169c46;
+  transform: scale(1);
+}
+
+/* Grid para mostrar preview (opcional) */
+.preview-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #282828;
+}
+
+.preview-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.artist-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #121212;
+  border-radius: 8px;
+  max-width: 200px;
+}
+
+.artist-preview img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.artist-preview h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.artist-preview p {
+  font-size: 0.875rem;
+  color: #b3b3b3;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .containerItem {
+    padding: 16px;
+  }
+
+  h1:first-child {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+
+  .boxItem {
+    padding: 16px;
+  }
+
+  .boxItem h1 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+  }
+
+  .addItemButton {
+    flex-direction: column;
+  }
+
+  .addItemButton button {
+    width: 100%;
+  }
+}
+
+/* Scrollbar personalizada (estilo Spotify) */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e3e;
+}
+
+/* Estados de hover para inputs */
+.inputBox:hover .textLogo h2 {
+  color: #fff;
+}
+
+/* Animação suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.boxItem {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilo para mensagens de erro/sucesso */
+.message {
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.message.success {
+  background: rgba(29, 185, 84, 0.15);
+  color: #1db954;
+  border: 1px solid rgba(29, 185, 84, 0.3);
+}
+
+.message.error {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+  border: 1px solid rgba(233, 69, 96, 0.3);
+}

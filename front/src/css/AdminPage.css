@@ -14,6 +14,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: 0.3s all ease-in-out;
 }
 
 .adminPageBox h2 {
@@ -28,15 +29,16 @@
     font-size: 28px;
     font-weight: bold;
     text-align: center;
-    transition: background 0.3s ease-in-out;
+    transition: background 0.3s all ease-in-out;
     z-index: 10;
 }
 
 .adminPageBox:hover {
     transform: scale(1.05);
+    transition: 0.3s all ease-in-out;
 }
 
 .adminPageBox:hover h2 {
     background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8), transparent);
-    transition: 0.3 all ease-in-out;
+    transition: 0.3s all ease-in-out;
 }
