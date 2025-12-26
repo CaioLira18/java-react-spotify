@@ -1,15 +1,16 @@
 package br.com.caio.spotify.application.entities;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import br.com.caio.spotify.application.entities.enums.UserEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,23 +32,35 @@ public class User {
     private UserEnum role;
 
     /**
-     * Lista de Musicas Favoritadas
+     * Lista de Músicas Favoritadas
     */
-    @OneToMany(mappedBy="id")
-    @JsonIgnore
-    private List<Music> listMusic;
+    @ManyToMany
+    @JoinTable(
+        name = "tb_user_favorite_musics", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "music_id")
+    )
+    private List<Music> listMusic = new ArrayList<>();
 
     /**
      * Lista de Artistas Favoritos
     */
-    @OneToMany(mappedBy="id")
-    @JsonIgnore
-    private List<Artists> listArtists;
+    @ManyToMany
+    @JoinTable(
+        name = "tb_user_favorite_artists", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private List<Artists> listArtists = new ArrayList<>();
 
     /**
-     * Lista de Playlists Favoritos
+     * Lista de Playlists Favoritas
     */
-    @OneToMany(mappedBy="id")
-    @JsonIgnore
-    private List<Playlist> listPlaylists;
+    @ManyToMany
+    @JoinTable(
+        name = "tb_user_favorite_playlists", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "playlist_id")
+    )
+    private List<Playlist> listPlaylists = new ArrayList<>();
 }

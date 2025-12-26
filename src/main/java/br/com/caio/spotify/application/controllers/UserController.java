@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.caio.spotify.application.entities.User;
 import br.com.caio.spotify.application.services.UserService;
 
-
-
 @RestController
 @CrossOrigin(origins = {
     "http://localhost:5173",
@@ -56,5 +54,59 @@ public class UserController {
     public ResponseEntity<Void> deleteItem(@PathVariable String id) {
         boolean deleted = userService.deleteItem(id);
         return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    // Adicionar música aos favoritos
+    @PostMapping("/{userId}/favorites/music/{musicId}")
+    public ResponseEntity<User> addMusicToFavorites(
+            @PathVariable String userId, 
+            @PathVariable String musicId) {
+        Optional<User> updatedUser = userService.addMusicToFavorites(userId, musicId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Remover música dos favoritos
+    @DeleteMapping("/{userId}/favorites/music/{musicId}")
+    public ResponseEntity<User> removeMusicFromFavorites(
+            @PathVariable String userId, 
+            @PathVariable String musicId) {
+        Optional<User> updatedUser = userService.removeMusicFromFavorites(userId, musicId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Adicionar playlist aos favoritos
+    @PostMapping("/{userId}/favorites/playlist/{playlistId}")
+    public ResponseEntity<User> addPlaylistToFavorites(
+            @PathVariable String userId, 
+            @PathVariable String playlistId) {
+        Optional<User> updatedUser = userService.addPlaylistToFavorites(userId, playlistId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Remover playlist dos favoritos
+    @DeleteMapping("/{userId}/favorites/playlist/{playlistId}")
+    public ResponseEntity<User> removePlaylistFromFavorites(
+            @PathVariable String userId, 
+            @PathVariable String playlistId) {
+        Optional<User> updatedUser = userService.removePlaylistFromFavorites(userId, playlistId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Adicionar artista aos favoritos
+    @PostMapping("/{userId}/favorites/artist/{artistId}")
+    public ResponseEntity<User> addArtistToFavorites(
+            @PathVariable String userId, 
+            @PathVariable String artistId) {
+        Optional<User> updatedUser = userService.addArtistToFavorites(userId, artistId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Remover artista dos favoritos
+    @DeleteMapping("/{userId}/favorites/artist/{artistId}")
+    public ResponseEntity<User> removeArtistFromFavorites(
+            @PathVariable String userId, 
+            @PathVariable String artistId) {
+        Optional<User> updatedUser = userService.removeArtistFromFavorites(userId, artistId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

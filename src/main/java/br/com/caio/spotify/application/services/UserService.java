@@ -8,6 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.caio.spotify.application.entities.User;
+import br.com.caio.spotify.application.repositories.ArtistRepository;
+import br.com.caio.spotify.application.repositories.MusicRepository;
+import br.com.caio.spotify.application.repositories.PlaylistRepository;
 import br.com.caio.spotify.application.repositories.UserRepository;
 
 @Service
@@ -15,6 +18,15 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MusicRepository musicRepository;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
+
+    @Autowired
+    private ArtistRepository artistsRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -56,5 +68,74 @@ public class UserService {
             userRepository.delete(item);
             return true;
         }).orElse(false);
+    }
+
+    // Adicionar música aos favoritos
+    public Optional<User> addMusicToFavorites(String userId, String musicId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            musicRepository.findById(musicId).map(music -> {
+                if (!user.getListMusic().contains(music)) {
+                    user.getListMusic().add(music);
+                    return userRepository.save(user);
+                }
+                return user;
+            })
+        );
+    }
+
+    // Remover música dos favoritos
+    public Optional<User> removeMusicFromFavorites(String userId, String musicId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            musicRepository.findById(musicId).map(music -> {
+                user.getListMusic().remove(music);
+                return userRepository.save(user);
+            })
+        );
+    }
+
+    // Adicionar playlist aos favoritos
+    public Optional<User> addPlaylistToFavorites(String userId, String playlistId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            playlistRepository.findById(playlistId).map(playlist -> {
+                if (!user.getListPlaylists().contains(playlist)) {
+                    user.getListPlaylists().add(playlist);
+                    return userRepository.save(user);
+                }
+                return user;
+            })
+        );
+    }
+
+    // Remover playlist dos favoritos
+    public Optional<User> removePlaylistFromFavorites(String userId, String playlistId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            playlistRepository.findById(playlistId).map(playlist -> {
+                user.getListPlaylists().remove(playlist);
+                return userRepository.save(user);
+            })
+        );
+    }
+
+    // Adicionar artista aos favoritos
+    public Optional<User> addArtistToFavorites(String userId, String artistId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            artistsRepository.findById(artistId).map(artist -> {
+                if (!user.getListArtists().contains(artist)) {
+                    user.getListArtists().add(artist);
+                    return userRepository.save(user);
+                }
+                return user;
+            })
+        );
+    }
+
+    // Remover artista dos favoritos
+    public Optional<User> removeArtistFromFavorites(String userId, String artistId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            artistsRepository.findById(artistId).map(artist -> {
+                user.getListArtists().remove(artist);
+                return userRepository.save(user);
+            })
+        );
     }
 }
