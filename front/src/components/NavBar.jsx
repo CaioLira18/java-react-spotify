@@ -50,7 +50,7 @@ const NavBar = () => {
           {isAuthenticated && (
             <div className="userBox">
               <div className="userImage">
-                <img src={image} onError={() => console.log('Erro ao carregar imagem')} />
+                <i class="fa-solid fa-user"></i>
               </div>
               <div className="logout" onClick={handleLogout}>
                 <i class="fa-solid fa-right-from-bracket"></i>

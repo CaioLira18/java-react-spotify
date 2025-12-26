@@ -79,6 +79,13 @@
   letter-spacing: 0.5px;
 }
 
+
+.userImage i {
+  background-color: gray;
+  padding: 10px;
+  border-radius: 50%;
+}
+
 .optionsNavBar {
   display: flex;
   align-items: center;

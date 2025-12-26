@@ -133,22 +133,25 @@ const ArtistPage = () => {
           <h2>Playlist Populares</h2>
 
           {playlists.map((playlist, index) => (
-            <div className="playlistArtistPage" key={playlist.id}>
-              <div className="playlistContainer" onClick={() => handlePlay(index)}>
-                <div className="albumImage">
-                  <img src={playlist.cover} alt={playlist.name} />
-                </div>
+            playlist.artistsNames.some(artist => artist.name === artista.name) && (
+              <div className="playlistArtistPage" key={playlist.id}>
+                <div className="playlistContainer" onClick={() => handlePlay(index)}>
+                  <div className="albumImage">
+                    <img src={playlist.cover} alt={playlist.name} />
+                  </div>
 
-                <div className="playlistInformation">
-                  <h4>{playlist.name}</h4>
-                  <div className="albumCredits">
-                    <p>Album</p>
-                    <p> • </p>
-                    <p>{playlist.year}</p>
+                  <div className="playlistInformation">
+                    <h4>{playlist.name}</h4>
+                    <div className="albumCredits">
+                      <p>Album</p>
+                      <p> • </p>
+                      <p>{playlist.year}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )
+
           ))}
         </div>
       </div>

@@ -5,8 +5,10 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const API_URL = "http://localhost:8080/api"
 
   const [songs, setSongs] = useState([])
+  const [playlists, setPlaylists] = useState([])
   const [filteredSongs, setFilteredSongs] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [type, setType] = useState("ALL")
 
   useEffect(() => {
     fetch(`${API_URL}/songs`)
@@ -23,6 +25,24 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
       .catch(error => {
         console.error(error)
         alert("Erro ao buscar músicas.")
+      })
+  }, [])
+
+
+  useEffect(() => {
+    fetch(`${API_URL}/playlists`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar playlists.")
+        }
+        return response.json()
+      })
+      .then(data => {
+        setPlaylists(data)
+      })
+      .catch(error => {
+        console.error(error)
+        alert("Erro ao buscar playlists.")
       })
   }, [])
 
@@ -56,9 +76,10 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
         </div>
 
         <div className="othersOptions">
-          <div className="otherOption"><h2>Playlist</h2></div>
-          <div className="otherOption"><h2>Podcast</h2></div>
-          <div className="otherOption"><h2>Album</h2></div>
+          <div className="otherOption" onClick={() => setType("ALL")}><h2>All</h2></div>
+          <div className="otherOption" onClick={() => setType("PLAYLIST")}><h2>Playlist</h2></div>
+          <div className="otherOption" onClick={() => setType("ALBUM")}><h2>Album</h2></div>
+          <div className="otherOption" onClick={() => setType("MUSIC")}><h2>Músicas</h2></div>
         </div>
 
         <div className="searchFilterOption">
@@ -80,28 +101,57 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
           </div>
         </div>
 
-        {filteredSongs.map((song, index) => (
-          <div
-            className="optionsHeader"
-            key={song.id}
-            onClick={() => handlePlay(index)}
-            style={{ cursor: "pointer" }}
-          >
-            <div className="boxOption">
-              <div className="boxImage">
-                <img src={song.cover} alt={song.name} />
-              </div>
 
-              <div className="boxInformations">
-                <span>{song.name}</span>
-                <p>
-                  {song.type === "MUSIC" ? "Song" : "Album"} –{" "}
-                  {song.artistsNames.map(a => a.name).join(', ')}
-                </p>
+        {filteredSongs.map((song, index) => (
+          (type === "MUSIC" || type === "ALL") && (
+            <div
+              className="optionsHeader"
+              key={song.id}
+              onClick={() => handlePlay(index)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="boxOption">
+                <div className="boxImage">
+                  <img src={song.cover} alt={song.name} />
+                </div>
+
+                <div className="boxInformations">
+                  <span>{song.name}</span>
+                  <p>
+                    {song.type === "MUSIC" ? "Song" : "Album"} –{" "}
+                    {song.artistsNames.map(a => a.name).join(", ")}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )
         ))}
+
+        {playlists.map((playlist, index) => (
+          (type === "PLAYLIST" || type === "ALL") && (
+            <div
+              className="optionsHeader"
+              key={playlist.id}
+              onClick={() => handlePlay(index)}
+              style={{ cursor: "pointer" }}
+            >
+              <div className="boxOption">
+                <div className="boxImage">
+                  <img src={playlist.cover} alt={playlist.name} />
+                </div>
+
+                <div className="boxInformations">
+                  <span>{playlist.name}</span>
+                  <p>
+                    {playlist.type === "PLAYLIST" ? "playlist" : "Album"} –{" "}
+                    {playlist.artistsNames.map(a => a.name).join(", ")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )
+        ))}
+
 
         <div className="headerButtons">
           <div className="buttonHeader">
