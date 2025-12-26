@@ -4,7 +4,6 @@ import Header from "../components/Header";
 const Home = () => {
     const [artistas, setArtistas] = useState([]);
     const API_URL = "http://localhost:8080/api";
-
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [name, setName] = useState('');

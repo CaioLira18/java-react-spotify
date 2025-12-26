@@ -1,64 +1,64 @@
 import React, { useEffect, useState } from 'react'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
-
+  
   const API_URL = "http://localhost:8080/api"
-
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [filteredSongs, setFilteredSongs] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [userID, setUserID] = useState(null)
 
   useEffect(() => {
-    fetch(`${API_URL}/songs`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Erro ao buscar músicas.")
-        }
-        return response.json()
-      })
-      .then(data => {
-        setSongs(data)
-        setFilteredSongs(data)
-      })
-      .catch(error => {
-        console.error(error)
-        alert("Erro ao buscar músicas.")
-      })
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser)
+        setIsAuthenticated(true)
+        setIsAdmin(parsedUser.role === 'ADMIN')
+        setUserID(parsedUser.id)
+        
+        // Corrigir os nomes das propriedades
+        const userPlaylists = parsedUser.listPlaylists || []
+        const userSongs = parsedUser.listMusic || []
+        
+        setPlaylists(userPlaylists)
+        setSongs(userSongs)
+        setFilteredSongs(userSongs) 
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err)
+      }
+    }
   }, [])
 
-
-  useEffect(() => {
-    fetch(`${API_URL}/playlists`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Erro ao buscar playlists.")
-        }
-        return response.json()
-      })
-      .then(data => {
-        setPlaylists(data)
-      })
-      .catch(error => {
-        console.error(error)
-        alert("Erro ao buscar playlists.")
-      })
-  }, [])
-
-  const handlePlay = (index) => {
+  const handlePlaySong = (index) => {
     setPlaylist(filteredSongs)
     setCurrentIndex(index)
+  }
+
+  const handlePlayPlaylist = (playlist) => {
+    if (playlist.songs && playlist.songs.length > 0) {
+      setPlaylist(playlist.songs)
+      setCurrentIndex(0)
+    }
   }
 
   function search(value) {
     setSearchTerm(value)
 
+    if (!value.trim()) {
+      setFilteredSongs(songs)
+      return
+    }
+
     const filtered = songs.filter(song =>
       song.name.toLowerCase().includes(value.toLowerCase()) ||
-      song.artistsNames.some(artist =>
+      (song.artistsNames && song.artistsNames.some(artist =>
         artist.name.toLowerCase().includes(value.toLowerCase())
-      )
+      ))
     )
 
     setFilteredSongs(filtered)
@@ -67,7 +67,6 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   return (
     <header>
       <div className="header">
-
         <div className="headerInformations">
           <div className="titleHeader">
             <i className="fa-solid fa-grip"></i>
@@ -76,10 +75,18 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
         </div>
 
         <div className="othersOptions">
-          <div className="otherOption" onClick={() => setType("ALL")}><h2>All</h2></div>
-          <div className="otherOption" onClick={() => setType("PLAYLIST")}><h2>Playlist</h2></div>
-          <div className="otherOption" onClick={() => setType("ALBUM")}><h2>Album</h2></div>
-          <div className="otherOption" onClick={() => setType("MUSIC")}><h2>Músicas</h2></div>
+          <div className="otherOption" onClick={() => setType("ALL")}>
+            <h2>All</h2>
+          </div>
+          <div className="otherOption" onClick={() => setType("PLAYLIST")}>
+            <h2>Playlist</h2>
+          </div>
+          <div className="otherOption" onClick={() => setType("ALBUM")}>
+            <h2>Album</h2>
+          </div>
+          <div className="otherOption" onClick={() => setType("MUSIC")}>
+            <h2>Músicas</h2>
+          </div>
         </div>
 
         <div className="searchFilterOption">
@@ -101,13 +108,13 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
           </div>
         </div>
 
-
-        {filteredSongs.map((song, index) => (
+        {/* Renderizar músicas */}
+        {filteredSongs.length > 0 && filteredSongs.map((song, index) => (
           (type === "MUSIC" || type === "ALL") && (
             <div
               className="optionsHeader"
               key={song.id}
-              onClick={() => handlePlay(index)}
+              onClick={() => handlePlaySong(index)}
               style={{ cursor: "pointer" }}
             >
               <div className="boxOption">
@@ -119,7 +126,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                   <span>{song.name}</span>
                   <p>
                     {song.type === "MUSIC" ? "Song" : "Album"} –{" "}
-                    {song.artistsNames.map(a => a.name).join(", ")}
+                    {song.artistsNames && song.artistsNames.map(a => a.name).join(", ")}
                   </p>
                 </div>
               </div>
@@ -127,12 +134,13 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
           )
         ))}
 
-        {playlists.map((playlist, index) => (
+        {/* Renderizar playlists */}
+        {playlists.length > 0 && playlists.map((playlist) => (
           (type === "PLAYLIST" || type === "ALL") && (
             <div
               className="optionsHeader"
               key={playlist.id}
-              onClick={() => handlePlay(index)}
+              onClick={() => handlePlayPlaylist(playlist)}
               style={{ cursor: "pointer" }}
             >
               <div className="boxOption">
@@ -143,15 +151,14 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                 <div className="boxInformations">
                   <span>{playlist.name}</span>
                   <p>
-                    {playlist.type === "PLAYLIST" ? "playlist" : "Album"} –{" "}
-                    {playlist.artistsNames.map(a => a.name).join(", ")}
+                    Playlist –{" "}
+                    {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
                   </p>
                 </div>
               </div>
             </div>
           )
         ))}
-
 
         <div className="headerButtons">
           <div className="buttonHeader">
@@ -161,7 +168,6 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             <button><i className="fa-solid fa-plus"></i></button>
           </div>
         </div>
-
       </div>
     </header>
   )

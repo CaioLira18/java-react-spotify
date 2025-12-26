@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
 
 const ArtistPage = () => {
+
   const { id } = useParams()
   const { setPlaylist, setCurrentIndex } = useOutletContext()
-
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
@@ -14,10 +14,10 @@ const ArtistPage = () => {
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
+  const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
   const [userID, setUserID] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
-
   const API_URL = "http://localhost:8080/api"
 
   // Carregar usuário inicial do LocalStorage
@@ -30,6 +30,7 @@ const ArtistPage = () => {
         setIsAdmin(parsedUser.role === 'ADMIN')
         setUserID(parsedUser.id)
         setFavoritesListSongs(parsedUser.listMusic || [])
+        setFavoritesListPlaylists(parsedUser.listPlaylists || [])
       } catch (err) {
         console.error("Erro ao processar usuário do localStorage", err)
       }
@@ -99,8 +100,6 @@ const ArtistPage = () => {
     setSelectedPlaylist(null)
   }
 
-  // --- LÓGICA DE FAVORITOS (CORRIGIDA) ---
-
   const addMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
 
@@ -114,11 +113,9 @@ const ArtistPage = () => {
       )
 
       if (response.ok) {
-        // 1. Atualiza o estado local para refletir na UI imediatamente
         const updatedFavorites = [...favoritesListSongs, selectedSong]
         setFavoritesListSongs(updatedFavorites)
 
-        // 2. Sincroniza com o localStorage para persistência
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
           storedUser.listMusic = updatedFavorites
@@ -149,11 +146,9 @@ const ArtistPage = () => {
       )
 
       if (response.ok) {
-        // 1. Remove do estado local via filtro
         const updatedFavorites = favoritesListSongs.filter(song => song.id !== selectedSong.id)
         setFavoritesListSongs(updatedFavorites)
 
-        // 2. Sincroniza com o localStorage
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
           storedUser.listMusic = updatedFavorites
@@ -184,6 +179,17 @@ const ArtistPage = () => {
       )
 
       if (response.ok) {
+        // Atualiza o estado local
+        const updatedFavorites = [...favoritesListPlaylists, selectedPlaylist]
+        setFavoritesListPlaylists(updatedFavorites)
+
+        // Sincroniza com localStorage
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (storedUser) {
+          storedUser.listPlaylists = updatedFavorites
+          localStorage.setItem('user', JSON.stringify(storedUser))
+        }
+
         showToast("Playlist adicionada aos favoritos!", "success")
         closeModalPlaylist()
       } else {
@@ -192,6 +198,41 @@ const ArtistPage = () => {
     } catch (error) {
       console.error(error)
       showToast("Erro ao adicionar playlist aos favoritos", "error")
+    }
+  }
+
+  const deletePlaylistToFavorites = async () => {
+    if (!selectedPlaylist || !userID) return
+
+    try {
+      const response = await fetch(
+        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      if (response.ok) {
+        // Remove do estado local
+        const updatedFavorites = favoritesListPlaylists.filter(playlist => playlist.id !== selectedPlaylist.id)
+        setFavoritesListPlaylists(updatedFavorites)
+
+        // Sincroniza com localStorage
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (storedUser) {
+          storedUser.listPlaylists = updatedFavorites
+          localStorage.setItem('user', JSON.stringify(storedUser))
+        }
+
+        showToast("Playlist removida dos favoritos!", "success")
+        closeModalPlaylist()
+      } else {
+        showToast("Erro ao remover playlist dos favoritos", "error")
+      }
+    } catch (error) {
+      console.error(error)
+      showToast("Erro ao remover playlist dos favoritos", "error")
     }
   }
 
@@ -275,7 +316,7 @@ const ArtistPage = () => {
         </div>
       </div>
 
-      {/* Modal Música com Verificação de Favorito Atualizada */}
+      {/* Modal Música */}
       {modalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -295,7 +336,6 @@ const ArtistPage = () => {
                 </div>
               )}
 
-              {/* Botão Dinâmico: Se a música estiver na lista, mostra remover, senão mostra adicionar */}
               {selectedSong && (
                 favoritesListSongs.some(song => song.id === selectedSong.id) ? (
                   <button className="modal-option" onClick={deleteMusicToFavorites}>
@@ -332,10 +372,19 @@ const ArtistPage = () => {
                   </div>
                 </div>
               )}
-              <button className="modal-option" onClick={addPlaylistToFavorites}>
-                <i className="fa-solid fa-heart"></i>
-                <span>Adicionar aos Favoritos</span>
-              </button>
+              {selectedPlaylist && (
+                favoritesListPlaylists.some(playlist => playlist.id === selectedPlaylist.id) ? (
+                  <button className="modal-option" onClick={deletePlaylistToFavorites}>
+                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
+                    <span>Remover dos Favoritos</span>
+                  </button>
+                ) : (
+                  <button className="modal-option" onClick={addPlaylistToFavorites}>
+                    <i className="fa-regular fa-heart"></i>
+                    <span>Adicionar aos Favoritos</span>
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
