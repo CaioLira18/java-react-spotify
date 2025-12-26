@@ -13,30 +13,30 @@ const ArtistPage = () => {
   const [modalOpenPlaylist, setModalOpenPlaylist] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
+  const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [userID, setUserID] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
-
-  // ID do usuário logado - você deve obter isso do seu sistema de autenticação
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setIsAuthenticated(true);
-        setIsAdmin(parsedUser.role === 'ADMIN');
-        setUserID(parsedUser.id);
-      } catch (err) {
-        console.error("Erro ao processar usuário do localStorage", err);
-      }
-    }
-  }, []);
-
-  const userId = userID;
   const API_URL = "http://localhost:8080/api"
 
+  // Carregar usuário inicial do LocalStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser)
+        setIsAuthenticated(true)
+        setIsAdmin(parsedUser.role === 'ADMIN')
+        setUserID(parsedUser.id)
+        setFavoritesListSongs(parsedUser.listMusic || [])
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err)
+      }
+    }
+  }, [])
+
+  // Buscar todas as músicas
   useEffect(() => {
     fetch(`${API_URL}/songs`)
       .then(res => res.json())
@@ -44,6 +44,7 @@ const ArtistPage = () => {
       .catch(console.error)
   }, [])
 
+  // Buscar todas as playlists
   useEffect(() => {
     fetch(`${API_URL}/playlists`)
       .then(res => res.json())
@@ -51,12 +52,15 @@ const ArtistPage = () => {
       .catch(console.error)
   }, [])
 
+  // Buscar dados do artista específico
   useEffect(() => {
     fetch(`${API_URL}/artists/${id}`)
       .then(res => res.json())
       .then(data => setArtista(data))
       .catch(() => showToast("Erro ao carregar artista!", "error"))
   }, [id])
+
+  // --- FUNÇÕES DE UTILIDADE ---
 
   const showToast = (message, type = 'success') => {
     const toastId = Date.now()
@@ -95,21 +99,32 @@ const ArtistPage = () => {
     setSelectedPlaylist(null)
   }
 
+  // --- LÓGICA DE FAVORITOS (CORRIGIDA) ---
+
   const addMusicToFavorites = async () => {
-    if (!selectedSong) return
+    if (!selectedSong || !userID) return
 
     try {
       const response = await fetch(
         `${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         }
       )
 
       if (response.ok) {
+        // 1. Atualiza o estado local para refletir na UI imediatamente
+        const updatedFavorites = [...favoritesListSongs, selectedSong]
+        setFavoritesListSongs(updatedFavorites)
+
+        // 2. Sincroniza com o localStorage para persistência
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (storedUser) {
+          storedUser.listMusic = updatedFavorites
+          localStorage.setItem('user', JSON.stringify(storedUser))
+        }
+
         showToast("Música adicionada aos favoritos!", "success")
         closeModal()
       } else {
@@ -121,17 +136,50 @@ const ArtistPage = () => {
     }
   }
 
-  const addPlaylistToFavorites = async () => {
-    if (!selectedPlaylist) return
+  const deleteMusicToFavorites = async () => {
+    if (!selectedSong || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userId}/favorites/playlist/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      if (response.ok) {
+        // 1. Remove do estado local via filtro
+        const updatedFavorites = favoritesListSongs.filter(song => song.id !== selectedSong.id)
+        setFavoritesListSongs(updatedFavorites)
+
+        // 2. Sincroniza com o localStorage
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (storedUser) {
+          storedUser.listMusic = updatedFavorites
+          localStorage.setItem('user', JSON.stringify(storedUser))
+        }
+
+        showToast("Música removida dos favoritos!", "success")
+        closeModal()
+      } else {
+        showToast("Erro ao remover música dos favoritos", "error")
+      }
+    } catch (error) {
+      console.error(error)
+      showToast("Erro ao remover música dos favoritos", "error")
+    }
+  }
+
+  const addPlaylistToFavorites = async () => {
+    if (!selectedPlaylist || !userID) return
+
+    try {
+      const response = await fetch(
+        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' }
         }
       )
 
@@ -147,6 +195,8 @@ const ArtistPage = () => {
     }
   }
 
+  // --- FILTROS DE RENDERIZAÇÃO ---
+
   if (!artista) {
     return <h1>Carregando Artista...</h1>
   }
@@ -155,13 +205,10 @@ const ArtistPage = () => {
     song.artistsNames.some(artist => artist.name === artista.name)
   )
 
-  const artistPlaylists = playlists.filter(playlist =>
-    playlist.artistsNames.some(artist => artist.name === artista.name)
-  )
-
   return (
     <>
       <div className="artistFlex">
+        {/* Header do Artista */}
         <div className="artist-individual-container">
           <div className="artist-header">
             <img src={artista.bannerPhoto} alt={artista.name} />
@@ -172,34 +219,23 @@ const ArtistPage = () => {
               <i className="fa-solid fa-certificate"></i>
               <p>Artista Verificado</p>
             </div>
-
             <h1>{artista.name}</h1>
             <h2>9 Milhões de Ouvintes Mensais</h2>
           </div>
         </div>
 
+        {/* Músicas Populares */}
         <div className="songsContainer">
           <h2>Músicas Populares</h2>
-
           {artistSongs.map((song, index) => (
             <div className="musicsArtistPage" key={song.id}>
-              <div
-                className="songContainer"
-                onClick={() => handlePlay(index)}
-              >
+              <div className="songContainer" onClick={() => handlePlay(index)}>
                 <h4>{index + 1}</h4>
-
                 <img src={song.cover} alt={song.name} />
-
                 <div className="songInformation">
                   <h4>{song.name}</h4>
-                  <p>
-                    {song.artistsNames
-                      .map(artist => artist.name)
-                      .join(', ')}
-                  </p>
+                  <p>{song.artistsNames.map(a => a.name).join(', ')}</p>
                 </div>
-
                 <div className="otherInformation">
                   <p>{song.duration}</p>
                   <p onClick={(e) => modalMoreOptions(song, e)}>
@@ -211,9 +247,9 @@ const ArtistPage = () => {
           ))}
         </div>
 
+        {/* Playlists/Álbuns */}
         <div className="playlistsContainer">
           <h2>Playlist Populares</h2>
-
           {playlists.map((playlist, index) => (
             playlist.artistsNames.some(artist => artist.name === artista.name) && (
               <div className="playlistArtistPage" key={playlist.id}>
@@ -221,13 +257,10 @@ const ArtistPage = () => {
                   <div className="albumImage">
                     <img src={playlist.cover} alt={playlist.name} />
                   </div>
-
                   <div className="playlistInformation">
                     <h4>{playlist.name}</h4>
                     <div className="albumCredits">
-                      <p>Album</p>
-                      <p> • </p>
-                      <p>{playlist.year}</p>
+                      <p>Album • {playlist.year}</p>
                       <div className="modalPlaylist">
                         <p onClick={(e) => modalMoreOptionsPlaylist(playlist, e)}>
                           <i className="fa-solid fa-ellipsis"></i>
@@ -242,15 +275,13 @@ const ArtistPage = () => {
         </div>
       </div>
 
-      {/* Modal Música */}
+      {/* Modal Música com Verificação de Favorito Atualizada */}
       {modalOpen && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Opções</h3>
-              <button className="close-btn" onClick={closeModal}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+              <button className="close-btn" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
             </div>
 
             <div className="modal-body">
@@ -259,19 +290,25 @@ const ArtistPage = () => {
                   <img src={selectedSong.cover} alt={selectedSong.name} />
                   <div>
                     <h4>{selectedSong.name}</h4>
-                    <p>
-                      {selectedSong.artistsNames
-                        .map(artist => artist.name)
-                        .join(', ')}
-                    </p>
+                    <p>{selectedSong.artistsNames.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
               )}
 
-              <button className="modal-option" onClick={addMusicToFavorites}>
-                <i className="fa-solid fa-heart"></i>
-                <span>Adicionar aos Favoritos</span>
-              </button>
+              {/* Botão Dinâmico: Se a música estiver na lista, mostra remover, senão mostra adicionar */}
+              {selectedSong && (
+                favoritesListSongs.some(song => song.id === selectedSong.id) ? (
+                  <button className="modal-option" onClick={deleteMusicToFavorites}>
+                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
+                    <span>Remover dos Favoritos</span>
+                  </button>
+                ) : (
+                  <button className="modal-option" onClick={addMusicToFavorites}>
+                    <i className="fa-regular fa-heart"></i>
+                    <span>Adicionar aos Favoritos</span>
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>
@@ -283,26 +320,18 @@ const ArtistPage = () => {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Opções</h3>
-              <button className="close-btn" onClick={closeModalPlaylist}>
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+              <button className="close-btn" onClick={closeModalPlaylist}><i className="fa-solid fa-xmark"></i></button>
             </div>
-
             <div className="modal-body">
               {selectedPlaylist && (
                 <div className="song-info">
                   <img src={selectedPlaylist.cover} alt={selectedPlaylist.name} />
                   <div>
                     <h4>{selectedPlaylist.name}</h4>
-                    <p>
-                      {selectedPlaylist.artistsNames
-                        .map(artist => artist.name)
-                        .join(', ')}
-                    </p>
+                    <p>{selectedPlaylist.artistsNames.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
               )}
-
               <button className="modal-option" onClick={addPlaylistToFavorites}>
                 <i className="fa-solid fa-heart"></i>
                 <span>Adicionar aos Favoritos</span>
@@ -312,7 +341,7 @@ const ArtistPage = () => {
         </div>
       )}
 
-      {/* Toast Notifications */}
+      {/* Notificações Toast */}
       <div className="toast-container">
         {toasts.map(toast => (
           <div key={toast.id} className={`toast toast-${toast.type}`}>
