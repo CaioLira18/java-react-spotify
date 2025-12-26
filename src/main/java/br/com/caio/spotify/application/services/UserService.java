@@ -41,11 +41,12 @@ public class UserService {
             item.setImage(updatedItem.getImage());
             item.setRole(updatedItem.getRole());
             item.setListMusic(updatedItem.getListMusic());
+            item.setListArtists(updatedItem.getListArtists());
+            item.setListPlaylists(updatedItem.getListPlaylists());
 
             if (!updatedItem.getPassword().equals(item.getPassword())) {
                 item.setPassword(passwordEncoder.encode(updatedItem.getPassword()));
             }
-
             return userRepository.save(item);
         });
     }

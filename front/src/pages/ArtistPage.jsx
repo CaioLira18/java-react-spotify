@@ -10,7 +10,10 @@ const ArtistPage = () => {
   const [playlists, setPlaylists] = useState([])
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpenPlaylist, setModalOpenPlaylist] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null)
+
 
   const API_URL = "http://localhost:8080/api"
 
@@ -56,9 +59,20 @@ const ArtistPage = () => {
     setModalOpen(true)
   }
 
+  const modalMoreOptionsPlaylist = (playlist, e) => {
+    e.stopPropagation()
+    setSelectedPlaylist(playlist)
+    setModalOpenPlaylist(true)
+  }
+
   const closeModal = () => {
     setModalOpen(false)
     setSelectedSong(null)
+  }
+
+  const closeModalPlaylist = () => {
+    setModalOpenPlaylist(false)
+    setSelectedPlaylist(null)
   }
 
   const addToFavorites = async () => {
@@ -146,12 +160,16 @@ const ArtistPage = () => {
                       <p>Album</p>
                       <p> • </p>
                       <p>{playlist.year}</p>
+                      <div className="modalPlaylist">
+                        <p onClick={(e) => modalMoreOptionsPlaylist(playlist, e)}>
+                          <i className="fa-solid fa-ellipsis"></i>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             )
-
           ))}
         </div>
       </div>
@@ -190,6 +208,44 @@ const ArtistPage = () => {
           </div>
         </div>
       )}
+
+      {/* Modal Playlist */}
+      {modalOpenPlaylist && (
+        <div className="modal-overlay" onClick={closeModalPlaylist}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Opções</h3>
+              <button className="close-btn" onClick={closeModalPlaylist}>
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {selectedPlaylist && (
+                <div className="song-info">
+                  <img src={selectedPlaylist.cover} alt={selectedPlaylist.name} />
+                  <div>
+                    <h4>{selectedPlaylist.name}</h4>
+                    <p>
+                      {selectedPlaylist.artistsNames
+                        .map(artist => artist.name)
+                        .join(', ')}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <button className="modal-option" onClick={addToFavorites}>
+                <i className="fa-solid fa-heart"></i>
+                <span>Adicionar aos Favoritos</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
 
       {/* Toast Notifications */}
       <div className="toast-container">

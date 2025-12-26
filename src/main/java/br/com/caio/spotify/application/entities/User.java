@@ -43,4 +43,11 @@ public class User {
     @OneToMany(mappedBy="id")
     @JsonIgnore
     private List<Artists> listArtists;
+
+    /**
+     * Lista de Playlists Favoritos
+    */
+    @OneToMany(mappedBy="id")
+    @JsonIgnore
+    private List<Playlist> listPlaylists;
 }

@@ -252,6 +252,17 @@
 }
 
 /* ===========================
+   ÍCONE DE CADA MÚSICA  
+=========================== */ 
+
+.modalPlaylist {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 50px;
+}
+
+/* ===========================
    RESPONSIVO
 =========================== */
 
