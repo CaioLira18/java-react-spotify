@@ -1,0 +1,508 @@
+/* Container Principal */
+.playlist-page-wrapper {
+  background: linear-gradient(180deg, rgba(84, 84, 84, 0.6) 0%, #121212 300px);
+  width: 100%;
+  margin-top: 70px;
+  color: #fff;
+}
+
+/* Header da Playlist/Álbum */
+.playlist-header-section {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 24px 32px;
+  margin-bottom: 24px;
+}
+
+.playlist-cover-image {
+  width: 232px;
+  height: 232px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.playlist-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.playlist-label-type {
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.playlist-main-title {
+  font-size: 96px;
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.playlist-meta-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 400;
+  margin-top: 8px;
+}
+
+.playlist-artist-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.playlist-artist-name {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.playlist-artist-name:hover {
+  text-decoration: underline;
+}
+
+/* Controles de Ação */
+.playlist-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 32px;
+  margin-bottom: 16px;
+}
+
+.playlist-play-button {
+  width: 56px;
+  height: 56px;
+  background: #1db954;
+  border: none;
+  border-radius: 50%;
+  color: #000;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 4px;
+  transition: all 0.3s ease;
+}
+
+.playlist-play-button:hover {
+  transform: scale(1.06);
+  background: #1ed760;
+}
+
+.playlist-action-btn {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playlist-action-btn:hover {
+  color: #fff;
+}
+
+/* Container de Músicas */
+.playlist-songs-list {
+  padding: 0 32px;
+}
+
+/* Header da Tabela */
+.playlist-table-header {
+  display: grid;
+  grid-template-columns: 40px 4fr 2fr 80px;
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #b3b3b3;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.table-col-number {
+  text-align: center;
+}
+
+.table-col-title {
+  text-align: left;
+}
+
+.table-col-plays {
+  text-align: right;
+}
+
+.table-col-duration {
+  text-align: right;
+}
+
+/* Linha de Música */
+.playlist-song-row {
+  margin-bottom: 8px;
+}
+
+.playlist-song-item {
+  display: grid;
+  grid-template-columns: 40px 4fr 2fr 80px;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.playlist-song-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.song-index-number {
+  text-align: center;
+  font-size: 16px;
+  color: #b3b3b3;
+  font-weight: 400;
+}
+
+.playlist-song-item:hover .song-index-number {
+  opacity: 0;
+}
+
+.playlist-song-item:hover .song-index-number::after {
+  content: '\f04b';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 28px;
+  color: #fff;
+  opacity: 1;
+}
+
+/* Informações da Música */
+.song-title-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.song-cover-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.song-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.song-title-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist-text {
+  margin: 0;
+  font-size: 14px;
+  color: #b3b3b3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlist-song-item:hover .song-title-text {
+  color: #1db954;
+}
+
+/* Reproduções */
+.song-plays-count {
+  text-align: right;
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+/* Duração e Opções */
+.song-duration-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.song-time-text {
+  font-size: 14px;
+  color: #b3b3b3;
+  margin: 0;
+}
+
+.song-options-btn {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  padding: 4px 8px;
+}
+
+.playlist-song-item:hover .song-options-btn {
+  opacity: 1;
+}
+
+.song-options-btn:hover {
+  color: #fff;
+}
+
+/* Modal */
+.song-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.song-modal-box {
+  background: #282828;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+}
+
+.song-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.song-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+}
+
+.song-modal-close {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.3s ease;
+}
+
+.song-modal-close:hover {
+  color: #fff;
+}
+
+.song-modal-body {
+  padding: 20px;
+}
+
+.modal-song-preview {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.modal-song-preview img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.modal-song-preview h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.modal-song-preview p {
+  margin: 0;
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.modal-action-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  text-align: left;
+}
+
+.modal-action-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-action-option i {
+  font-size: 20px;
+}
+
+/* Toast Notifications */
+.notification-toast-container {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-toast {
+  background: #282828;
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  animation: slideInToast 0.3s ease;
+  min-width: 300px;
+}
+
+.toast-style-success {
+  border-left: 4px solid #1db954;
+}
+
+.toast-style-error {
+  border-left: 4px solid #e22134;
+}
+
+.notification-toast button {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.notification-toast button:hover {
+  color: #fff;
+}
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Espaçamento final */
+.playlist-bottom-space {
+  height: 200px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .playlist-main-title {
+    font-size: 72px;
+  }
+}
+
+@media (max-width: 768px) {
+  .playlist-main-title {
+    font-size: 48px;
+  }
+
+  .playlist-header-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .playlist-table-header {
+    grid-template-columns: 40px 3fr 80px;
+  }
+
+  .playlist-song-item {
+    grid-template-columns: 40px 3fr 80px;
+  }
+
+  .table-col-plays,
+  .song-plays-count {
+    display: none;
+  }
+
+  .playlist-cover-image {
+    width: 192px;
+    height: 192px;
+  }
+}
+
+@media (max-width: 480px) {
+  .playlist-main-title {
+    font-size: 32px;
+  }
+
+  .playlist-header-section {
+    padding: 16px;
+  }
+
+  .playlist-action-bar {
+    padding: 16px;
+  }
+
+  .playlist-songs-list {
+    padding: 0 16px;
+  }
+}

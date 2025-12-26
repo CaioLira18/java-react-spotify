@@ -9,6 +9,7 @@ import AddArtistPage from './pages/AddArtistPage'
 import AdminPage from './pages/AdminPage'
 import NavBar from './components/NavBar'
 import AddPlaylistPage from './pages/AddPlaylistPage'
+import PlaylistPage from './pages/PlaylistPage'
 
 function App() {
   return (
@@ -19,8 +20,8 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
+          <Route path="/playlists/:id" element={<PlaylistPage />} />
         </Route>
-
         <Route path="/music" element={<AddMusicPage />} />
         <Route path="/artist" element={<AddArtistPage />} />
         <Route path="/playlist" element={<AddPlaylistPage />} />

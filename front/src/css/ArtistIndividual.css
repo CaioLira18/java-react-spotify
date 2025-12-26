@@ -106,6 +106,10 @@
   background-color: #000;
 }
 
+.space {
+  margin-top: 100px;
+}
+
 .playlistsContainer > h2 {
   font-size: 1.5rem;
   margin-bottom: 24px;

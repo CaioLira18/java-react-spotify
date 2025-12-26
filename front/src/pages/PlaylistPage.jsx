@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
 
-const ArtistPage = () => {
+const PlaylistPage = () => {
 
   const { id } = useParams()
   const { setPlaylist, setCurrentIndex } = useOutletContext()
-  const [artista, setArtista] = useState(null)
+  const [playlistData, setPlaylistData] = useState(null)
   const [songs, setSongs] = useState([])
-  const [playlists, setPlaylists] = useState([])
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [modalOpenPlaylist, setModalOpenPlaylist] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
   const [userID, setUserID] = useState(null)
@@ -45,20 +42,12 @@ const ArtistPage = () => {
       .catch(console.error)
   }, [])
 
-  // Buscar todas as playlists
+  // Buscar dados da playlist específica
   useEffect(() => {
-    fetch(`${API_URL}/playlists`)
+    fetch(`${API_URL}/playlists/${id}`)
       .then(res => res.json())
-      .then(data => setPlaylists(data))
-      .catch(console.error)
-  }, [])
-
-  // Buscar dados do artista específico
-  useEffect(() => {
-    fetch(`${API_URL}/artists/${id}`)
-      .then(res => res.json())
-      .then(data => setArtista(data))
-      .catch(() => showToast("Erro ao carregar artista!", "error"))
+      .then(data => setPlaylistData(data))
+      .catch(() => showToast("Erro ao carregar playlist!", "error"))
   }, [id])
 
   // --- FUNÇÕES DE UTILIDADE ---
@@ -74,7 +63,7 @@ const ArtistPage = () => {
   }
 
   const handlePlay = (index) => {
-    setPlaylist(artistSongs)
+    setPlaylist(playlistSongs)
     setCurrentIndex(index)
   }
 
@@ -84,20 +73,9 @@ const ArtistPage = () => {
     setModalOpen(true)
   }
 
-  const modalMoreOptionsPlaylist = (playlist, e) => {
-    e.stopPropagation()
-    setSelectedPlaylist(playlist)
-    setModalOpenPlaylist(true)
-  }
-
   const closeModal = () => {
     setModalOpen(false)
     setSelectedSong(null)
-  }
-
-  const closeModalPlaylist = () => {
-    setModalOpenPlaylist(false)
-    setSelectedPlaylist(null)
   }
 
   const addMusicToFavorites = async () => {
@@ -167,11 +145,11 @@ const ArtistPage = () => {
   }
 
   const addPlaylistToFavorites = async () => {
-    if (!selectedPlaylist || !userID) return
+    if (!playlistData || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/playlist/${playlistData.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -179,11 +157,9 @@ const ArtistPage = () => {
       )
 
       if (response.ok) {
-        // Atualiza o estado local
-        const updatedFavorites = [...favoritesListPlaylists, selectedPlaylist]
+        const updatedFavorites = [...favoritesListPlaylists, playlistData]
         setFavoritesListPlaylists(updatedFavorites)
 
-        // Sincroniza com localStorage
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
           storedUser.listPlaylists = updatedFavorites
@@ -191,7 +167,6 @@ const ArtistPage = () => {
         }
 
         showToast("Playlist adicionada aos favoritos!", "success")
-        closeModalPlaylist()
       } else {
         showToast("Erro ao adicionar playlist aos favoritos", "error")
       }
@@ -202,11 +177,11 @@ const ArtistPage = () => {
   }
 
   const deletePlaylistToFavorites = async () => {
-    if (!selectedPlaylist || !userID) return
+    if (!playlistData || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/playlist/${playlistData.id}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -214,11 +189,9 @@ const ArtistPage = () => {
       )
 
       if (response.ok) {
-        // Remove do estado local
-        const updatedFavorites = favoritesListPlaylists.filter(playlist => playlist.id !== selectedPlaylist.id)
+        const updatedFavorites = favoritesListPlaylists.filter(p => p.id !== playlistData.id)
         setFavoritesListPlaylists(updatedFavorites)
 
-        // Sincroniza com localStorage
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
           storedUser.listPlaylists = updatedFavorites
@@ -226,7 +199,6 @@ const ArtistPage = () => {
         }
 
         showToast("Playlist removida dos favoritos!", "success")
-        closeModalPlaylist()
       } else {
         showToast("Erro ao remover playlist dos favoritos", "error")
       }
@@ -236,151 +208,131 @@ const ArtistPage = () => {
     }
   }
 
-  // --- FILTROS DE RENDERIZAÇÃO ---
-
-  if (!artista) {
-    return <h1>Carregando Artista...</h1>
+  // Calcular duração total
+  const calculateTotalDuration = (songs) => {
+    const totalSeconds = songs.reduce((acc, song) => {
+      const [min, sec] = song.duration.split(':').map(Number);
+      return acc + (min * 60 + sec);
+    }, 0);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes} min ${seconds} s`;
   }
 
-  const artistSongs = songs.filter(song =>
-    song.artistsNames.some(artist => artist.name === artista.name)
+  // --- FILTROS DE RENDERIZAÇÃO ---
+
+  if (!playlistData) {
+    return <h1>Carregando Playlist...</h1>
+  }
+
+  const playlistSongs = songs.filter(song => 
+    playlistData.songIds?.includes(song.id)
   )
+
+  const isPlaylistFavorited = favoritesListPlaylists.some(p => p.id === playlistData.id)
 
   return (
     <>
-      <div className="artistFlex">
-        {/* Header do Artista */}
-        <div className="artist-individual-container">
-          <div className="artist-header">
-            <img src={artista.bannerPhoto} alt={artista.name} />
-          </div>
-
-          <div className="artistInformation">
-            <div className="verificy">
-              <i className="fa-solid fa-certificate"></i>
-              <p>Artista Verificado</p>
+      <div className="playlist-page-wrapper">
+        {/* Header da Playlist */}
+        <div className="playlist-header-section">
+          <img src={playlistData.cover} alt={playlistData.name} className="playlist-cover-image" />
+          <div className="playlist-header-info">
+            <span className="playlist-label-type">Álbum</span>
+            <h1 className="playlist-main-title">{playlistData.name}</h1>
+            <div className="playlist-meta-info">
+              <img src={playlistData.artistsNames.map(artista => artista.profilePhoto)} alt={playlistData.name} className="playlist-artist-avatar" />
+              <a href={`/artists/${playlistData.artistsNames.map(artista => artista.id)}`}><span className="playlist-artist-name">{playlistData.artistsNames?.map(a => a.name).join(', ')}</span></a>
+              <span>• {playlistData.year} • {playlistSongs.length} músicas, {calculateTotalDuration(playlistSongs)}</span>
             </div>
-            <h1>{artista.name}</h1>
-            <h2>9 Milhões de Ouvintes Mensais</h2>
           </div>
         </div>
 
-        {/* Músicas Populares */}
-        <div className="songsContainer">
-          <h2>Músicas Populares</h2>
-          {artistSongs.map((song, index) => (
-            <div className="musicsArtistPage" key={song.id}>
-              <div className="songContainer" onClick={() => handlePlay(index)}>
-                <h4>{index + 1}</h4>
-                <img src={song.cover} alt={song.name} />
-                <div className="songInformation">
-                  <h4>{song.name}</h4>
-                  <p>{song.artistsNames.map(a => a.name).join(', ')}</p>
+        {/* Controles de ação */}
+        <div className="playlist-action-bar">
+          <button className="playlist-play-button" onClick={() => handlePlay(0)}>
+            <i className="fa-solid fa-play"></i>
+          </button>
+          <button className="playlist-action-btn">
+            <i className="fa-solid fa-shuffle"></i>
+          </button>
+          <button 
+            className="playlist-action-btn" 
+            onClick={isPlaylistFavorited ? deletePlaylistToFavorites : addPlaylistToFavorites}
+          >
+            <i className={isPlaylistFavorited ? "fa-solid fa-check" : "fa-regular fa-heart"}></i>
+          </button>
+          <button className="playlist-action-btn">
+            <i className="fa-solid fa-arrow-down"></i>
+          </button>
+          <button className="playlist-action-btn">
+            <i className="fa-solid fa-ellipsis"></i>
+          </button>
+        </div>
+
+        {/* Lista de Músicas */}
+        <div className="playlist-songs-list">
+          <div className="playlist-table-header">
+            <span className="table-col-number">#</span>
+            <span className="table-col-title">Título</span>
+            <span className="table-col-plays">Reproduções</span>
+            <span className="table-col-duration"><i className="fa-regular fa-clock"></i></span>
+          </div>
+          
+          {playlistSongs.map((song, index) => (
+            <div className="playlist-song-row" key={song.id}>
+              <div className="playlist-song-item" onClick={() => handlePlay(index)}>
+                <span className="song-index-number">{index + 1}</span>
+                <div className="song-title-section">
+                  <img src={song.cover} alt={song.name} className="song-cover-thumb" />
+                  <div className="song-text-info">
+                    <h4 className="song-title-text">{song.name}</h4>
+                    <p className="song-artist-text">{song.artistsNames?.map(a => a.name).join(', ')}</p>
+                  </div>
                 </div>
-                <div className="otherInformation">
-                  <p>{song.duration}</p>
-                  <p onClick={(e) => modalMoreOptions(song, e)}>
+                <span className="song-plays-count">{(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+                <div className="song-duration-section">
+                  <p className="song-time-text">{song.duration}</p>
+                  <button className="song-options-btn" onClick={(e) => modalMoreOptions(song, e)}>
                     <i className="fa-solid fa-ellipsis"></i>
-                  </p>
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Playlists/Álbuns */}
-        <div className="playlistsContainer">
-          <h2>Playlist Populares</h2>
-          {playlists.map((playlist, index) => (
-            playlist.artistsNames.some(artist => artist.name === artista.name) && (
-              <div className="playlistArtistPage" key={playlist.id}>
-                <div className="playlistContainer" onClick={() => handlePlay(index)}>
-                  <div className="albumImage">
-                    <a href={`/playlists/${playlist.id}`}><img src={playlist.cover} alt={playlist.name} /></a>
-                  </div>
-                  <div className="playlistInformation">
-                    <h4>{playlist.name}</h4>
-                    <div className="albumCredits">
-                      <p>Album • {playlist.year}</p>
-                      <div className="modalPlaylist">
-                        <p onClick={(e) => modalMoreOptionsPlaylist(playlist, e)}>
-                          <i className="fa-solid fa-ellipsis"></i>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
-          ))}
-        </div>
-        <div className="space"></div>
+        <div className="playlist-bottom-space"></div>
       </div>
 
       {/* Modal Música */}
       {modalOpen && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+        <div className="song-modal-overlay" onClick={closeModal}>
+          <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="song-modal-header">
               <h3>Opções</h3>
-              <button className="close-btn" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
+              <button className="song-modal-close" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div className="modal-body">
+            <div className="song-modal-body">
               {selectedSong && (
-                <div className="song-info">
+                <div className="modal-song-preview">
                   <img src={selectedSong.cover} alt={selectedSong.name} />
                   <div>
                     <h4>{selectedSong.name}</h4>
-                    <p>{selectedSong.artistsNames.map(a => a.name).join(', ')}</p>
+                    <p>{selectedSong.artistsNames?.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
               )}
 
               {selectedSong && (
                 favoritesListSongs.some(song => song.id === selectedSong.id) ? (
-                  <button className="modal-option" onClick={deleteMusicToFavorites}>
+                  <button className="modal-action-option" onClick={deleteMusicToFavorites}>
                     <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
                     <span>Remover dos Favoritos</span>
                   </button>
                 ) : (
-                  <button className="modal-option" onClick={addMusicToFavorites}>
-                    <i className="fa-regular fa-heart"></i>
-                    <span>Adicionar aos Favoritos</span>
-                  </button>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Playlist */}
-      {modalOpenPlaylist && (
-        <div className="modal-overlay" onClick={closeModalPlaylist}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3>Opções</h3>
-              <button className="close-btn" onClick={closeModalPlaylist}><i className="fa-solid fa-xmark"></i></button>
-            </div>
-            <div className="modal-body">
-              {selectedPlaylist && (
-                <div className="song-info">
-                  <img src={selectedPlaylist.cover} alt={selectedPlaylist.name} />
-                  <div>
-                    <h4>{selectedPlaylist.name}</h4>
-                    <p>{selectedPlaylist.artistsNames.map(a => a.name).join(', ')}</p>
-                  </div>
-                </div>
-              )}
-              {selectedPlaylist && (
-                favoritesListPlaylists.some(playlist => playlist.id === selectedPlaylist.id) ? (
-                  <button className="modal-option" onClick={deletePlaylistToFavorites}>
-                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
-                    <span>Remover dos Favoritos</span>
-                  </button>
-                ) : (
-                  <button className="modal-option" onClick={addPlaylistToFavorites}>
+                  <button className="modal-action-option" onClick={addMusicToFavorites}>
                     <i className="fa-regular fa-heart"></i>
                     <span>Adicionar aos Favoritos</span>
                   </button>
@@ -392,9 +344,9 @@ const ArtistPage = () => {
       )}
 
       {/* Notificações Toast */}
-      <div className="toast-container">
+      <div className="notification-toast-container">
         {toasts.map(toast => (
-          <div key={toast.id} className={`toast toast-${toast.type}`}>
+          <div key={toast.id} className={`notification-toast toast-style-${toast.type}`}>
             <span>{toast.message}</span>
             <button onClick={() => removeToast(toast.id)}>×</button>
           </div>
@@ -404,4 +356,4 @@ const ArtistPage = () => {
   )
 }
 
-export default ArtistPage
+export default PlaylistPage
