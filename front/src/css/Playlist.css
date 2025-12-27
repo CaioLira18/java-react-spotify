@@ -255,8 +255,8 @@
 .song-duration-section {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .song-time-text {
@@ -273,7 +273,7 @@
   cursor: pointer;
   opacity: 0;
   transition: all 0.3s ease;
-  padding: 4px 8px;
+  padding: 4px 0px;
 }
 
 .playlist-song-item:hover .song-options-btn {
@@ -282,6 +282,36 @@
 
 .song-options-btn:hover {
   color: #fff;
+}
+
+.inserirMusica {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.inserirMusica input {
+  width: 80%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #121212;
+  color: #fff;
+}
+
+.inserirMusica button {
+  width: 80%;
+  padding: 8px 16px;
+  background: #1db954;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 /* Modal */
@@ -435,6 +465,17 @@
 .notification-toast button:hover {
   color: #fff;
 }
+
+.durationReprodution{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.song-plays-count {
+  margin-left: 12px;
+}
+
 
 @keyframes slideInToast {
   from {

@@ -9,7 +9,9 @@ const PlaylistPage = () => {
   const [songs, setSongs] = useState([])
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
+  const [modalAdminOpen, setModalAdminOpen] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
+  const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
   const [userID, setUserID] = useState(null)
@@ -76,6 +78,17 @@ const PlaylistPage = () => {
   const closeModal = () => {
     setModalOpen(false)
     setSelectedSong(null)
+  }
+
+  const modalAdminMoreOptions = (playlist, e) => {
+    e.stopPropagation()
+    setSelectedPlaylist(playlist)
+    setModalAdminOpen(true)
+  }
+
+  const closeAdminModal = () => {
+    setModalAdminOpen(false)
+    selectedPlaylist(null)
   }
 
   const addMusicToFavorites = async () => {
@@ -208,6 +221,10 @@ const PlaylistPage = () => {
     }
   }
 
+  const addMusicToPlaylist = async () => {
+
+  }
+
   // Calcular duração total
   const calculateTotalDuration = (songs) => {
     const totalSeconds = songs.reduce((acc, song) => {
@@ -225,8 +242,8 @@ const PlaylistPage = () => {
     return <h1>Carregando Playlist...</h1>
   }
 
-  const playlistSongs = songs.filter(song => 
-    playlistData.songIds?.includes(song.id)
+  const playlistSongs = songs.filter(song =>
+    song.id?.includes(playlistData.musicsNames.map(music => music.id))
   )
 
   const isPlaylistFavorited = favoritesListPlaylists.some(p => p.id === playlistData.id)
@@ -256,8 +273,8 @@ const PlaylistPage = () => {
           <button className="playlist-action-btn">
             <i className="fa-solid fa-shuffle"></i>
           </button>
-          <button 
-            className="playlist-action-btn" 
+          <button
+            className="playlist-action-btn"
             onClick={isPlaylistFavorited ? deletePlaylistToFavorites : addPlaylistToFavorites}
           >
             <i className={isPlaylistFavorited ? "fa-solid fa-check" : "fa-regular fa-heart"}></i>
@@ -265,7 +282,7 @@ const PlaylistPage = () => {
           <button className="playlist-action-btn">
             <i className="fa-solid fa-arrow-down"></i>
           </button>
-          <button className="playlist-action-btn">
+          <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
             <i className="fa-solid fa-ellipsis"></i>
           </button>
         </div>
@@ -275,10 +292,12 @@ const PlaylistPage = () => {
           <div className="playlist-table-header">
             <span className="table-col-number">#</span>
             <span className="table-col-title">Título</span>
-            <span className="table-col-plays">Reproduções</span>
-            <span className="table-col-duration"><i className="fa-regular fa-clock"></i></span>
+            <div className="durationReprodution">
+              <span className="table-col-plays">Reproduções</span>
+              <span className="table-col-duration">Duração</span>
+            </div>
           </div>
-          
+
           {playlistSongs.map((song, index) => (
             <div className="playlist-song-row" key={song.id}>
               <div className="playlist-song-item" onClick={() => handlePlay(index)}>
@@ -290,12 +309,14 @@ const PlaylistPage = () => {
                     <p className="song-artist-text">{song.artistsNames?.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
-                <span className="song-plays-count">{(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
-                <div className="song-duration-section">
-                  <p className="song-time-text">{song.duration}</p>
-                  <button className="song-options-btn" onClick={(e) => modalMoreOptions(song, e)}>
-                    <i className="fa-solid fa-ellipsis"></i>
-                  </button>
+                <div className="durationReprodution">
+                  <span className="song-plays-count">{(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+                  <div className="song-duration-section">
+                    <p className="song-time-text">{song.duration}</p>
+                    <button className="song-options-btn" onClick={(e) => modalMoreOptions(song, e)}>
+                      <i className="fa-solid fa-ellipsis"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -307,6 +328,87 @@ const PlaylistPage = () => {
 
       {/* Modal Música */}
       {modalOpen && (
+        <div className="song-modal-overlay" onClick={closeModal}>
+          <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="song-modal-header">
+              <h3>Opções</h3>
+              <button className="song-modal-close" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div className="song-modal-body">
+              {selectedSong && (
+                <div className="modal-song-preview">
+                  <img src={selectedSong.cover} alt={selectedSong.name} />
+                  <div>
+                    <h4>{selectedSong.name}</h4>
+                    <p>{selectedSong.artistsNames?.map(a => a.name).join(', ')}</p>
+                  </div>
+                </div>
+              )}
+
+              {selectedSong && (
+                favoritesListSongs.some(song => song.id === selectedSong.id) ? (
+                  <button className="modal-action-option" onClick={deleteMusicToFavorites}>
+                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
+                    <span>Remover dos Favoritos</span>
+                  </button>
+                ) : (
+                  <button className="modal-action-option" onClick={addMusicToFavorites}>
+                    <i className="fa-regular fa-heart"></i>
+                    <span>Adicionar aos Favoritos</span>
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modalAdminOpen && (
+        <div className="song-modal-overlay" onClick={closeAdminModal}>
+          <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="song-modal-header">
+              <h3>Opções</h3>
+              <button className="song-modal-close" onClick={closeAdminModal}><i className="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div className="song-modal-body">
+              {selectedPlaylist && (
+                <div className="modal-song-preview">
+                  <img src={selectedPlaylist.cover} alt={selectedPlaylist.name} />
+                  <div>
+                    <h4>{selectedPlaylist.name}</h4>
+                    <p>{selectedPlaylist.artistsNames?.map(a => a.name).join(', ')}</p>
+                  </div>
+                </div>
+              )}
+
+              {selectedPlaylist && (
+                favoritesListPlaylists.some(playlist => playlist.id === selectedPlaylist.id) ? (
+                  <button className="modal-action-option" onClick={deletePlaylistToFavorites}>
+                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
+                    <span>Remover dos Favoritos</span>
+                  </button>
+                ) : (
+                  <button className="modal-action-option" onClick={addPlaylistToFavorites}>
+                    <i className="fa-regular fa-heart"></i>
+                    <span>Adicionar aos Favoritos</span>
+                  </button>
+                )
+
+              )}
+              {isAdmin && (
+                <div className="adminOptions">
+                  <div className="inserirMusica">
+                    <input placeholder='Insira a URL da Musica' type="text" />
+                    <button onClick={addMusicToPlaylist}>Adicionar Musica No Album</button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}{modalOpen && (
         <div className="song-modal-overlay" onClick={closeModal}>
           <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="song-modal-header">
