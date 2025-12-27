@@ -18,7 +18,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "tb_playlists")
+@Table(name = "tb_albums")
 public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,11 +30,11 @@ public class Album {
     private ContentEnum type;
 
     @ManyToMany 
-    @JoinTable(name = "tb_playlist_artists", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
+    @JoinTable(name = "tb_album_artists", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private List<Artists> artistsNames = new ArrayList<>(); // Inicialize a lista
 
     @ManyToMany 
-    @JoinTable(name = "tb_playlist_musics", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "music_id"))
+    @JoinTable(name = "tb_album_musics", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "music_id"))
     private List<Music> musicsNames = new ArrayList<>(); // Inicialize a lista
 
 }

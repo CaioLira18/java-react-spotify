@@ -10,8 +10,8 @@ import AdminPage from './pages/AdminPage'
 import NavBar from './components/NavBar'
 import AddPlaylistPage from './pages/AddAlbumPage'
 import PlaylistPage from './pages/PlaylistPage'
-import DeletePlaylistPage from './pages/DeletePlaylistPage'
 import AddAlbumPage from './pages/AddAlbumPage'
+import DeleteAlbumPage from './pages/DeleteAlbumPage'
 
 function App() {
   return (
@@ -30,7 +30,7 @@ function App() {
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/deletePlaylist" element={<DeletePlaylistPage />} />
+        <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
       </Routes>
     </div>
 

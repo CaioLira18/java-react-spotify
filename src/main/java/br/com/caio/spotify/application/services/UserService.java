@@ -94,9 +94,9 @@ public class UserService {
     }
 
     // Adicionar playlist aos favoritos
-    public Optional<User> addPlaylistToFavorites(String userId, String playlistId) {
+    public Optional<User> addAlbumToFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
-            playlistRepository.findById(playlistId).map(playlist -> {
+            playlistRepository.findById(albumId).map(playlist -> {
                 if (!user.getListPlaylists().contains(playlist)) {
                     user.getListPlaylists().add(playlist);
                     return userRepository.save(user);
@@ -107,9 +107,9 @@ public class UserService {
     }
 
     // Remover playlist dos favoritos
-    public Optional<User> removePlaylistFromFavorites(String userId, String playlistId) {
+    public Optional<User> removeAlbumFromFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
-            playlistRepository.findById(playlistId).map(playlist -> {
+            playlistRepository.findById(albumId).map(playlist -> {
                 user.getListPlaylists().remove(playlist);
                 return userRepository.save(user);
             })

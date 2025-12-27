@@ -75,20 +75,20 @@ public class UserController {
     }
 
     // Adicionar playlist aos favoritos
-    @PostMapping("/{userId}/favorites/album/{playlistId}")
-    public ResponseEntity<User> addPlaylistToFavorites(
+    @PostMapping("/{userId}/favorites/album/{albumId}")
+    public ResponseEntity<User> addAlbumToFavorites(
             @PathVariable String userId, 
-            @PathVariable String playlistId) {
-        Optional<User> updatedUser = userService.addPlaylistToFavorites(userId, playlistId);
+            @PathVariable String albumId) {
+        Optional<User> updatedUser = userService.addAlbumToFavorites(userId, albumId);
         return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     // Remover playlist dos favoritos
-    @DeleteMapping("/{userId}/favorites/album/{playlistId}")
-    public ResponseEntity<User> removePlaylistFromFavorites(
+    @DeleteMapping("/{userId}/favorites/album/{albumId}")
+    public ResponseEntity<User> removeAlbumFromFavorites(
             @PathVariable String userId, 
-            @PathVariable String playlistId) {
-        Optional<User> updatedUser = userService.removePlaylistFromFavorites(userId, playlistId);
+            @PathVariable String albumId) {
+        Optional<User> updatedUser = userService.removeAlbumFromFavorites(userId, albumId);
         return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 

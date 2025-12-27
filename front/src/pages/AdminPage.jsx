@@ -42,8 +42,8 @@ const AdminPage = () => {
             <h2>Deletar Musica</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/deletePlaylist"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
-            <h2>Deletar Playlist</h2></a>
+          <a href="/deleteAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
+            <h2>Deletar Álbum</h2></a>
         </div>
       </div>
         <div className="space"></div>

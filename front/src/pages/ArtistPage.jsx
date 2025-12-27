@@ -48,7 +48,7 @@ const ArtistPage = () => {
   useEffect(() => {
     fetch(`${API_URL}/albums`)
       .then(res => {
-        if (!res.ok) throw new Error("Erro ao buscar playlists"); // Verifica se o status é 200-299
+        if (!res.ok) throw new Error("Erro ao buscar Albums"); 
         return res.json();
       })
       .then(data => {

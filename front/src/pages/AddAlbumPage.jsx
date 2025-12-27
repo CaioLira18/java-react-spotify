@@ -47,7 +47,7 @@ const AddAlbumPage = () => {
       songsIds
     };
 
-    fetch(`${API_URL}/playlists`, {
+    fetch(`${API_URL}/albums`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)

@@ -58,9 +58,9 @@ public class User {
     */
     @ManyToMany
     @JoinTable(
-        name = "tb_user_favorite_playlists", 
+        name = "tb_user_favorite_albums", 
         joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "playlist_id")
+        inverseJoinColumns = @JoinColumn(name = "albums_id")
     )
     private List<Album> listPlaylists = new ArrayList<>();
 }
