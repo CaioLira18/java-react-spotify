@@ -13,6 +13,8 @@ import './css/AdminPage.css'
 import './css/AddArtistPage.css'
 import './css/ModalMusic.css'
 import './css/Playlist.css'
+import './utils/Fonts.css'
+
 
 
 

@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Caviar Dreams';
+    src: url('./font/CaviarDreams.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Caviar Dreams Bold';
+    src: url('./font/CaviarDreams_Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Caviar Dreams BoldItalic';
+    src: url('./font/CaviarDreams_BoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Zector';
+    src: url('./font/Zector.ttf') format('truetype');
+}

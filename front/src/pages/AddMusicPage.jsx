@@ -1,69 +1,115 @@
 import React, { useEffect, useState } from 'react'
 
 const AddMusicPage = () => {
-  const API_URL = "http://localhost:8080/api";
+  const API_URL = "http://localhost:8080/api"
 
-  const [name, setName] = useState("");
-  const [duration, setDuration] = useState("");
-  const [cover, setCover] = useState("");
-  const [musicUrl, setMusicUrl] = useState("");
-  const [type, setType] = useState("MUSIC");
-  const [artists, setArtists] = useState([]);
-  const [artistsIds, setArtistsIds] = useState([]);
+  const CLOUD_NAME = "dthgw4q5d"
+  const UPLOAD_PRESET = "Musics"
+
+  const [name, setName] = useState("")
+  const [duration, setDuration] = useState("")
+  const [cover, setCover] = useState("")
+  const [musicUrl, setMusicUrl] = useState("")
+  const [musicFile, setMusicFile] = useState(null)
+  const [coverFile, setCoverFile] = useState(null)
+  const [type, setType] = useState("MUSIC")
+  const [artists, setArtists] = useState([])
+  const [artistsIds, setArtistsIds] = useState([])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
-      .then(response => {
-        if (!response.ok) throw new Error();
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => setArtists(data))
-      .catch(() => alert("Erro ao buscar Artistas."));
-  }, []);
+      .catch(() => alert("Erro ao buscar Artistas."))
+  }, [])
 
-  function addItem() {
+  async function uploadMusicToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", musicFile)
+    formData.append("upload_preset", "Musics")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/video/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error()
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  async function uploadCoverToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", coverFile)
+    formData.append("upload_preset", "Covers")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error()
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  async function addItem() {
     if (
       !name.trim() ||
       !duration.trim() ||
-      !cover.trim() ||
-      !musicUrl.trim() ||
-      !type.trim() ||
+      !coverFile ||
+      !musicFile ||
       artistsIds.length === 0
     ) {
-      alert("Preencha os campos obrigatórios.");
-      return;
+      alert("Preencha os campos obrigatórios.")
+      return
     }
 
-    const payload = {
-      name,
-      duration,
-      cover,
-      musicUrl,
-      type,
-      artistsIds
-    };
+    try {
+      setLoading(true)
 
-    fetch(`${API_URL}/songs`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(response => {
-        if (!response.ok) throw new Error();
-        return response.json();
+      const uploadedUrl = await uploadMusicToCloudinary()
+      setMusicUrl(uploadedUrl)
+      const uploadedCoverUrl = await uploadCoverToCloudinary()
+      setCover(uploadedCoverUrl)
+
+      const payload = {
+        name,
+        duration,
+        cover: uploadedCoverUrl,
+        musicUrl: uploadedUrl,
+        type,
+        artistsIds
+      }
+
+      await fetch(`${API_URL}/songs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       })
-      .then(() => {
-        alert("Adicionado com sucesso!");
-        setName("");
-        setDuration("");
-        setCover("");
-        setMusicUrl("");
-        setType("");
-        setArtistsIds([]);
-      })
-      .catch(() => alert("Erro ao adicionar."));
+
+      alert("Adicionado com sucesso!")
+
+      setName("")
+      setDuration("")
+      setCover("")
+      setMusicUrl("")
+      setMusicFile(null)
+      setArtistsIds([])
+    } catch {
+      alert("Erro ao adicionar.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -71,6 +117,7 @@ const AddMusicPage = () => {
       <div className="artist">
         <div className="containerItem">
           <div className="boxItem">
+
             <div className="logoBox">
               <img
                 src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp"
@@ -98,7 +145,11 @@ const AddMusicPage = () => {
                 <h2>Cover</h2>
               </div>
               <div className="inputArea">
-                <input value={cover} onChange={(e) => setCover(e.target.value)} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCoverFile(e.target.files[0])}
+                />
               </div>
             </div>
 
@@ -128,8 +179,8 @@ const AddMusicPage = () => {
                     const values = Array.from(
                       e.target.selectedOptions,
                       option => option.value
-                    );
-                    setArtistsIds(values);
+                    )
+                    setArtistsIds(values)
                   }}
                 >
                   {artists.map(artist => (
@@ -150,8 +201,8 @@ const AddMusicPage = () => {
               <div className="inputArea">
                 <ul>
                   {artistsIds.map(id => {
-                    const artist = artists.find(a => a.id === id);
-                    return <li key={id}>{artist?.name}</li>;
+                    const artist = artists.find(a => a.id === id)
+                    return <li key={id}>{artist?.name}</li>
                   })}
                 </ul>
               </div>
@@ -164,33 +215,43 @@ const AddMusicPage = () => {
                 <h2>Role</h2>
               </div>
               <div className="inputArea">
-                <select className='form-input' value={type} onChange={(e) => setType(e.target.value)}>
+                <select
+                  className="form-input"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                >
                   <option value="MUSIC">Musica</option>
                   <option value="ALBUM">Album</option>
                 </select>
               </div>
             </div>
 
-            {/* Música URL */}
+            {/* Música (UPLOAD) */}
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-pencil"></i>
-                <h2>Musica Url</h2>
+                <h2>Musica</h2>
               </div>
               <div className="inputArea">
-                <input value={musicUrl} onChange={(e) => setMusicUrl(e.target.value)} />
+                <input
+                  type="file"
+                  accept="audio/mp3"
+                  onChange={(e) => setMusicFile(e.target.files[0])}
+                />
               </div>
             </div>
 
             <div className="addItemButton">
-              <button onClick={addItem}>Adicionar</button>
+              <button onClick={addItem} disabled={loading}>
+                {loading ? "Enviando..." : "Adicionar"}
+              </button>
             </div>
 
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default AddMusicPage;
+export default AddMusicPage
