@@ -8,7 +8,7 @@ const AddPlaylistPage = () => {
   const [cover, setCover] = useState("");
   const [year, setYear] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
-  const [type, setType] = useState("0");
+  const [type, setType] = useState("ALBUM");
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [artistsIds, setArtistsIds] = useState([]);
@@ -36,20 +36,7 @@ const AddPlaylistPage = () => {
   }, []);
 
   function addItem() {
-    if (
-      !name.trim() ||
-      !duration.trim() ||
-      !cover.trim() ||
-      !type.trim() ||
-      !year.trim() ||
-      artistsIds.length === 0 ||
-      songsIds.length === 0
-
-    ) {
-      alert("Preencha os campos obrigatórios.");
-      return;
-    }
-
+    // Verifique se os IDs estão chegando como Array de Strings
     const payload = {
       name,
       duration,
@@ -62,26 +49,28 @@ const AddPlaylistPage = () => {
 
     fetch(`${API_URL}/playlists`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     })
-      .then(response => {
-        if (!response.ok) throw new Error();
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Erro no servidor");
+        }
         return response.json();
       })
       .then(() => {
         alert("Adicionado com sucesso!");
+        // Resetar para valores padrão, não strings vazias em campos obrigatórios
         setName("");
         setDuration("");
         setCover("");
-        setType("");
         setYear("");
+        setType("ALBUM");
         setArtistsIds([]);
         setSongsIds([]);
       })
-      .catch(() => alert("Erro ao adicionar."));
+      .catch(err => alert("Erro: " + err.message));
   }
 
   return (

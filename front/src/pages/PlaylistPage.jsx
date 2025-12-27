@@ -11,6 +11,7 @@ const PlaylistPage = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalAdminOpen, setModalAdminOpen] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
+  const [selectedSongToPlaylistId, setSelectedSongToPlaylistId] = useState('')
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
@@ -88,7 +89,8 @@ const PlaylistPage = () => {
 
   const closeAdminModal = () => {
     setModalAdminOpen(false)
-    selectedPlaylist(null)
+    setSelectedPlaylist(null)
+    setSelectedSongToPlaylistId('')
   }
 
   const addMusicToFavorites = async () => {
@@ -221,8 +223,72 @@ const PlaylistPage = () => {
     }
   }
 
+  // CORRIGIDO: URL agora é /playlists/{playlistId}/music/{musicId}
   const addMusicToPlaylist = async () => {
+    if (!selectedSongToPlaylistId || !playlistData) return
 
+    try {
+      const response = await fetch(
+        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      if (response.ok) {
+        showToast("Música adicionada à playlist!", "success")
+        
+        // Recarregar dados da playlist
+        fetch(`${API_URL}/playlists/${id}`)
+          .then(res => res.json())
+          .then(data => setPlaylistData(data))
+          .catch(console.error)
+        
+        closeAdminModal()
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Erro ao adicionar música:', errorData)
+        showToast("Erro ao adicionar música à playlist", "error")
+      }
+    } catch (error) {
+      console.error('Erro ao adicionar música:', error)
+      showToast("Erro ao adicionar música à playlist", "error")
+    }
+  }
+
+  // CORRIGIDO: URL agora é /playlists/{playlistId}/music/{musicId}
+  const removeMusicFromPlaylist = async () => {
+    if (!selectedSongToPlaylistId || !playlistData) return
+
+    try {
+      const response = await fetch(
+        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      if (response.ok) {
+        showToast("Música deletada da playlist!", "success")
+        
+        // Recarregar dados da playlist
+        fetch(`${API_URL}/playlists/${id}`)
+          .then(res => res.json())
+          .then(data => setPlaylistData(data))
+          .catch(console.error)
+        
+        closeAdminModal()
+      } else {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Erro ao remover música:', errorData)
+        showToast("Erro ao remover música da playlist", "error")
+      }
+    } catch (error) {
+      console.error('Erro ao remover música:', error)
+      showToast("Erro ao remover música da playlist", "error")
+    }
   }
 
   // Calcular duração total
@@ -243,7 +309,7 @@ const PlaylistPage = () => {
   }
 
   const playlistSongs = songs.filter(song =>
-    song.id?.includes(playlistData.musicsNames.map(music => music.id))
+    playlistData.musicsNames.some(music => music.id === song.id)
   )
 
   const isPlaylistFavorited = favoritesListPlaylists.some(p => p.id === playlistData.id)
@@ -364,6 +430,7 @@ const PlaylistPage = () => {
         </div>
       )}
 
+      {/* Modal Admin */}
       {modalAdminOpen && (
         <div className="song-modal-overlay" onClick={closeAdminModal}>
           <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
@@ -395,50 +462,30 @@ const PlaylistPage = () => {
                     <span>Adicionar aos Favoritos</span>
                   </button>
                 )
-
               )}
+              
               {isAdmin && (
                 <div className="adminOptions">
                   <div className="inserirMusica">
-                    <input placeholder='Insira a URL da Musica' type="text" />
-                    <button onClick={addMusicToPlaylist}>Adicionar Musica No Album</button>
+                    <select 
+                      className="form-input" 
+                      name="musicas" 
+                      id="musicas"
+                      value={selectedSongToPlaylistId}
+                      onChange={(e) => setSelectedSongToPlaylistId(e.target.value)}
+                    >
+                      <option value="">Selecione uma música</option>
+                      {songs.map(song => (
+                        <option key={song.id} value={song.id}>
+                          {song.name} - {song.artistsNames?.map(a => a.name).join(', ')}
+                        </option>
+                      ))}
+                    </select>
+                    <button onClick={addMusicToPlaylist}>Adicionar Música No Álbum</button>
+                    <button onClick={removeMusicFromPlaylist}>Remover Música do Álbum</button>
                   </div>
+                  
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}{modalOpen && (
-        <div className="song-modal-overlay" onClick={closeModal}>
-          <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="song-modal-header">
-              <h3>Opções</h3>
-              <button className="song-modal-close" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div className="song-modal-body">
-              {selectedSong && (
-                <div className="modal-song-preview">
-                  <img src={selectedSong.cover} alt={selectedSong.name} />
-                  <div>
-                    <h4>{selectedSong.name}</h4>
-                    <p>{selectedSong.artistsNames?.map(a => a.name).join(', ')}</p>
-                  </div>
-                </div>
-              )}
-
-              {selectedSong && (
-                favoritesListSongs.some(song => song.id === selectedSong.id) ? (
-                  <button className="modal-action-option" onClick={deleteMusicToFavorites}>
-                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
-                    <span>Remover dos Favoritos</span>
-                  </button>
-                ) : (
-                  <button className="modal-action-option" onClick={addMusicToFavorites}>
-                    <i className="fa-regular fa-heart"></i>
-                    <span>Adicionar aos Favoritos</span>
-                  </button>
-                )
               )}
             </div>
           </div>

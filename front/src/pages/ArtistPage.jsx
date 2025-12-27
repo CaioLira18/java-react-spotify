@@ -46,12 +46,24 @@ const ArtistPage = () => {
   }, [])
 
   // Buscar todas as playlists
-  useEffect(() => {
-    fetch(`${API_URL}/playlists`)
-      .then(res => res.json())
-      .then(data => setPlaylists(data))
-      .catch(console.error)
-  }, [])
+useEffect(() => {
+  fetch(`${API_URL}/playlists`)
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao buscar playlists"); // Verifica se o status é 200-299
+      return res.json();
+    })
+    .then(data => {
+      if (Array.isArray(data)) {
+        setPlaylists(data);
+      } else {
+        setPlaylists([]); // Garante que continue sendo um array se o dado vier estranho
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      setPlaylists([]); // Em caso de erro, mantém o array vazio para não quebrar o .map()
+    });
+}, []);
 
   // Buscar dados do artista específico
   useEffect(() => {

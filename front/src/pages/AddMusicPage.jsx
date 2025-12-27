@@ -7,7 +7,7 @@ const AddMusicPage = () => {
   const [duration, setDuration] = useState("");
   const [cover, setCover] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("MUSIC");
   const [artists, setArtists] = useState([]);
   const [artistsIds, setArtistsIds] = useState([]);
 

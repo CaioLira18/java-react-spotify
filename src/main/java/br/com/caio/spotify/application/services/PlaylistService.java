@@ -39,7 +39,7 @@ public class PlaylistService {
 
         playlist.setArtistsNames(artists);
         playlist.setMusicsNames(musics);
-        return playlistRepository.save(playlist);
+        return playlistRepository.save(playlist); // Agora salvará sem erros de duplicidade
     }
 
     public Optional<Playlist> updatePlaylist(String id, Playlist updatedPlaylist, List<String> artistsIds,
@@ -65,5 +65,21 @@ public class PlaylistService {
             playlistRepository.delete(item);
             return true;
         }).orElse(false);
+    }
+
+    public Optional<Playlist> addMusicToPlaylist(String musicId, String playlistId) {
+        return musicRepository.findById(musicId)
+                .flatMap(music -> playlistRepository.findById(playlistId).map(playlist -> {
+                    playlist.getMusicsNames().add(music);
+                    return playlistRepository.save(playlist);
+                }));
+    }
+
+    public Optional<Playlist> removeMusicFromPlaylist(String musicId, String playlistId) {
+        return musicRepository.findById(musicId)
+                .flatMap(music -> playlistRepository.findById(playlistId).map(playlist -> {
+                    playlist.getMusicsNames().remove(music);
+                    return playlistRepository.save(playlist);
+                }));
     }
 }

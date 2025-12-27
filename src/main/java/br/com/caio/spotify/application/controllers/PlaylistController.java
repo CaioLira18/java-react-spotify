@@ -36,9 +36,10 @@ public class PlaylistController {
     public ResponseEntity<Playlist> getItemById(@PathVariable String id) {
         Optional<Playlist> playlist = playlistService.findPlaylistById(id);
         return playlist.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // Em PlaylistController.java
     @PostMapping
     public ResponseEntity<Playlist> createPlaylist(@RequestBody PlaylistRequestDTO dto) {
         Playlist playlist = new Playlist();
@@ -46,12 +47,11 @@ public class PlaylistController {
         playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
+        playlist.setYear(dto.getYear()); // Verifique se o DTO e a Entity têm esse campo
 
         return ResponseEntity.ok(
-            playlistService.createPlaylist(playlist, dto.getArtistsIds(), dto.getSongsIds())
-        );
+                playlistService.createPlaylist(playlist, dto.getArtistsIds(), dto.getSongsIds()));
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<Playlist> updateItem(
@@ -64,12 +64,13 @@ public class PlaylistController {
         playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
+        playlist.setYear(dto.getYear());
 
-        Optional<Playlist> updatedItem =
-                playlistService.updatePlaylist(id, playlist, dto.getArtistsIds(), dto.getSongsIds());
+        Optional<Playlist> updatedItem = playlistService.updatePlaylist(id, playlist, dto.getArtistsIds(),
+                dto.getSongsIds());
 
         return updatedItem.map(ResponseEntity::ok)
-                          .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -78,5 +79,23 @@ public class PlaylistController {
         return deleted
                 ? ResponseEntity.noContent().build()
                 : ResponseEntity.notFound().build();
+    }
+
+    // Adicionar música à playlist
+    @PostMapping("/{playlistId}/music/{musicId}") // Corrigido o Path e a ordem
+    public ResponseEntity<Playlist> addMusicToPlaylist(
+            @PathVariable String playlistId,
+            @PathVariable String musicId) {
+        Optional<Playlist> updatedPlaylist = playlistService.addMusicToPlaylist(musicId, playlistId);
+        return updatedPlaylist.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Remover música da playlist
+    @DeleteMapping("/{playlistId}/music/{musicId}") // Corrigido o Path e a ordem
+    public ResponseEntity<Playlist> removeMusicFromPlaylist(
+            @PathVariable String playlistId,
+            @PathVariable String musicId) {
+        Optional<Playlist> updatedPlaylist = playlistService.removeMusicFromPlaylist(musicId, playlistId);
+        return updatedPlaylist.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

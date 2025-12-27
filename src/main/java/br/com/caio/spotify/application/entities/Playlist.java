@@ -1,5 +1,6 @@
 package br.com.caio.spotify.application.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
@@ -9,7 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,15 +27,14 @@ public class Playlist {
     private String cover;
     private String duration;
     private String year;
-    private ContentEnum type; 
+    private ContentEnum type;
 
-    @OneToMany
+    @ManyToMany 
     @JoinTable(name = "tb_playlist_artists", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private List<Artists> artistsNames;
+    private List<Artists> artistsNames = new ArrayList<>(); // Inicialize a lista
 
-    @OneToMany
+    @ManyToMany 
     @JoinTable(name = "tb_playlist_musics", joinColumns = @JoinColumn(name = "playlist_id"), inverseJoinColumns = @JoinColumn(name = "music_id"))
-    private List<Music> musicsNames;
-
+    private List<Music> musicsNames = new ArrayList<>(); // Inicialize a lista
 
 }
