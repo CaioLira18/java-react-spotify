@@ -8,9 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.caio.spotify.application.entities.User;
+import br.com.caio.spotify.application.repositories.AlbumRepository;
 import br.com.caio.spotify.application.repositories.ArtistRepository;
 import br.com.caio.spotify.application.repositories.MusicRepository;
-import br.com.caio.spotify.application.repositories.PlaylistRepository;
 import br.com.caio.spotify.application.repositories.UserRepository;
 
 @Service
@@ -23,7 +23,7 @@ public class UserService {
     private MusicRepository musicRepository;
 
     @Autowired
-    private PlaylistRepository playlistRepository;
+    private AlbumRepository playlistRepository;
 
     @Autowired
     private ArtistRepository artistsRepository;

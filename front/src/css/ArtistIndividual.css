@@ -101,7 +101,7 @@
   margin-left: 50px;
 }
 
-.playlistsContainer {
+.albumsContainer {
   padding: 32px 50px;
   background-color: #000;
 }
@@ -110,7 +110,7 @@
   margin-top: 100px;
 }
 
-.playlistsContainer > h2 {
+.albumsContainer > h2 {
   font-size: 1.5rem;
   margin-bottom: 24px;
   font-weight: 700;
@@ -151,13 +151,13 @@
   border-radius: 4px;
 }
 
-.playlistArtistPage {
+.albumArtistPage {
   display: inline-block;
   margin-right: 16px;
   margin-bottom: 24px;
 }
 
-.playlistContainer {
+.albumContainer {
   background-color: #181818;
   border-radius: 8px;
   padding: 16px;
@@ -167,7 +167,7 @@
   border: none;
 }
 
-.playlistContainer:hover {
+.albumContainer:hover {
   background-color: #282828;
 }
 
@@ -214,7 +214,7 @@
   text-align: left;
 }
 
-.playlistInformation h4 {
+.albumInformation h4 {
   font-size: 16px;
   font-weight: 700;
   color: white;
@@ -223,7 +223,7 @@
   text-overflow: ellipsis;
 }
 
-.playlistInformation p {
+.albumInformation p {
   font-size: 14px;
   color: #b3b3b3;
   line-height: 1.4;

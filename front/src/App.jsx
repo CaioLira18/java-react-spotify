@@ -8,8 +8,10 @@ import AddMusicPage from './pages/AddMusicPage'
 import AddArtistPage from './pages/AddArtistPage'
 import AdminPage from './pages/AdminPage'
 import NavBar from './components/NavBar'
-import AddPlaylistPage from './pages/AddPlaylistPage'
+import AddPlaylistPage from './pages/AddAlbumPage'
 import PlaylistPage from './pages/PlaylistPage'
+import DeletePlaylistPage from './pages/DeletePlaylistPage'
+import AddAlbumPage from './pages/AddAlbumPage'
 
 function App() {
   return (
@@ -20,14 +22,15 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
-          <Route path="/playlists/:id" element={<PlaylistPage />} />
+          <Route path="/albums/:id" element={<PlaylistPage />} />
         </Route>
         <Route path="/music" element={<AddMusicPage />} />
         <Route path="/artist" element={<AddArtistPage />} />
-        <Route path="/playlist" element={<AddPlaylistPage />} />
+        <Route path="/album" element={<AddAlbumPage />} />
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/deletePlaylist" element={<DeletePlaylistPage />} />
       </Routes>
     </div>
 

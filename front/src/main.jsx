@@ -13,12 +13,8 @@ import './css/AdminPage.css'
 import './css/AddArtistPage.css'
 import './css/ModalMusic.css'
 import './css/Playlist.css'
+import './css/deletePages.css'
 import './utils/Fonts.css'
-
-
-
-
-
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 

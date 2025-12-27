@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const AddPlaylistPage = () => {
+const AddAlbumPage = () => {
   const API_URL = "http://localhost:8080/api";
 
   const [name, setName] = useState("");
@@ -85,7 +85,7 @@ const AddPlaylistPage = () => {
               />
             </div>
 
-            <h1>Adicionar Playlist</h1>
+            <h1>Adicionar Álbum</h1>
 
             {/* Nome */}
             <div className="inputBox">
@@ -244,4 +244,4 @@ const AddPlaylistPage = () => {
   );
 }
 
-export default AddPlaylistPage;
+export default AddAlbumPage;

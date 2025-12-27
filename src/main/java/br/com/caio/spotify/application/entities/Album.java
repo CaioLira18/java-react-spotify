@@ -19,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "tb_playlists")
-public class Playlist {
+public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

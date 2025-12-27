@@ -34,15 +34,15 @@ const AdminPage = () => {
             <h2>Adicionar Musicas</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/playlist"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
-            <h2>Adicionar Playlist</h2></a>
+          <a href="/album"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
+            <h2>Adicionar Álbum</h2></a>
         </div>
         <div className="adminPageBox">
           <a href="/deleteMusicPage"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766874466/avatars-vJG4WT2we6uySowd-yRIFcg-t1080x1080_kzjxet.jpg" alt="" />
             <h2>Deletar Musica</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/deletePlaylistPage"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
+          <a href="/deletePlaylist"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
             <h2>Deletar Playlist</h2></a>
         </div>
       </div>

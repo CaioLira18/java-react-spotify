@@ -7,10 +7,10 @@ const ArtistPage = () => {
   const { setPlaylist, setCurrentIndex } = useOutletContext()
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
-  const [playlists, setPlaylists] = useState([])
+  const [albums, setAlbums] = useState([])
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [modalOpenPlaylist, setModalOpenPlaylist] = useState(false)
+  const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
@@ -45,27 +45,25 @@ const ArtistPage = () => {
       .catch(console.error)
   }, [])
 
-  // Buscar todas as playlists
-useEffect(() => {
-  fetch(`${API_URL}/playlists`)
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao buscar playlists"); // Verifica se o status é 200-299
-      return res.json();
-    })
-    .then(data => {
-      if (Array.isArray(data)) {
-        setPlaylists(data);
-      } else {
-        setPlaylists([]); // Garante que continue sendo um array se o dado vier estranho
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      setPlaylists([]); // Em caso de erro, mantém o array vazio para não quebrar o .map()
-    });
-}, []);
+  useEffect(() => {
+    fetch(`${API_URL}/albums`)
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao buscar playlists"); // Verifica se o status é 200-299
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAlbums(data);
+        } else {
+          setAlbums([]);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        setAlbums([]);
+      });
+  }, []);
 
-  // Buscar dados do artista específico
   useEffect(() => {
     fetch(`${API_URL}/artists/${id}`)
       .then(res => res.json())
@@ -96,10 +94,10 @@ useEffect(() => {
     setModalOpen(true)
   }
 
-  const modalMoreOptionsPlaylist = (playlist, e) => {
+  const modalMoreOptionsAlbum = (playlist, e) => {
     e.stopPropagation()
     setSelectedPlaylist(playlist)
-    setModalOpenPlaylist(true)
+    setModalOpenAlbum(true)
   }
 
   const closeModal = () => {
@@ -108,7 +106,7 @@ useEffect(() => {
   }
 
   const closeModalPlaylist = () => {
-    setModalOpenPlaylist(false)
+    setModalOpenAlbum(false)
     setSelectedPlaylist(null)
   }
 
@@ -183,7 +181,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${selectedPlaylist.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -218,7 +216,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${selectedPlaylist.id}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -300,22 +298,22 @@ useEffect(() => {
           ))}
         </div>
 
-        {/* Playlists/Álbuns */}
-        <div className="playlistsContainer">
-          <h2>Playlist Populares</h2>
-          {playlists.map((playlist, index) => (
-            playlist.artistsNames.some(artist => artist.name === artista.name) && (
-              <div className="playlistArtistPage" key={playlist.id}>
-                <div className="playlistContainer" onClick={() => handlePlay(index)}>
+        {/* Álbuns */}
+        <div className="albumsContainer">
+          <h2>Álbums Populares</h2>
+          {albums.map((album, index) => (
+            album.artistsNames.some(artist => artist.name === artista.name) && (
+              <div className="albumsArtistPage" key={album.id}>
+                <div className="albumContainer" onClick={() => handlePlay(index)}>
                   <div className="albumImage">
-                    <a href={`/playlists/${playlist.id}`}><img src={playlist.cover} alt={playlist.name} /></a>
+                    <a href={`/albums/${album.id}`}><img src={album.cover} alt={album.name} /></a>
                   </div>
-                  <div className="playlistInformation">
-                    <h4>{playlist.name}</h4>
+                  <div className="albumInformation">
+                    <h4>{album.name}</h4>
                     <div className="albumCredits">
-                      <p>Album • {playlist.year}</p>
+                      <p>Album • {album.year}</p>
                       <div className="modalPlaylist">
-                        <p onClick={(e) => modalMoreOptionsPlaylist(playlist, e)}>
+                        <p onClick={(e) => modalMoreOptionsAlbum(album, e)}>
                           <i className="fa-solid fa-ellipsis"></i>
                         </p>
                       </div>
@@ -367,8 +365,8 @@ useEffect(() => {
         </div>
       )}
 
-      {/* Modal Playlist */}
-      {modalOpenPlaylist && (
+      {/* Modal Album */}
+      {modalOpenAlbum && (
         <div className="modal-overlay" onClick={closeModalPlaylist}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">

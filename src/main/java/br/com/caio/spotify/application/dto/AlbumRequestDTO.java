@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PlaylistRequestDTO {
+public class AlbumRequestDTO {
     private String name;
     private String duration;
     private String cover;

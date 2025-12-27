@@ -75,7 +75,7 @@ public class UserController {
     }
 
     // Adicionar playlist aos favoritos
-    @PostMapping("/{userId}/favorites/playlist/{playlistId}")
+    @PostMapping("/{userId}/favorites/album/{playlistId}")
     public ResponseEntity<User> addPlaylistToFavorites(
             @PathVariable String userId, 
             @PathVariable String playlistId) {
@@ -84,7 +84,7 @@ public class UserController {
     }
 
     // Remover playlist dos favoritos
-    @DeleteMapping("/{userId}/favorites/playlist/{playlistId}")
+    @DeleteMapping("/{userId}/favorites/album/{playlistId}")
     public ResponseEntity<User> removePlaylistFromFavorites(
             @PathVariable String userId, 
             @PathVariable String playlistId) {
