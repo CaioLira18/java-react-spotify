@@ -304,9 +304,9 @@ const ArtistPage = () => {
           {albums.map((album, index) => (
             album.artistsNames.some(artist => artist.name === artista.name) && (
               <div className="albumsArtistPage" key={album.id}>
-                <div className="albumContainer" onClick={() => handlePlay(index)}>
+                <a href={`/albums/${album.id}`}><div className="albumContainer">
                   <div className="albumImage">
-                    <a href={`/albums/${album.id}`}><img src={album.cover} alt={album.name} /></a>
+                    <img src={album.cover} alt={album.name} />
                   </div>
                   <div className="albumInformation">
                     <h4>{album.name}</h4>
@@ -319,7 +319,7 @@ const ArtistPage = () => {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div></a>
               </div>
             )
           ))}

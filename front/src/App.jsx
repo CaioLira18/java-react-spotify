@@ -8,10 +8,9 @@ import AddMusicPage from './pages/AddMusicPage'
 import AddArtistPage from './pages/AddArtistPage'
 import AdminPage from './pages/AdminPage'
 import NavBar from './components/NavBar'
-import AddPlaylistPage from './pages/AddAlbumPage'
-import PlaylistPage from './pages/PlaylistPage'
 import AddAlbumPage from './pages/AddAlbumPage'
 import DeleteAlbumPage from './pages/DeleteAlbumPage'
+import AlbumPage from './pages/AlbumPage'
 
 function App() {
   return (
@@ -22,7 +21,7 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
-          <Route path="/albums/:id" element={<PlaylistPage />} />
+          <Route path="/albums/:id" element={<AlbumPage />} />
         </Route>
         <Route path="/music" element={<AddMusicPage />} />
         <Route path="/artist" element={<AddArtistPage />} />

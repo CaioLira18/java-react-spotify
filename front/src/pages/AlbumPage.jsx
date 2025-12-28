@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
 
-const PlaylistPage = () => {
+const AlbumPage = () => {
 
   const { id } = useParams()
   const { setPlaylist, setCurrentIndex } = useOutletContext()
@@ -47,10 +47,10 @@ const PlaylistPage = () => {
 
   // Buscar dados da playlist específica
   useEffect(() => {
-    fetch(`${API_URL}/playlists/${id}`)
+    fetch(`${API_URL}/albums/${id}`)
       .then(res => res.json())
       .then(data => setPlaylistData(data))
-      .catch(() => showToast("Erro ao carregar playlist!", "error"))
+      .catch(() => showToast("Erro ao carregar Album!", "error"))
   }, [id])
 
   // --- FUNÇÕES DE UTILIDADE ---
@@ -505,4 +505,4 @@ const PlaylistPage = () => {
   )
 }
 
-export default PlaylistPage
+export default AlbumPage
