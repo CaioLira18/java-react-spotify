@@ -7,7 +7,7 @@ const DeleteAlbumPage = () => {
     const [toasts, setToasts] = useState([])
     const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
-    const [filteredAlbums, setFilteredAlbums] = useState("")
+    const [filteredAlbums, setFilteredAlbums] = useState([])
     const API_URL = "http://localhost:8080/api"
 
     const showToast = (message, type = 'success') => {
@@ -45,7 +45,6 @@ const DeleteAlbumPage = () => {
                 artist.name.toLowerCase().includes(value.toLowerCase())
             ))
         )
-
         setFilteredAlbums(filtered)
     }
 
@@ -57,11 +56,14 @@ const DeleteAlbumPage = () => {
                 return res.json()
             })
             .then(data => {
-                setAlbums(Array.isArray(data) ? data : [])
+                const albumsData = Array.isArray(data) ? data : [];
+                setAlbums(albumsData);
+                setFilteredAlbums(albumsData); // Add this line so the list shows on load
             })
             .catch(err => {
-                console.error(err)
-                setAlbums([])
+                console.error(err);
+                setAlbums([]);
+                setFilteredAlbums([]); // Ensure this is also reset on error
             })
     }, [])
 
@@ -77,7 +79,6 @@ const DeleteAlbumPage = () => {
             if (response.ok) {
                 showToast("Album removido!", "success")
 
-                // remove a playlist da lista após deletar
                 setAlbums(albums.filter(album => album.id !== selectedAlbum.id))
                 setSelectedAlbum(null)
             } else {
