@@ -229,7 +229,7 @@ const AlbumPage = () => {
 
     try {
       const response = await fetch(
-        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToPlaylistId}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -263,7 +263,7 @@ const AlbumPage = () => {
 
     try {
       const response = await fetch(
-        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToPlaylistId}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -274,7 +274,7 @@ const AlbumPage = () => {
         showToast("Música deletada da playlist!", "success")
         
         // Recarregar dados da playlist
-        fetch(`${API_URL}/playlists/${id}`)
+        fetch(`${API_URL}/albums/${id}`)
           .then(res => res.json())
           .then(data => setPlaylistData(data))
           .catch(console.error)
