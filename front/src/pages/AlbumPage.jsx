@@ -11,10 +11,10 @@ const AlbumPage = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalAdminOpen, setModalAdminOpen] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
-  const [selectedSongToPlaylistId, setSelectedSongToPlaylistId] = useState('')
+  const [selectedSongToAlbum, setSelectedSongToAlbum] = useState('')
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
-  const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
+  const [favoritesListAlbums, setFavoritesListAlbums] = useState([])
   const [userID, setUserID] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -30,7 +30,7 @@ const AlbumPage = () => {
         setIsAdmin(parsedUser.role === 'ADMIN')
         setUserID(parsedUser.id)
         setFavoritesListSongs(parsedUser.listMusic || [])
-        setFavoritesListPlaylists(parsedUser.listPlaylists || [])
+        setFavoritesListAlbums(parsedUser.listPlaylists || [])
       } catch (err) {
         console.error("Erro ao processar usuário do localStorage", err)
       }
@@ -90,7 +90,7 @@ const AlbumPage = () => {
   const closeAdminModal = () => {
     setModalAdminOpen(false)
     setSelectedPlaylist(null)
-    setSelectedSongToPlaylistId('')
+    setSelectedSongToAlbum('')
   }
 
   const addMusicToFavorites = async () => {
@@ -159,12 +159,12 @@ const AlbumPage = () => {
     }
   }
 
-  const addPlaylistToFavorites = async () => {
+  const addAlbumToFavorites = async () => {
     if (!playlistData || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${playlistData.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${playlistData.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -172,8 +172,8 @@ const AlbumPage = () => {
       )
 
       if (response.ok) {
-        const updatedFavorites = [...favoritesListPlaylists, playlistData]
-        setFavoritesListPlaylists(updatedFavorites)
+        const updatedFavorites = [...favoritesListAlbums, playlistData]
+        setFavoritesListAlbums(updatedFavorites)
 
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
@@ -181,22 +181,22 @@ const AlbumPage = () => {
           localStorage.setItem('user', JSON.stringify(storedUser))
         }
 
-        showToast("Playlist adicionada aos favoritos!", "success")
+        showToast("Álbum adicionado aos favoritos!", "success")
       } else {
-        showToast("Erro ao adicionar playlist aos favoritos", "error")
+        showToast("Erro ao adicionar album aos favoritos", "error")
       }
     } catch (error) {
       console.error(error)
-      showToast("Erro ao adicionar playlist aos favoritos", "error")
+      showToast("Erro ao adicionar album aos favoritos", "error")
     }
   }
 
-  const deletePlaylistToFavorites = async () => {
+  const deleteAlbumFromFavorites = async () => {
     if (!playlistData || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${playlistData.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${playlistData.id}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -204,8 +204,8 @@ const AlbumPage = () => {
       )
 
       if (response.ok) {
-        const updatedFavorites = favoritesListPlaylists.filter(p => p.id !== playlistData.id)
-        setFavoritesListPlaylists(updatedFavorites)
+        const updatedFavorites = favoritesListAlbums.filter(p => p.id !== playlistData.id)
+        setFavoritesListAlbums(updatedFavorites)
 
         const storedUser = JSON.parse(localStorage.getItem('user'))
         if (storedUser) {
@@ -213,23 +213,22 @@ const AlbumPage = () => {
           localStorage.setItem('user', JSON.stringify(storedUser))
         }
 
-        showToast("Playlist removida dos favoritos!", "success")
+        showToast("Album removido dos favoritos!", "success")
       } else {
-        showToast("Erro ao remover playlist dos favoritos", "error")
+        showToast("Erro ao remover album dos favoritos", "error")
       }
     } catch (error) {
       console.error(error)
-      showToast("Erro ao remover playlist dos favoritos", "error")
+      showToast("Erro ao remover album dos favoritos", "error")
     }
   }
 
-  // CORRIGIDO: URL agora é /playlists/{playlistId}/music/{musicId}
-  const addMusicToPlaylist = async () => {
-    if (!selectedSongToPlaylistId || !playlistData) return
+  const addMusicToAlbum = async () => {
+    if (!selectedSongToAlbum || !playlistData) return
 
     try {
       const response = await fetch(
-        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToAlbum}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -240,7 +239,7 @@ const AlbumPage = () => {
         showToast("Música adicionada à playlist!", "success")
         
         // Recarregar dados da playlist
-        fetch(`${API_URL}/playlists/${id}`)
+        fetch(`${API_URL}/albums/${id}`)
           .then(res => res.json())
           .then(data => setPlaylistData(data))
           .catch(console.error)
@@ -257,13 +256,12 @@ const AlbumPage = () => {
     }
   }
 
-  // CORRIGIDO: URL agora é /playlists/{playlistId}/music/{musicId}
   const removeMusicFromPlaylist = async () => {
-    if (!selectedSongToPlaylistId || !playlistData) return
+    if (!selectedSongToAlbum || !playlistData) return
 
     try {
       const response = await fetch(
-        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToPlaylistId}`,
+        `${API_URL}/albums/${playlistData.id}/music/${selectedSongToAlbum}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -312,7 +310,7 @@ const AlbumPage = () => {
     playlistData.musicsNames.some(music => music.id === song.id)
   )
 
-  const isPlaylistFavorited = favoritesListPlaylists.some(p => p.id === playlistData.id)
+  const isPlaylistFavorited = favoritesListAlbums.some(p => p.id === playlistData.id)
 
   return (
     <>
@@ -341,16 +339,18 @@ const AlbumPage = () => {
           </button>
           <button
             className="playlist-action-btn"
-            onClick={isPlaylistFavorited ? deletePlaylistToFavorites : addPlaylistToFavorites}
+            onClick={isPlaylistFavorited ? deleteAlbumFromFavorites : addAlbumToFavorites}
           >
             <i className={isPlaylistFavorited ? "fa-solid fa-check" : "fa-regular fa-heart"}></i>
           </button>
           <button className="playlist-action-btn">
             <i className="fa-solid fa-arrow-down"></i>
           </button>
+          {isAdmin && (
           <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
             <i className="fa-solid fa-ellipsis"></i>
           </button>
+          )}
         </div>
 
         {/* Lista de Músicas */}
@@ -365,6 +365,7 @@ const AlbumPage = () => {
           </div>
 
           {playlistSongs.map((song, index) => (
+            (song.status != 'NOT_RELEASED' && (
             <div className="playlist-song-row" key={song.id}>
               <div className="playlist-song-item" onClick={() => handlePlay(index)}>
                 <span className="song-index-number">{index + 1}</span>
@@ -386,6 +387,7 @@ const AlbumPage = () => {
                 </div>
               </div>
             </div>
+            ))
           ))}
         </div>
 
@@ -451,13 +453,13 @@ const AlbumPage = () => {
               )}
 
               {selectedPlaylist && (
-                favoritesListPlaylists.some(playlist => playlist.id === selectedPlaylist.id) ? (
-                  <button className="modal-action-option" onClick={deletePlaylistToFavorites}>
+                favoritesListAlbums.some(playlist => playlist.id === selectedPlaylist.id) ? (
+                  <button className="modal-action-option" onClick={deleteAlbumFromFavorites}>
                     <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
                     <span>Remover dos Favoritos</span>
                   </button>
                 ) : (
-                  <button className="modal-action-option" onClick={addPlaylistToFavorites}>
+                  <button className="modal-action-option" onClick={addAlbumToFavorites}>
                     <i className="fa-regular fa-heart"></i>
                     <span>Adicionar aos Favoritos</span>
                   </button>
@@ -471,8 +473,8 @@ const AlbumPage = () => {
                       className="form-input" 
                       name="musicas" 
                       id="musicas"
-                      value={selectedSongToPlaylistId}
-                      onChange={(e) => setSelectedSongToPlaylistId(e.target.value)}
+                      value={selectedSongToAlbum}
+                      onChange={(e) => setSelectedSongToAlbum(e.target.value)}
                     >
                       <option value="">Selecione uma música</option>
                       {songs.map(song => (
@@ -481,7 +483,7 @@ const AlbumPage = () => {
                         </option>
                       ))}
                     </select>
-                    <button onClick={addMusicToPlaylist}>Adicionar Música No Álbum</button>
+                    <button onClick={addMusicToAlbum}>Adicionar Música No Álbum</button>
                     <button onClick={removeMusicFromPlaylist}>Remover Música do Álbum</button>
                   </div>
                   

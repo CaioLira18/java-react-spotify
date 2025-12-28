@@ -3,6 +3,7 @@ package br.com.caio.spotify.application.entities;
 import java.util.List;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
+import br.com.caio.spotify.application.entities.enums.StatusMusic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,8 @@ public class Music {
     private String name;
     private String duration;
     private String cover;
+    private StatusMusic status;
+    
     @ManyToMany
     @JoinTable(name = "tb_music_artists", joinColumns = @JoinColumn(name = "music_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private List<Artists> artistsNames;

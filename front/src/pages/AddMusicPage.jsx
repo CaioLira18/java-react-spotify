@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 const AddMusicPage = () => {
   const API_URL = "http://localhost:8080/api"
-
-  const CLOUD_NAME = "dthgw4q5d"
-  const UPLOAD_PRESET = "Musics"
-
   const [name, setName] = useState("")
   const [duration, setDuration] = useState("")
   const [cover, setCover] = useState("")
@@ -13,9 +9,11 @@ const AddMusicPage = () => {
   const [musicFile, setMusicFile] = useState(null)
   const [coverFile, setCoverFile] = useState(null)
   const [type, setType] = useState("MUSIC")
+  const [status, setStatus] = useState("")
   const [artists, setArtists] = useState([])
   const [artistsIds, setArtistsIds] = useState([])
   const [loading, setLoading] = useState(false)
+
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
@@ -68,6 +66,8 @@ const AddMusicPage = () => {
       !duration.trim() ||
       !coverFile ||
       !musicFile ||
+      !status ||
+      !type ||
       artistsIds.length === 0
     ) {
       alert("Preencha os campos obrigatórios.")
@@ -88,6 +88,7 @@ const AddMusicPage = () => {
         cover: uploadedCoverUrl,
         musicUrl: uploadedUrl,
         type,
+        status,
         artistsIds
       }
 
@@ -103,6 +104,8 @@ const AddMusicPage = () => {
       setDuration("")
       setCover("")
       setMusicUrl("")
+      setType("")
+      setStatus("")
       setMusicFile(null)
       setArtistsIds([])
     } catch {
@@ -221,8 +224,27 @@ const AddMusicPage = () => {
                   onChange={(e) => setType(e.target.value)}
                 >
                   <option value="MUSIC">Musica</option>
-                  <option value="ALBUM">Album</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Status</h2>
+              </div>
+              <div className="inputArea">
+                <select
+                  className="form-input"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">Selecione o status</option>
+                  <option value="RELEASED">Lançada</option>
+                  <option value="NOT_RELEASED">Não Lançada</option>
+                </select>
+
               </div>
             </div>
 

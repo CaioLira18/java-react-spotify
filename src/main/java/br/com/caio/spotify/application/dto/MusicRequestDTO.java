@@ -3,6 +3,7 @@ package br.com.caio.spotify.application.dto;
 import java.util.List;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
+import br.com.caio.spotify.application.entities.enums.StatusMusic;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,5 +16,6 @@ public class MusicRequestDTO {
     private String cover;
     private String musicUrl;
     private ContentEnum type;
+    private StatusMusic status;
     private List<String> artistsIds;
 }

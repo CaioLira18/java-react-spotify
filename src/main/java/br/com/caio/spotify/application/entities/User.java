@@ -62,5 +62,5 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "albums_id")
     )
-    private List<Album> listPlaylists = new ArrayList<>();
+    private List<Album> listAlbums = new ArrayList<>();
 }

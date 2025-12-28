@@ -40,6 +40,7 @@ public class MusicService {
             item.setDuration(updatedMusic.getDuration());
             item.setCover(updatedMusic.getCover());
             item.setType(updatedMusic.getType());
+            item.setStatus(updatedMusic.getStatus());
             item.setMusicUrl(updatedMusic.getMusicUrl());
 
             if (artistsIds != null) {

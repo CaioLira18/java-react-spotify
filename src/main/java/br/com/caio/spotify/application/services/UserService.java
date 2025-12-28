@@ -54,7 +54,7 @@ public class UserService {
             item.setRole(updatedItem.getRole());
             item.setListMusic(updatedItem.getListMusic());
             item.setListArtists(updatedItem.getListArtists());
-            item.setListPlaylists(updatedItem.getListPlaylists());
+            item.setListAlbums(updatedItem.getListAlbums());
 
             if (!updatedItem.getPassword().equals(item.getPassword())) {
                 item.setPassword(passwordEncoder.encode(updatedItem.getPassword()));
@@ -97,8 +97,8 @@ public class UserService {
     public Optional<User> addAlbumToFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
             playlistRepository.findById(albumId).map(playlist -> {
-                if (!user.getListPlaylists().contains(playlist)) {
-                    user.getListPlaylists().add(playlist);
+                if (!user.getListAlbums().contains(playlist)) {
+                    user.getListAlbums().add(playlist);
                     return userRepository.save(user);
                 }
                 return user;
@@ -110,7 +110,7 @@ public class UserService {
     public Optional<User> removeAlbumFromFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
             playlistRepository.findById(albumId).map(playlist -> {
-                user.getListPlaylists().remove(playlist);
+                user.getListAlbums().remove(playlist);
                 return userRepository.save(user);
             })
         );

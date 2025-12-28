@@ -12,7 +12,7 @@ const ArtistPage = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
-  const [selectedPlaylist, setSelectedPlaylist] = useState(null)
+  const [selectedAlbum, setSelectedAlbum] = useState(null)
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListPlaylists, setFavoritesListPlaylists] = useState([])
   const [userID, setUserID] = useState(null)
@@ -96,7 +96,7 @@ const ArtistPage = () => {
 
   const modalMoreOptionsAlbum = (playlist, e) => {
     e.stopPropagation()
-    setSelectedPlaylist(playlist)
+    setSelectedAlbum(playlist)
     setModalOpenAlbum(true)
   }
 
@@ -107,7 +107,7 @@ const ArtistPage = () => {
 
   const closeModalAlbum = () => {
     setModalOpenAlbum(false)
-    setSelectedPlaylist(null)
+    setSelectedAlbum(null)
   }
 
   const addMusicToFavorites = async () => {
@@ -177,11 +177,11 @@ const ArtistPage = () => {
   }
 
   const addPlaylistToFavorites = async () => {
-    if (!selectedPlaylist || !userID) return
+    if (!selectedAlbum || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/album/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -190,7 +190,7 @@ const ArtistPage = () => {
 
       if (response.ok) {
         // Atualiza o estado local
-        const updatedFavorites = [...favoritesListPlaylists, selectedPlaylist]
+        const updatedFavorites = [...favoritesListPlaylists, selectedAlbum]
         setFavoritesListPlaylists(updatedFavorites)
 
         // Sincroniza com localStorage
@@ -212,11 +212,11 @@ const ArtistPage = () => {
   }
 
   const deletePlaylistToFavorites = async () => {
-    if (!selectedPlaylist || !userID) return
+    if (!selectedAlbum || !userID) return
 
     try {
       const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/album/${selectedPlaylist.id}`,
+        `${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
@@ -225,7 +225,7 @@ const ArtistPage = () => {
 
       if (response.ok) {
         // Remove do estado local
-        const updatedFavorites = favoritesListPlaylists.filter(playlist => playlist.id !== selectedPlaylist.id)
+        const updatedFavorites = favoritesListPlaylists.filter(playlist => playlist.id !== selectedAlbum.id)
         setFavoritesListPlaylists(updatedFavorites)
 
         // Sincroniza com localStorage
@@ -279,6 +279,7 @@ const ArtistPage = () => {
         <div className="songsContainer">
           <h2>Músicas Populares</h2>
           {artistSongs.map((song, index) => (
+            song.status != "NOT_RELEASED" && (
             <div className="musicsArtistPage" key={song.id}>
               <div className="songContainer" onClick={() => handlePlay(index)}>
                 <h4>{index + 1}</h4>
@@ -295,6 +296,7 @@ const ArtistPage = () => {
                 </div>
               </div>
             </div>
+            )
           ))}
         </div>
 
@@ -374,17 +376,17 @@ const ArtistPage = () => {
               <button className="close-btn" onClick={closeModalAlbum}><i className="fa-solid fa-xmark"></i></button>
             </div>
             <div className="modal-body">
-              {selectedPlaylist && (
+              {selectedAlbum && (
                 <div className="song-info">
-                  <img src={selectedPlaylist.cover} alt={selectedPlaylist.name} />
+                  <img src={selectedAlbum.cover} alt={selectedAlbum.name} />
                   <div>
-                    <h4>{selectedPlaylist.name}</h4>
-                    <p>{selectedPlaylist.artistsNames.map(a => a.name).join(', ')}</p>
+                    <h4>{selectedAlbum.name}</h4>
+                    <p>{selectedAlbum.artistsNames.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
               )}
-              {selectedPlaylist && (
-                favoritesListPlaylists.some(playlist => playlist.id === selectedPlaylist.id) ? (
+              {selectedAlbum && (
+                favoritesListPlaylists.some(playlist => playlist.id === selectedAlbum.id) ? (
                   <button className="modal-option" onClick={deletePlaylistToFavorites}>
                     <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
                     <span>Remover dos Favoritos</span>
