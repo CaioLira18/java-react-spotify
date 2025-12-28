@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from 'react'
 
 const NavBar = () => {
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [name, setName] = useState('');
-  const [image, setImage] = useState('');
+  const [idUser, setUserId] = useState('');
+  const [users, setUsers] = useState([]);
+  const API_URL = "http://localhost:8080/api";
+
+  useEffect(() => {
+    fetch(`${API_URL}/users`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erro ao buscar Usuarios.");
+        }
+        return response.json();
+      })
+      .then((data) => setUsers(data))
+      .catch((error) => {
+        console.error(error);
+        alert("Erro ao buscar Usuarios.");
+      });
+  }, []);
 
 
   useEffect(() => {
@@ -16,8 +32,7 @@ const NavBar = () => {
         setIsAuthenticated(true);
         setIsAdmin(parsedUser.role === 'ADMIN');
         setName(parsedUser.name || '');
-        setImage(parsedUser.image || '');
-
+        setUserId(parsedUser.id || '');
       } catch (err) {
         console.error("Erro ao processar usuário do localStorage", err);
       }
@@ -50,7 +65,13 @@ const NavBar = () => {
           {isAuthenticated && (
             <div className="userBox">
               <div className="userImage">
-                <i class="fa-solid fa-user"></i>
+                <img
+                  src={
+                    users.find(user => user.id === idUser)?.image ||
+                    "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
+                  }
+                  alt="Sem foto"
+                />
               </div>
               <div className="logout" onClick={handleLogout}>
                 <i class="fa-solid fa-right-from-bracket"></i>
