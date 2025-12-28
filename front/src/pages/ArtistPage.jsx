@@ -105,7 +105,7 @@ const ArtistPage = () => {
     setSelectedSong(null)
   }
 
-  const closeModalPlaylist = () => {
+  const closeModalAlbum = () => {
     setModalOpenAlbum(false)
     setSelectedPlaylist(null)
   }
@@ -201,7 +201,7 @@ const ArtistPage = () => {
         }
 
         showToast("Playlist adicionada aos favoritos!", "success")
-        closeModalPlaylist()
+        closeModalAlbum()
       } else {
         showToast("Erro ao adicionar playlist aos favoritos", "error")
       }
@@ -236,7 +236,7 @@ const ArtistPage = () => {
         }
 
         showToast("Playlist removida dos favoritos!", "success")
-        closeModalPlaylist()
+        closeModalAlbum()
       } else {
         showToast("Erro ao remover playlist dos favoritos", "error")
       }
@@ -367,11 +367,11 @@ const ArtistPage = () => {
 
       {/* Modal Album */}
       {modalOpenAlbum && (
-        <div className="modal-overlay" onClick={closeModalPlaylist}>
+        <div className="modal-overlay" onClick={closeModalAlbum}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Opções</h3>
-              <button className="close-btn" onClick={closeModalPlaylist}><i className="fa-solid fa-xmark"></i></button>
+              <button className="close-btn" onClick={closeModalAlbum}><i className="fa-solid fa-xmark"></i></button>
             </div>
             <div className="modal-body">
               {selectedPlaylist && (

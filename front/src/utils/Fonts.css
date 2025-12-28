@@ -17,3 +17,13 @@
     font-family: 'Zector';
     src: url('./font/Zector.ttf') format('truetype');
 }
+
+@font-face {
+    font-family: "NudMotoya Cedar W55 W5";
+    src: url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.eot");
+    src: url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/42511765b3eaba28338971be9a0caf60.svg#NudMotoya Cedar W55 W5")format("svg");
+}
