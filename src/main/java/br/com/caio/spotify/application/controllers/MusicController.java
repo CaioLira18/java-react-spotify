@@ -66,6 +66,7 @@ public class MusicController {
         music.setMusicUrl(dto.getMusicUrl());
         music.setType(dto.getType());
         music.setYear(dto.getYear());
+        music.setStatus(dto.getStatus());
 
         Optional<Music> updatedItem = musicService.updateMusic(id, music, dto.getArtistsIds());
 

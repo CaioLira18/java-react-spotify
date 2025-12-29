@@ -14,6 +14,8 @@ import AlbumPage from './pages/AlbumPage'
 import SearchPage from './pages/SearchPage'
 import DeleteMusicPage from './pages/DeleteMusicPage'
 import DeleteArtistPage from './pages/DeleteArtistPage'
+import UpdateArtistPage from './pages/UpdateArtistPage'
+import UpdateMusicPage from './pages/UpdateMusicPage'
 
 function App() {
   return (
@@ -35,7 +37,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
         <Route path="/deleteMusic" element={<DeleteMusicPage />} />
-        <Route path="/deleteArtist" element={<DeleteArtistPage />} />
+        <Route path="/updateArtist" element={<UpdateArtistPage />} />
+        <Route path="/updateMusic" element={<UpdateMusicPage />} />
       </Routes>
     </div>
 

@@ -9,6 +9,7 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 20px; /* Adiciona espaçamento nas bordas */
 }
 
 .modal-content {
@@ -16,7 +17,10 @@
     border-radius: 8px;
     width: 90%;
     max-width: 400px;
+    max-height: 90vh; /* Limita a altura máxima */
     color: white;
+    display: flex;
+    flex-direction: column; /* Permite controlar o overflow do body */
 }
 
 .modal-header {
@@ -25,6 +29,7 @@
     align-items: center;
     padding: 20px;
     border-bottom: 1px solid #404040;
+    flex-shrink: 0; /* Impede que o header encolha */
 }
 
 .modal-header h3 {
@@ -54,6 +59,8 @@
 
 .modal-body {
     padding: 20px;
+    overflow-y: auto; /* Adiciona scroll vertical quando necessário */
+    flex: 1; /* Permite que o body ocupe o espaço disponível */
 }
 
 .song-info {

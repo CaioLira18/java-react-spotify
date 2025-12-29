@@ -30,6 +30,9 @@ public class ArtistService {
     public Optional<Artists> updateItem(String id, Artists updatedItem) {
         return artistRepository.findById(id).map(item -> {
             item.setName(updatedItem.getName());
+            item.setBannerPhoto(updatedItem.getBannerPhoto());
+            item.setProfilePhoto(updatedItem.getProfilePhoto());
+            item.setDescription(updatedItem.getDescription());
             return artistRepository.save(item);
         });
     }
