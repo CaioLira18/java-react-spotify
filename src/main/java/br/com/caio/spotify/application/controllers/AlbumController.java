@@ -76,11 +76,19 @@ public class AlbumController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String id) {
-        boolean deleted = albumService.deleteAlbum(id);
-        return deleted
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteItem(@PathVariable String id) {
+        try {
+            boolean deleted = albumService.deleteAlbum(id);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body("Erro ao deletar album: " + e.getMessage());
+        }
     }
 
     // Adicionar música à playlist

@@ -68,6 +68,7 @@ public class AlbumService {
 
     public boolean deleteAlbum(String id) {
         return albumRepository.findById(id).map(item -> {
+            albumRepository.removeAlbumFromAllFavorites(id);
             albumRepository.delete(item);
             return true;
         }).orElse(false);

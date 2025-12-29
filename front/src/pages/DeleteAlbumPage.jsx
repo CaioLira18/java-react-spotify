@@ -81,6 +81,7 @@ const DeleteAlbumPage = () => {
 
                 setAlbums(albums.filter(album => album.id !== selectedAlbum.id))
                 setSelectedAlbum(null)
+                closeModalAlbum()
             } else {
                 showToast("Erro ao remover Album", "error")
             }
@@ -102,21 +103,24 @@ const DeleteAlbumPage = () => {
                 <input value={searchTerm} onChange={(e) => search(e.target.value)} placeholder='Digite o Nome do Álbum' type="text" />
             </div>
 
-            {filteredAlbums.map((album) =>
+            <div className="centerContent">
                 <div className="deleteAlbumContainer">
-                    <div className="albumDeleteBox">
-                        <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(album, e)}>
-                            <div className="albumDeleteImage">
-                                <img src={album.cover} alt="" />
-                            </div>
-                            <div className="albumDeleteNames">
-                                <h4>{album.name} - {album.artistsNames.map(artist => artist.name)}</h4>
-                                <h5>Álbum • {album.year}</h5>
+                    {filteredAlbums.map((album) =>
+                        <div className="albumDeleteBox">
+                            <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(album, e)}>
+                                <div className="albumDeleteImage">
+                                    <img src={album.cover} alt="" />
+                                </div>
+                                <div className="albumDeleteNames">
+                                    <h4>{album.name} - {album.artistsNames.map(artist => artist.name)}</h4>
+                                    <h5>Álbum • {album.year}</h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
+
 
             {/* Modal Album */}
             {modalOpenAlbum && (

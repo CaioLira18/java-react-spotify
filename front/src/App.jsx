@@ -37,6 +37,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
+        <Route path="/deleteArtist" element={<DeleteArtistPage />} />
         <Route path="/deleteMusic" element={<DeleteMusicPage />} />
         <Route path="/updateArtist" element={<UpdateArtistPage />} />
         <Route path="/updateMusic" element={<UpdateMusicPage />} />

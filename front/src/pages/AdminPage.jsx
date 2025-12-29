@@ -66,8 +66,12 @@ const AdminPage = () => {
             <h2>Deletar Álbums</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/updateAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766977100/1900x1900-000000-81-0-0_raklbt.jpg" alt="" />
+          <a href="/updateAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985811/240628-babymonster-x-wwd-japan-magazine-v0-kps35qkhc89d1_hfs2k2.webp" alt="" />
             <h2>Atualizar Álbums</h2></a>
+        </div>
+         <div className="adminPageBox">
+          <a href="/viewAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985896/1728448268079vlcsnap-2024-10-09-12h19m57s120_s2ied3.avif" alt="" />
+            <h2>Visualizar Álbums</h2></a>
         </div>
       </div>
         <div className="space"></div>
