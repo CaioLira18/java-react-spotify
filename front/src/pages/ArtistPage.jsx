@@ -48,7 +48,7 @@ const ArtistPage = () => {
   useEffect(() => {
     fetch(`${API_URL}/albums`)
       .then(res => {
-        if (!res.ok) throw new Error("Erro ao buscar Albums"); 
+        if (!res.ok) throw new Error("Erro ao buscar Albums");
         return res.json();
       })
       .then(data => {
@@ -280,22 +280,22 @@ const ArtistPage = () => {
           <h2>Músicas Populares</h2>
           {artistSongs.map((song, index) => (
             song.status != "NOT_RELEASED" && (
-            <div className="musicsArtistPage" key={song.id}>
-              <div className="songContainer" onClick={() => handlePlay(index)}>
-                <h4>{index + 1}</h4>
-                <img src={song.cover} alt={song.name} />
-                <div className="songInformation">
-                  <h4>{song.name}</h4>
-                  <p>{song.artistsNames.map(a => a.name).join(', ')}</p>
-                </div>
-                <div className="otherInformation">
-                  <p>{song.duration}</p>
-                  <p onClick={(e) => modalMoreOptions(song, e)}>
-                    <i className="fa-solid fa-ellipsis"></i>
-                  </p>
+              <div className="musicsArtistPage" key={song.id}>
+                <div className="songContainer" onClick={() => handlePlay(index)}>
+                  <h4>{index + 1}</h4>
+                  <img src={song.cover} alt={song.name} />
+                  <div className="songInformation">
+                    <h4>{song.name}</h4>
+                    <p>{song.artistsNames.map(a => a.name).join(', ')}</p>
+                  </div>
+                  <div className="otherInformation">
+                    <p>{song.duration}</p>
+                    <p onClick={(e) => modalMoreOptions(song, e)}>
+                      <i className="fa-solid fa-ellipsis"></i>
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
             )
           ))}
         </div>
@@ -303,28 +303,34 @@ const ArtistPage = () => {
         {/* Álbuns */}
         <div className="albumsContainer">
           <h2>Álbums Populares</h2>
-          {albums.map((album, index) => (
-            album.artistsNames.some(artist => artist.name === artista.name) && (
-              <div className="albumsArtistPage" key={album.id}>
-                <a href={`/albums/${album.id}`}><div className="albumContainer">
-                  <div className="albumImage">
-                    <img src={album.cover} alt={album.name} />
-                  </div>
-                  <div className="albumInformation">
-                    <h4>{album.name}</h4>
-                    <div className="albumCredits">
-                      <p>Album • {album.year}</p>
-                      <div className="modalPlaylist">
-                        <p onClick={(e) => modalMoreOptionsAlbum(album, e)}>
-                          <i className="fa-solid fa-ellipsis"></i>
-                        </p>
+          <div className="flexAlbums">
+
+            {albums.map((album, index) => (
+              album.artistsNames.some(artist => artist.name === artista.name) && (
+                album.status != 'NOT_RELEASED' && (
+                <div className="albumsArtistPage" key={album.id}>
+                  <a href={`/albums/${album.id}`}><div className="albumContainer">
+                    <div className="albumImage">
+                      <img src={album.cover} alt={album.name} />
+                    </div>
+                    <div className="albumInformation">
+                      <h4>{album.name}</h4>
+                      <div className="albumCredits">
+                        <p>Album • {album.year}</p>
+                        <div className="modalPlaylist">
+                          <p onClick={(e) => modalMoreOptionsAlbum(album, e)}>
+                            <i className="fa-solid fa-ellipsis"></i>
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div></a>
-              </div>
-            )
-          ))}
+                  </div></a>
+                </div>
+                )
+              )
+            ))}
+          </div>
+
         </div>
         <div className="space"></div>
       </div>

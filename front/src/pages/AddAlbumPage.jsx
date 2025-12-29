@@ -70,7 +70,6 @@ const AddAlbumPage = () => {
     }
 
     try {
-      setLoading(true)
 
       const uploadedCoverUrl = await uploadCoverToCloudinary()
       setCover(uploadedCoverUrl)
@@ -106,7 +105,6 @@ const AddAlbumPage = () => {
     } catch {
       alert("Erro ao adicionar.")
     } finally {
-      setLoading(false)
     }
   }
 
