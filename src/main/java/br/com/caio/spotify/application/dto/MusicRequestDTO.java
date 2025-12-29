@@ -15,6 +15,7 @@ public class MusicRequestDTO {
     private String duration;
     private String cover;
     private String musicUrl;
+    private String year;
     private ContentEnum type;
     private StatusMusic status;
     private List<String> artistsIds;

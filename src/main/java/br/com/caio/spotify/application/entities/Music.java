@@ -28,6 +28,7 @@ public class Music {
     private String name;
     private String duration;
     private String cover;
+    private String year;
     private StatusMusic status;
     
     @ManyToMany

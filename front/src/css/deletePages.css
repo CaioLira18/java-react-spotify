@@ -1,37 +1,63 @@
 .deleteAlbumContainer {
-    margin-top: 100px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 100px;
+    gap: 200px;
+    align-items: center;
+    justify-content: center;
 }
 
 .albumDeleteBox {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 200px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 200px;
     transition: 0.3s all ease-in-out;
 }
 
 .albumDeleteBox:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     cursor: pointer;
+}
+
+.albumDeleteInformations {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.albumDeleteImage {
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 10px;
+}
+
+.albumDeleteImage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
 }
 
 .albumDeleteNames {
     font-family: 'NudMotoya Cedar W55 W5';
     font-size: 14px;
-    gap: 5px;
+    text-align: center;
+    width: 100%;
 }
 
-.albumDeleteImage img {
-    width: 200px;
-    border-radius: 10px;
+.albumDeleteNames h4 {
+    margin: 0 0 5px 0;
+    font-weight: 600;
 }
 
-.albumDeleteNames {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+.albumDeleteNames h5 {
+    margin: 0;
+    font-weight: 400;
+    opacity: 0.7;
 }
 
 .inputDeleteAlbumSearch {
@@ -39,6 +65,7 @@
     align-items: center;
     justify-content: center;
     margin-top: 100px;
+    padding: 0 40px;
 }
 
 .inputDeleteAlbumSearch input {
@@ -52,6 +79,10 @@
     font-size: 15px;
 }
 
+.inputDeleteAlbumSearch input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
 .optionDeleteAlbum button {
     width: 100%;
     height: 40px;
@@ -59,9 +90,39 @@
     border: none;
     border-radius: 10px;
     transition: 0.3s all ease-in-out;
+    color: white;
+    font-weight: 600;
 }
 
 .optionDeleteAlbum button:hover {
     background-color: rgb(196, 55, 55);
     cursor: pointer;
+}
+
+.centerContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+    .deleteAlbumContainer {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .deleteAlbumContainer {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .deleteAlbumContainer {
+        grid-template-columns: 1fr;
+    }
 }

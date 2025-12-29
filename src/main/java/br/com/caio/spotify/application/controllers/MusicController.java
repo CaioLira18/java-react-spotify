@@ -36,7 +36,7 @@ public class MusicController {
     public ResponseEntity<Music> getItemById(@PathVariable String id) {
         Optional<Music> music = musicService.findMusicById(id);
         return music.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -46,12 +46,12 @@ public class MusicController {
         music.setDuration(dto.getDuration());
         music.setCover(dto.getCover());
         music.setMusicUrl(dto.getMusicUrl());
+        music.setYear(dto.getYear());
         music.setType(dto.getType());
         music.setStatus(dto.getStatus());
 
         return ResponseEntity.ok(
-            musicService.createMusic(music, dto.getArtistsIds())
-        );
+                musicService.createMusic(music, dto.getArtistsIds()));
     }
 
     @PutMapping("/{id}")
@@ -65,19 +65,27 @@ public class MusicController {
         music.setCover(dto.getCover());
         music.setMusicUrl(dto.getMusicUrl());
         music.setType(dto.getType());
+        music.setYear(dto.getYear());
 
-        Optional<Music> updatedItem =
-                musicService.updateMusic(id, music, dto.getArtistsIds());
+        Optional<Music> updatedItem = musicService.updateMusic(id, music, dto.getArtistsIds());
 
         return updatedItem.map(ResponseEntity::ok)
-                          .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable String id) {
-        boolean deleted = musicService.deleteMusic(id);
-        return deleted
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+    public ResponseEntity<?> deleteItem(@PathVariable String id) {
+        try {
+            boolean deleted = musicService.deleteMusic(id);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500)
+                    .body("Erro ao deletar música: " + e.getMessage());
+        }
     }
 }

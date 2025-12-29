@@ -34,16 +34,16 @@ const AdminPage = () => {
             <h2>Adicionar Musicas</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/album"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
-            <h2>Adicionar Álbum</h2></a>
+          <a href="/deleteMusic"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766874466/avatars-vJG4WT2we6uySowd-yRIFcg-t1080x1080_kzjxet.jpg" alt="" />
+            <h2>Deletar Musicas</h2></a>
         </div>
         <div className="adminPageBox">
-          <a href="/deleteMusicPage"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766874466/avatars-vJG4WT2we6uySowd-yRIFcg-t1080x1080_kzjxet.jpg" alt="" />
-            <h2>Deletar Musica</h2></a>
+          <a href="/album"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
+            <h2>Adicionar Álbums</h2></a>
         </div>
         <div className="adminPageBox">
           <a href="/deleteAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
-            <h2>Deletar Álbum</h2></a>
+            <h2>Deletar Álbums</h2></a>
         </div>
       </div>
         <div className="space"></div>

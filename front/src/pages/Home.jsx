@@ -60,7 +60,7 @@ const Home = () => {
         <div>
             <div className="homeFlex">
                 <div className="inputItemSearch">
-                    <input value={searchTerm} onChange={(e) => search(e.target.value)} placeholder='O Que Você quer ouir hoje ?' type="text" />
+                    <input value={searchTerm} onChange={(e) => search(e.target.value)} placeholder='O Que Você quer ouvir hoje ?' type="text" />
                 </div>
                 <div className="artistas">
                     <div className="informationHeaderArtistas">

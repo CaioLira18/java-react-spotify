@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.caio.spotify.application.entities.Artists;
 import br.com.caio.spotify.application.entities.Music;
@@ -28,18 +29,21 @@ public class MusicService {
         return musicRepository.findById(id);
     }
 
+    @Transactional
     public Music createMusic(Music music, List<String> artistsIds) {
         List<Artists> artists = artistRepository.findAllById(artistsIds);
         music.setArtistsNames(artists);
         return musicRepository.save(music);
     }
 
+    @Transactional
     public Optional<Music> updateMusic(String id, Music updatedMusic, List<String> artistsIds) {
         return musicRepository.findById(id).map(item -> {
             item.setName(updatedMusic.getName());
             item.setDuration(updatedMusic.getDuration());
             item.setCover(updatedMusic.getCover());
             item.setType(updatedMusic.getType());
+            item.setYear(updatedMusic.getYear());
             item.setStatus(updatedMusic.getStatus());
             item.setMusicUrl(updatedMusic.getMusicUrl());
 
@@ -52,9 +56,21 @@ public class MusicService {
         });
     }
 
+    @Transactional
     public boolean deleteMusic(String id) {
-        return musicRepository.findById(id).map(item -> {
-            musicRepository.delete(item);
+        return musicRepository.findById(id).map(music -> {
+            // 1. Remover dos favoritos (query direta)
+            musicRepository.removeMusicFromAllFavorites(id);
+            
+            // 2. Remover dos Albums (query direta)
+            musicRepository.removeMusicFromAlbum(id);
+
+            // 2. Limpar relacionamento com artistas
+            music.getArtistsNames().clear();
+            musicRepository.save(music);
+
+            // 3. Deletar a música
+            musicRepository.delete(music);
             return true;
         }).orElse(false);
     }

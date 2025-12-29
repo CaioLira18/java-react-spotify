@@ -1,60 +1,105 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 const AddArtistPage = () => {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
   const [bannerPhoto, setBannerPhoto] = useState("");
   const [description, setDescription] = useState("");
+  const [photoFile, setPhotoFile] = useState(null)
+  const [bannerFile, setBannerFile] = useState(null)
 
   const API_URL = "http://localhost:8080/api";
 
-  function addItem() {
-    if (!name.trim() || !profilePhoto.trim() || !bannerPhoto.trim()) {
+  async function uploadPhotoToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", photoFile)
+    formData.append("upload_preset", "Artists_Photo")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error("Erro ao fazer upload da foto")
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  async function uploadBannerToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", bannerFile)
+    formData.append("upload_preset", "Artists_Banner")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error("Erro ao fazer upload do banner")
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  async function addItem() {
+    if (!name.trim() || !photoFile || !bannerFile) {
       alert("Preencha os campos obrigatórios.");
       return;
     }
 
-    const payload = {
-      name,
-      profilePhoto,
-      bannerPhoto,
-      description
-      /* Outros Atriburtos */
-    };
+    try {
+      const uploadedPhoto = await uploadPhotoToCloudinary()
+      const uploadedBanner = await uploadBannerToCloudinary()
 
-    fetch(`${API_URL}/artists`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Erro ao adicionar.");
-        }
-        return response.json();
-      })
-      .then(() => {
-        alert("Adicionado com sucesso!");
-        setName("");
-        {/* Outros Atributos */ }
-      })
-      .catch(error => {
-        console.error(error);
-        alert("Erro ao adicionar.");
+      const payload = {
+        name,
+        profilePhoto: uploadedPhoto,
+        bannerPhoto: uploadedBanner,
+        description
+      };
+
+      const response = await fetch(`${API_URL}/artists`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
       });
+
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar.");
+      }
+
+      await response.json();
+      alert("Adicionado com sucesso!");
+      
+      setName("");
+      setProfilePhoto("");
+      setBannerPhoto("");
+      setDescription("");
+      setPhotoFile(null);
+      setBannerFile(null);
+
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao adicionar.");
+    }
   }
+  
   return (
-
     <div>
-
       <div className="artist">
-
         <div className="containerItem">
           <div className="boxItem">
             <div className="logoBox">
-              <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp" alt="" />
+              <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp" alt="Spotify Logo" />
             </div>
             <h1>Adicionar Artista</h1>
 
@@ -75,7 +120,11 @@ const AddArtistPage = () => {
                 <h2>Foto de Perfil</h2>
               </div>
               <div className="inputArea">
-                <input value={profilePhoto} onChange={(e) => setProfilePhoto(e.target.value)} type="text" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPhotoFile(e.target.files[0])}
+                />
               </div>
             </div>
 
@@ -85,7 +134,11 @@ const AddArtistPage = () => {
                 <h2>Banner do Artista</h2>
               </div>
               <div className="inputArea">
-                <input value={bannerPhoto} onChange={(e) => setBannerPhoto(e.target.value)} type="text" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setBannerFile(e.target.files[0])}
+                />
               </div>
             </div>
 
@@ -99,15 +152,12 @@ const AddArtistPage = () => {
               </div>
             </div>
 
-            {/* Outros Atributos */}
-
             <div className="addItemButton">
               <button onClick={addItem}>Adicionar</button>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   )
 }

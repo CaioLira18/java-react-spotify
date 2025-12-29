@@ -11,6 +11,8 @@ import NavBar from './components/NavBar'
 import AddAlbumPage from './pages/AddAlbumPage'
 import DeleteAlbumPage from './pages/DeleteAlbumPage'
 import AlbumPage from './pages/AlbumPage'
+import SearchPage from './pages/SearchPage'
+import DeleteMusicPage from './pages/DeleteMusicPage'
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/albums/:id" element={<AlbumPage />} />
+          <Route path="/search" element={<SearchPage />} />
         </Route>
         <Route path="/music" element={<AddMusicPage />} />
         <Route path="/artist" element={<AddArtistPage />} />
@@ -30,6 +33,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
+        <Route path="/deleteMusic" element={<DeleteMusicPage />} />
       </Routes>
     </div>
 
