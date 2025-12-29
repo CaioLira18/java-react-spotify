@@ -308,24 +308,28 @@ const ArtistPage = () => {
             {albums.map((album, index) => (
               album.artistsNames.some(artist => artist.name === artista.name) && (
                 album.status != 'NOT_RELEASED' && (
-                <div className="albumsArtistPage" key={album.id}>
-                  <a href={`/albums/${album.id}`}><div className="albumContainer">
-                    <div className="albumImage">
-                      <img src={album.cover} alt={album.name} />
-                    </div>
-                    <div className="albumInformation">
-                      <h4>{album.name}</h4>
-                      <div className="albumCredits">
-                        <p>Album • {album.year}</p>
-                        <div className="modalPlaylist">
-                          <p onClick={(e) => modalMoreOptionsAlbum(album, e)}>
-                            <i className="fa-solid fa-ellipsis"></i>
-                          </p>
+                  <div className="albumsArtistPage" key={album.id}>
+                    <div className="albumContainer">
+                      <div className="albumImage">
+                        <a href={`/albums/${album.id}`}>
+                          <img src={album.cover} alt={album.name} />
+                        </a>
+                      </div>
+                      <div className="albumInformation">
+                        <a href={`/albums/${album.id}`}>
+                          <h4>{album.name}</h4>
+                        </a>
+                        <div className="albumCredits">
+                          <p>Album • {album.year}</p>
+                          <div className="modalPlaylist">
+                            <p onClick={(e) => modalMoreOptionsAlbum(album, e)}>
+                              <i className="fa-solid fa-ellipsis"></i>
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div></a>
-                </div>
+                  </div>
                 )
               )
             ))}

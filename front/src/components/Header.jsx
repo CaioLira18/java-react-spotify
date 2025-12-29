@@ -143,6 +143,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
               onClick={() => handlePlayPlaylist(playlist)}
               style={{ cursor: "pointer" }}
             >
+              <a href={`/albums/${playlist.id}`}>
               <div className="boxOption">
                 <div className="boxImage">
                   <img src={playlist.cover} alt={playlist.name} />
@@ -156,6 +157,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                   </p>
                 </div>
               </div>
+              </a>
             </div>
           )
         ))}
