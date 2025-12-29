@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
+import br.com.caio.spotify.application.entities.enums.StatusMusic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class Album {
     private String duration;
     private String year;
     private ContentEnum type;
+    private StatusMusic status;
 
     @ManyToMany 
     @JoinTable(name = "tb_album_artists", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))

@@ -1,5 +1,6 @@
 package br.com.caio.spotify.application.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,16 +43,21 @@ public class AlbumService {
         return albumRepository.save(album); // Agora salvará sem erros de duplicidade
     }
 
-    public Optional<Album> updateAlbum(String id, Album updatedAlbum, List<String> artistsIds,
-            List<String> songsIds) {
+    public Optional<Album> updateAlbum(String id, Album updatedAlbum, List<String> artistsIds, List<String> songsIds) {
         return albumRepository.findById(id).map(item -> {
-            List<Artists> artists = artistRepository.findAllById(artistsIds);
-            List<Music> musics = musicRepository.findAllById(songsIds);
+            List<Artists> artists = (artistsIds != null && !artistsIds.isEmpty())
+                    ? artistRepository.findAllById(artistsIds)
+                    : new ArrayList<>();
+
+            List<Music> musics = (songsIds != null && !songsIds.isEmpty())
+                    ? musicRepository.findAllById(songsIds)
+                    : new ArrayList<>();
 
             item.setName(updatedAlbum.getName());
             item.setCover(updatedAlbum.getCover());
             item.setDuration(updatedAlbum.getDuration());
             item.setType(updatedAlbum.getType());
+            item.setStatus(updatedAlbum.getStatus());
             item.setYear(updatedAlbum.getYear());
             item.setArtistsNames(artists);
             item.setMusicsNames(musics);

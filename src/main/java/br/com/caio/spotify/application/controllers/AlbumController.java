@@ -47,6 +47,7 @@ public class AlbumController {
         playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
+        playlist.setStatus(dto.getStatus());
         playlist.setYear(dto.getYear()); // Verifique se o DTO e a Entity têm esse campo
 
         return ResponseEntity.ok(
@@ -64,6 +65,7 @@ public class AlbumController {
         playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
+        playlist.setStatus(dto.getStatus());
         playlist.setYear(dto.getYear());
 
         Optional<Album> updatedItem = albumService.updateAlbum(id, playlist, dto.getArtistsIds(),

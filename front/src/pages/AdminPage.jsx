@@ -54,12 +54,20 @@ const AdminPage = () => {
             <h2>Atualizar Musicas</h2></a>
         </div>
         <div className="adminPageBox">
+          <a href="/viewMusics"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766981926/N43RAAQISFIR5NEXHQAQB5WDYM_ozsmfp.jpg" alt="" />
+            <h2>Visualizar Musicas</h2></a>
+        </div>
+        <div className="adminPageBox">
           <a href="/album"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766605500/ROSE-1st-Studio-Album-rosie-Concept-Photo-documents-2_yyhheu.jpg" alt="" />
             <h2>Adicionar Álbums</h2></a>
         </div>
         <div className="adminPageBox">
           <a href="/deleteAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766977100/1900x1900-000000-81-0-0_raklbt.jpg" alt="" />
             <h2>Deletar Álbums</h2></a>
+        </div>
+        <div className="adminPageBox">
+          <a href="/updateAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766977100/1900x1900-000000-81-0-0_raklbt.jpg" alt="" />
+            <h2>Atualizar Álbums</h2></a>
         </div>
       </div>
         <div className="space"></div>

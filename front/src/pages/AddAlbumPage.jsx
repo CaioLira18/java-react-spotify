@@ -12,8 +12,28 @@ const AddAlbumPage = () => {
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [artistsIds, setArtistsIds] = useState([]);
+  const [status, setStatus] = useState("")
   const [songsIds, setSongsIds] = useState([]);
+  const [coverFile, setCoverFile] = useState(null)
 
+  async function uploadCoverToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", coverFile)
+    formData.append("upload_preset", "Covers")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error()
+
+    const data = await response.json()
+    return data.secure_url
+  }
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
@@ -35,42 +55,59 @@ const AddAlbumPage = () => {
       .catch(() => alert("Erro ao buscar Artistas."));
   }, []);
 
-  function addItem() {
-    // Verifique se os IDs estão chegando como Array de Strings
-    const payload = {
-      name,
-      duration,
-      cover,
-      type,
-      year,
-      artistsIds,
-      songsIds
-    };
+  async function addItem() {
+    if (
+      !name.trim() ||
+      !duration.trim() ||
+      !coverFile ||
+      !status ||
+      !year ||
+      !type ||
+      artistsIds.length === 0
+    ) {
+      alert("Preencha os campos obrigatórios.")
+      return
+    }
 
-    fetch(`${API_URL}/albums`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-      .then(async response => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Erro no servidor");
-        }
-        return response.json();
+    try {
+      setLoading(true)
+
+      const uploadedCoverUrl = await uploadCoverToCloudinary()
+      setCover(uploadedCoverUrl)
+
+      const payload = {
+        name,
+        duration,
+        cover: uploadedCoverUrl,
+        type,
+        year,
+        status,
+        songsIds,
+        artistsIds
+      }
+
+      await fetch(`${API_URL}/albums`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       })
-      .then(() => {
-        alert("Adicionado com sucesso!");
-        // Resetar para valores padrão, não strings vazias em campos obrigatórios
-        setName("");
-        setDuration("");
-        setCover("");
-        setYear("");
-        setType("ALBUM");
-        setArtistsIds([]);
-        setSongsIds([]);
-      })
-      .catch(err => alert("Erro: " + err.message));
+
+      alert("Adicionado com sucesso!")
+
+      setName("")
+      setDuration("")
+      setCover("")
+      setMusicUrl("")
+      setType("")
+      setYear("")
+      setStatus("")
+      setSongsIds([])
+      setArtistsIds([])
+    } catch {
+      alert("Erro ao adicionar.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -105,7 +142,12 @@ const AddAlbumPage = () => {
                 <h2>Cover</h2>
               </div>
               <div className="inputArea">
-                <input value={cover} onChange={(e) => setCover(e.target.value)} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCoverFile(e.target.files[0])}
+                />
+                {coverFile && <p style={{ color: 'green', marginTop: '5px' }}>Arquivo selecionado: {coverFile.name}</p>}
               </div>
             </div>
 
@@ -232,6 +274,26 @@ const AddAlbumPage = () => {
                 </select>
               </div>
             </div>
+
+            {/* Status */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Status</h2>
+              </div>
+              <div className="inputArea">
+                <select
+                  className="form-input"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">Selecione o status</option>
+                  <option value="RELEASED">Lançada</option>
+                  <option value="NOT_RELEASED">Não Lançada</option>
+                </select>
+              </div>
+            </div>
+
 
             <div className="addItemButton">
               <button onClick={addItem}>Adicionar</button>
