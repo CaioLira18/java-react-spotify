@@ -9,6 +9,7 @@ const AddMusicPage = () => {
   const [musicFile, setMusicFile] = useState(null)
   const [coverFile, setCoverFile] = useState(null)
   const [type, setType] = useState("MUSIC")
+  const [year, setYear] = useState("")
   const [status, setStatus] = useState("")
   const [artists, setArtists] = useState([])
   const [artistsIds, setArtistsIds] = useState([])
@@ -67,6 +68,7 @@ const AddMusicPage = () => {
       !coverFile ||
       !musicFile ||
       !status ||
+      !year ||
       !type ||
       artistsIds.length === 0
     ) {
@@ -88,6 +90,7 @@ const AddMusicPage = () => {
         cover: uploadedCoverUrl,
         musicUrl: uploadedUrl,
         type,
+        year,
         status,
         artistsIds
       }
@@ -105,6 +108,7 @@ const AddMusicPage = () => {
       setCover("")
       setMusicUrl("")
       setType("")
+      setYear("")
       setStatus("")
       setMusicFile(null)
       setArtistsIds([])
@@ -138,6 +142,17 @@ const AddMusicPage = () => {
               </div>
               <div className="inputArea">
                 <input value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+            </div>
+
+            {/* Ano */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Ano da Musica</h2>
+              </div>
+              <div className="inputArea">
+                <input value={year} onChange={(e) => setYear(e.target.value)} />
               </div>
             </div>
 
