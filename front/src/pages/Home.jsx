@@ -7,20 +7,22 @@ const Home = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [name, setName] = useState('');
-   
-   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setIsAuthenticated(true);
-        setIsAdmin(parsedUser.role === 'ADMIN');
-        setName(parsedUser.name || '');
-      } catch (err) {
-        console.error("Erro ao processar usuário do localStorage", err);
-      }
-    }
-  }, []);
+    const [searchTerm, setSearchTerm] = useState("")
+    const [filteredItem, setFilteredItem] = useState([])
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+                setName(parsedUser.name || '');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
 
     useEffect(() => {
         fetch(`${API_URL}/artists`)
@@ -37,9 +39,29 @@ const Home = () => {
             });
     }, []);
 
+    function search(value) {
+        setSearchTerm(value)
+
+        if (!value.trim()) {
+            setFilteredItem(item)
+            return
+        }
+
+        const filtered = item.filter(item =>
+            item.name.toLowerCase().includes(value.toLowerCase()) ||
+            (item.artistsNames && item.artistsNames.some(artist =>
+                artist.name.toLowerCase().includes(value.toLowerCase())
+            ))
+        )
+        setFilteredItem(filtered)
+    }
+
     return (
         <div>
             <div className="homeFlex">
+                <div className="inputItemSearch">
+                    <input value={searchTerm} onChange={(e) => search(e.target.value)} placeholder='O Que Você quer ouir hoje ?' type="text" />
+                </div>
                 <div className="artistas">
                     <div className="informationHeaderArtistas">
                         <h1>Artistas Populares</h1>
