@@ -33,6 +33,7 @@ public class ArtistService {
             item.setBannerPhoto(updatedItem.getBannerPhoto());
             item.setProfilePhoto(updatedItem.getProfilePhoto());
             item.setDescription(updatedItem.getDescription());
+            item.setMusicas(updatedItem.getMusicas());
             return artistRepository.save(item);
         });
     }
