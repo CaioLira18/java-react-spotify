@@ -1,0 +1,30 @@
+.albumViewBox {
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    border-radius: 10px;
+    margin: 0 auto;
+    margin-top: 10px;
+    transition: 0.3s all ease-in-out;
+}
+
+.albumViewBox:hover {
+    background-color: rgb(66, 66, 66);
+}
+
+.flexAlbumView {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.albumViewImage img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    border-radius: 5px;
+}

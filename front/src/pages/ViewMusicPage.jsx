@@ -131,7 +131,6 @@ const ViewMusicPage = () => {
                                 <h4>
                                     Número de Reproduções: 0
                                 </h4>
-
                             </div>
                         </div>
                     </div>

@@ -14,7 +14,9 @@ import './css/AddArtistPage.css'
 import './css/ModalMusic.css'
 import './css/Album.css'
 import './css/deletePages.css'
+import './css/ViewPages.css'
 import './utils/Fonts.css'
+
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
 

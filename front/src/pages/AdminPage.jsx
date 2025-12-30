@@ -70,7 +70,7 @@ const AdminPage = () => {
             <h2>Atualizar Álbums</h2></a>
         </div>
          <div className="adminPageBox">
-          <a href="/viewAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985896/1728448268079vlcsnap-2024-10-09-12h19m57s120_s2ied3.avif" alt="" />
+          <a href="/viewAlbums"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985896/1728448268079vlcsnap-2024-10-09-12h19m57s120_s2ied3.avif" alt="" />
             <h2>Visualizar Álbums</h2></a>
         </div>
       </div>
