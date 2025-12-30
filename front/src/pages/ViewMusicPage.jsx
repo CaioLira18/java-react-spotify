@@ -121,11 +121,13 @@ const ViewMusicPage = () => {
                                 <h4>
                                     Ano de Lançamento: {selectedSong.year}
                                 </h4>
-                                {albums.map((selectedAlbum) => (
-                                    <h4>
-                                        Album: {selectedAlbum.musicsNames.map(music => music.id === selectedSong.id ? selectedAlbum.name : 'Sem Álbum')}
-                                    </h4>
-                                ))}
+                                <h4>
+                                    Album: {
+                                        albums.find(album =>
+                                            album.musicsNames.some(music => music.id === selectedSong.id)
+                                        )?.name || 'Sem Álbum'
+                                    }
+                                </h4>
                                 <h4>
                                     Número de Reproduções: 0
                                 </h4>
