@@ -19,7 +19,6 @@ const NavBar = () => {
           .then((data) => setUsers(data))
           .catch((error) => {
             console.error(error);
-            alert("Erro ao buscar Usuarios.");
           });
       }, []);
   

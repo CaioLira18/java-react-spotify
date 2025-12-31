@@ -36,6 +36,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-top: 20px;
 }
 
 .buttonHeader button {
@@ -252,6 +253,11 @@
   height: 56px;
   border-radius: 4px;
   background-color: blue;
+}
+
+.informationsLikedSongBox {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Responsivo para telas menores */

@@ -34,6 +34,7 @@ public class ArtistService {
             item.setProfilePhoto(updatedItem.getProfilePhoto());
             item.setDescription(updatedItem.getDescription());
             item.setMusicas(updatedItem.getMusicas());
+            item.setStatus(updatedItem.getStatus());
             return artistRepository.save(item);
         });
     }

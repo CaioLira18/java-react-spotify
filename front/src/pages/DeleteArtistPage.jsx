@@ -107,6 +107,7 @@ const DeleteArtistPage = () => {
             <div className="centerContent">
                 <div className="deleteAlbumContainer">
                     {filteredArtists.map((artist) =>
+                        artist.status != "OFF" && (
                         <div className="albumDeleteBox">
                             <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsArtists(artist, e)}>
                                 <div className="albumDeleteImage">
@@ -117,10 +118,10 @@ const DeleteArtistPage = () => {
                                 </div>
                             </div>
                         </div>
+                        )
                     )}
                 </div>
             </div>
-
 
 
             {/* Modal Artist */}

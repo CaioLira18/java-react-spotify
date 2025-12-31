@@ -131,6 +131,15 @@ body {
     color: #b3b3b3;
 }
 
+.withoutArtists {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 30px;
+    font-weight: bold;
+}
+
 /* Ajuste para Mobile */
 @media (max-width: 768px) {
     .searchContainer {

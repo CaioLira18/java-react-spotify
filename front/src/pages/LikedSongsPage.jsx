@@ -193,7 +193,7 @@ const LikedSongsPage = () => {
           </div>
 
           {favoritesListSongs.map((song, index) => (
-            song.status !== 'NOT_RELEASED' && (
+            song.status != "NOT_RELEASED" && (
               <div key={song.id} className="playlist-song-row">
                 <div className="playlist-song-item" onClick={() => handlePlaySong(index)}>
                   <span className="song-index-number">{index + 1}</span>

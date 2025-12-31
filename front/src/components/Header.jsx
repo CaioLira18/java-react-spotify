@@ -12,6 +12,8 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [userID, setUserID] = useState(null)
+  const [filteredSongs, setFilteredSongs] = useState([])
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -133,7 +135,10 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             <div className="boxImage">
               <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="" />
             </div>
-            <span> Musicas Curtidas</span>
+            <div className="informationsLikedSongBox">
+              <span> Musicas Curtidas</span>
+              <span>{songs.length} Musicas</span>
+            </div>
           </div></a>
         </div>
 

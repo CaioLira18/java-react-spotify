@@ -106,17 +106,19 @@ const DeleteAlbumPage = () => {
             <div className="centerContent">
                 <div className="deleteAlbumContainer">
                     {filteredAlbums.map((album) =>
-                        <div className="albumDeleteBox">
-                            <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(album, e)}>
-                                <div className="albumDeleteImage">
-                                    <img src={album.cover} alt="" />
-                                </div>
-                                <div className="albumDeleteNames">
-                                    <h4>{album.name} - {album.artistsNames.map(artist => artist.name)}</h4>
-                                    <h5>Álbum • {album.year}</h5>
+                        album.status != "NOT_RELEASED" && (
+                            <div className="albumDeleteBox">
+                                <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(album, e)}>
+                                    <div className="albumDeleteImage">
+                                        <img src={album.cover} alt="" />
+                                    </div>
+                                    <div className="albumDeleteNames">
+                                        <h4>{album.name} - {album.artistsNames.map(artist => artist.name)}</h4>
+                                        <h5>Álbum • {album.year}</h5>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )
                     )}
                 </div>
             </div>

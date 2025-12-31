@@ -58,12 +58,12 @@ const DeleteMusicPage = () => {
             .then(data => {
                 const songsData = Array.isArray(data) ? data : [];
                 setSongs(songsData);
-                setFiltredSongs(songsData); 
+                setFiltredSongs(songsData);
             })
             .catch(err => {
                 console.error(err);
                 setSongs([]);
-                setFiltredSongs([]); 
+                setFiltredSongs([]);
             })
     }, [])
 
@@ -95,11 +95,11 @@ const DeleteMusicPage = () => {
     return (
         <div>
             <div className="inputDeleteAlbumSearch">
-                <input 
-                    value={searchTerm} 
-                    onChange={(e) => search(e.target.value)} 
-                    placeholder='Digite o Nome da Musica' 
-                    type="text" 
+                <input
+                    value={searchTerm}
+                    onChange={(e) => search(e.target.value)}
+                    placeholder='Digite o Nome da Musica'
+                    type="text"
                 />
             </div>
 
@@ -114,19 +114,21 @@ const DeleteMusicPage = () => {
             {/* Container único para todas as músicas */}
             <div className="centerContent">
                 <div className="deleteAlbumContainer">
-                {filtredSongs.map((song) => (
-                    <div key={song.id} className="albumDeleteBox">
-                        <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(song, e)}>
-                            <div className="albumDeleteImage">
-                                <img src={song.cover} alt={song.name} />
+                    {filtredSongs.map((song) => (
+                        song.status != "NOT_RELEASED" && (
+                            <div key={song.id} className="albumDeleteBox">
+                                <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsAlbum(song, e)}>
+                                    <div className="albumDeleteImage">
+                                        <img src={song.cover} alt={song.name} />
+                                    </div>
+                                    <div className="albumDeleteNames">
+                                        <h4>{song.name} - {song.artistsNames.map(artist => artist.name).join(', ')}</h4>
+                                        <h5>Song • {song.year}</h5>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="albumDeleteNames">
-                                <h4>{song.name} - {song.artistsNames.map(artist => artist.name).join(', ')}</h4>
-                                <h5>Song • {song.year}</h5>
-                            </div>
-                        </div>
-                    </div>
-                                    ))}
+                        )
+                    ))}
                 </div>
             </div>
 

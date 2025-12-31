@@ -14,7 +14,7 @@ const AddMusicPage = () => {
   const [artists, setArtists] = useState([])
   const [artistsIds, setArtistsIds] = useState([])
   const [loading, setLoading] = useState(false)
-
+  const [toasts, setToasts] = useState([])
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
@@ -22,6 +22,16 @@ const AddMusicPage = () => {
       .then(data => setArtists(data))
       .catch(() => alert("Erro ao buscar Artistas."))
   }, [])
+
+  const showToast = (message, type = 'success') => {
+    const toastId = Date.now()
+    setToasts(prev => [...prev, { id: toastId, message, type }])
+    setTimeout(() => removeToast(toastId), 5000)
+  }
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id))
+  }
 
   async function uploadMusicToCloudinary() {
     const formData = new FormData()
@@ -101,7 +111,7 @@ const AddMusicPage = () => {
         body: JSON.stringify(payload)
       })
 
-      alert("Adicionado com sucesso!")
+      showToast("Adicionado com sucesso!")
 
       setName("")
       setDuration("")
@@ -286,6 +296,16 @@ const AddMusicPage = () => {
 
           </div>
         </div>
+      </div>
+      
+      {/* Notificações Toast */}
+      <div className="toast-container">
+        {toasts.map(toast => (
+          <div key={toast.id} className={`toast toast-${toast.type}`}>
+            <span>{toast.message}</span>
+            <button onClick={() => removeToast(toast.id)}>×</button>
+          </div>
+        ))}
       </div>
     </div>
   )

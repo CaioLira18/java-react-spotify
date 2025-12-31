@@ -2,6 +2,7 @@ package br.com.caio.spotify.application.entities;
 
 import java.util.List;
 
+import br.com.caio.spotify.application.entities.enums.StatusArtist;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,7 @@ public class Artists {
     private String profilePhoto;
     private String bannerPhoto;
     private String description;
+    private StatusArtist status;
 
     @OneToMany
     private List<Music> musicas;
