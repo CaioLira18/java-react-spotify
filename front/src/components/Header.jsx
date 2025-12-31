@@ -4,8 +4,9 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
 
   const API_URL = "http://localhost:8080/api"
   const [songs, setSongs] = useState([])
+  const [artists, setArtists] = useState([])
+  const [albums, setAlbums] = useState([])
   const [playlists, setPlaylists] = useState([])
-  const [filteredSongs, setFilteredSongs] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -34,10 +35,19 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
     }
   }, [])
 
-  const handlePlaySong = (index) => {
-    setPlaylist(filteredSongs)
-    setCurrentIndex(index)
-  }
+  useEffect(() => {
+      fetch(`${API_URL}/artists`)
+        .then(res => res.json())
+        .then(data => setArtists(data))
+        .catch(console.error)
+  }, [])
+
+  useEffect(() => {
+      fetch(`${API_URL}/albums`)
+        .then(res => res.json())
+        .then(data => setAlbums(data))
+        .catch(console.error)
+  }, [])
 
   const handlePlayPlaylist = (playlist) => {
     if (playlist.songs && playlist.songs.length > 0) {
@@ -51,17 +61,26 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
 
     if (!value.trim()) {
       setFilteredSongs(songs)
+      setFilteredArtists(artists)
+      setFilteredAlbums(albums)
       return
     }
 
-    const filtered = songs.filter(song =>
-      song.name.toLowerCase().includes(value.toLowerCase()) ||
-      (song.artistsNames && song.artistsNames.some(artist =>
-        artist.name.toLowerCase().includes(value.toLowerCase())
-      ))
+    const filteredSongsSearch = songs.filter(song =>
+      song.name.toLowerCase().includes(value.toLowerCase()) 
     )
 
-    setFilteredSongs(filtered)
+    const filteredArtistsSearch = artists.filter(artist =>
+      artist.name.toLowerCase().includes(value.toLowerCase()) 
+    )
+
+    const filteredAlbumSearch = albums.filter(album =>
+      album.name.toLowerCase().includes(value.toLowerCase())
+    )
+
+    setFilteredSongs(filteredSongsSearch)
+    setFilteredAlbums(filteredAlbumSearch)
+    setFilteredArtists(filteredArtistsSearch)
   }
 
   return (

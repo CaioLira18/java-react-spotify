@@ -162,7 +162,7 @@ const LikedSongsPage = () => {
             className="playlist-cover-image"
           />
           <div className="playlist-header-info">
-            <p className="playlist-label-type">Álbum</p>
+            <p className="playlist-label-type">Playlist</p>
             <h1 className="playlist-main-title">Musicas Curtidas</h1>
             <div className="playlist-meta-info">
               <img
