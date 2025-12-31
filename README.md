@@ -96,6 +96,31 @@ npm run dev
 
 ```
 
-### Sugestão de Próximo Passo:
+## Imagens Do Projeto
 
-Deseja que eu crie uma seção detalhada descrevendo os **Endpoints da API** (como os caminhos de `/auth/login` ou `/music/add`) para ajudar outros desenvolvedores a entenderem como o seu backend funciona?
+- Home
+- src/pages/9.png
+
+- Artist Page
+- src/pages/1.png
+
+- Musics Favorites Page
+- src/pages/2.png
+
+- Album Page
+- src/pages/3.png
+
+- Info Artists
+- src/pages/4.png
+
+- Admin Page
+- src/pages/5.png
+
+- Delete Album Page
+- src/pages/6.png
+
+- Delete Song Page
+- src/pages/7.png
+
+- Delete Artist Page
+- src/pages/8.png
