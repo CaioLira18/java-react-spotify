@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
-  
+
   const API_URL = "http://localhost:8080/api"
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
@@ -20,14 +20,14 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
         setIsAuthenticated(true)
         setIsAdmin(parsedUser.role === 'ADMIN')
         setUserID(parsedUser.id)
-        
+
         // Corrigir os nomes das propriedades
         const userPlaylists = parsedUser.listPlaylists || []
         const userSongs = parsedUser.listMusic || []
-        
+
         setPlaylists(userPlaylists)
         setSongs(userSongs)
-        setFilteredSongs(userSongs) 
+        setFilteredSongs(userSongs)
       } catch (err) {
         console.error("Erro ao processar usuário do localStorage", err)
       }
@@ -108,31 +108,15 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
           </div>
         </div>
 
-        {/* Renderizar músicas */}
-        {filteredSongs.length > 0 && filteredSongs.map((song, index) => (
-          (type === "MUSIC" || type === "ALL") && (
-            <div
-              className="optionsHeader"
-              key={song.id}
-              onClick={() => handlePlaySong(index)}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="boxOption">
-                <div className="boxImage">
-                  <img src={song.cover} alt={song.name} />
-                </div>
-
-                <div className="boxInformations">
-                  <span>{song.name}</span>
-                  <p>
-                    {song.type === "MUSIC" ? "Song" : "Album"} –{" "}
-                    {song.artistsNames && song.artistsNames.map(a => a.name).join(", ")}
-                  </p>
-                </div>
-              </div>
+        <div className="likedSongs">
+          <a href="/likedSongs">
+          <div className="boxOption">
+            <div className="boxImage">
+              <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="" />
             </div>
-          )
-        ))}
+            <span> Musicas Curtidas</span>
+          </div></a>
+        </div>
 
         {/* Renderizar playlists */}
         {playlists.length > 0 && playlists.map((playlist) => (
@@ -144,19 +128,19 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
               style={{ cursor: "pointer" }}
             >
               <a href={`/albums/${playlist.id}`}>
-              <div className="boxOption">
-                <div className="boxImage">
-                  <img src={playlist.cover} alt={playlist.name} />
-                </div>
+                <div className="boxOption">
+                  <div className="boxImage">
+                    <img src={playlist.cover} alt={playlist.name} />
+                  </div>
 
-                <div className="boxInformations">
-                  <span>{playlist.name}</span>
-                  <p>
-                    Playlist –{" "}
-                    {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
-                  </p>
+                  <div className="boxInformations">
+                    <span>{playlist.name}</span>
+                    <p>
+                      Playlist –{" "}
+                      {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
+                    </p>
+                  </div>
                 </div>
-              </div>
               </a>
             </div>
           )

@@ -16,6 +16,7 @@ const AlbumPage = () => {
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListAlbums, setFavoritesListAlbums] = useState([])
   const [userID, setUserID] = useState(null)
+  const [albums, setAlbums] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const API_URL = "http://localhost:8080/api"
@@ -52,6 +53,13 @@ const AlbumPage = () => {
       .then(data => setPlaylistData(data))
       .catch(() => showToast("Erro ao carregar Album!", "error"))
   }, [id])
+
+  useEffect(() => {
+    fetch(`${API_URL}/albums`)
+      .then(res => res.json())
+      .then(data => setAlbums(data))
+      .catch(console.error)
+  }, [])
 
   // --- FUNÇÕES DE UTILIDADE ---
 
@@ -223,6 +231,13 @@ const AlbumPage = () => {
     }
   }
 
+  const findAlbumForSong = (songId) => {
+    const album = albums.find(album =>
+      album.musicsNames?.some(music => music.id === songId)
+    )
+    return album ? album.name : '---'
+  }
+
   const addMusicToAlbum = async () => {
     if (!selectedSongToAlbum || !playlistData) return
 
@@ -237,13 +252,13 @@ const AlbumPage = () => {
 
       if (response.ok) {
         showToast("Música adicionada à playlist!", "success")
-        
+
         // Recarregar dados da playlist
         fetch(`${API_URL}/albums/${id}`)
           .then(res => res.json())
           .then(data => setPlaylistData(data))
           .catch(console.error)
-        
+
         closeAdminModal()
       } else {
         const errorData = await response.json().catch(() => ({}))
@@ -270,13 +285,13 @@ const AlbumPage = () => {
 
       if (response.ok) {
         showToast("Música deletada da playlist!", "success")
-        
+
         // Recarregar dados da playlist
         fetch(`${API_URL}/albums/${id}`)
           .then(res => res.json())
           .then(data => setPlaylistData(data))
           .catch(console.error)
-        
+
         closeAdminModal()
       } else {
         const errorData = await response.json().catch(() => ({}))
@@ -347,46 +362,61 @@ const AlbumPage = () => {
             <i className="fa-solid fa-arrow-down"></i>
           </button>
           {isAdmin && (
-          <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
-            <i className="fa-solid fa-ellipsis"></i>
-          </button>
+            <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
+              <i className="fa-solid fa-ellipsis"></i>
+            </button>
           )}
         </div>
 
         {/* Lista de Músicas */}
         <div className="playlist-songs-list">
           <div className="playlist-table-header">
-            <span className="table-col-number">#</span>
-            <span className="table-col-title">Título</span>
-            <div className="durationReprodution">
-              <span className="table-col-plays">Reproduções</span>
-              <span className="table-col-duration">Duração</span>
-            </div>
+            <div className="table-col-number">#</div>
+            <div className="table-col-title">Título</div>
+            <div className="table-col-album">Album</div>
+            <div className="table-col-plays">Reproduções</div>
+            <div className="table-col-duration">Duração</div>
           </div>
 
           {playlistSongs.map((song, index) => (
             (song.status != 'NOT_RELEASED' && (
-            <div className="playlist-song-row" key={song.id}>
-              <div className="playlist-song-item" onClick={() => handlePlay(index)}>
-                <span className="song-index-number">{index + 1}</span>
-                <div className="song-title-section">
-                  <img src={song.cover} alt={song.name} className="song-cover-thumb" />
-                  <div className="song-text-info">
-                    <h4 className="song-title-text">{song.name}</h4>
-                    <p className="song-artist-text">{song.artistsNames?.map(a => a.name).join(', ')}</p>
+              <div key={song.id} className="playlist-song-row">
+                <div className="playlist-song-item" onClick={() => handlePlay(index)}>
+                  <span className="song-index-number">{index + 1}</span>
+
+                  <div className="song-title-section">
+                    <img
+                      src={song.cover}
+                      alt={song.name}
+                      className="song-cover-thumb"
+                    />
+                    <div className="song-text-info">
+                      <p className="song-title-text">{song.name}</p>
+                      <p className="song-artist-text">
+                        {song.artistsNames?.map(a => a.name).join(', ')}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="durationReprodution">
-                  <span className="song-plays-count">{(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</span>
+
+                  <div className="song-album-name">
+                    {findAlbumForSong(song.id)}
+                  </div>
+
+                  <div className="song-plays-count">
+                    {(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                  </div>
+
                   <div className="song-duration-section">
                     <p className="song-time-text">{song.duration}</p>
-                    <button className="song-options-btn" onClick={(e) => modalMoreOptions(song, e)}>
-                      <i className="fa-solid fa-ellipsis"></i>
+                    <button
+                      className="song-options-btn"
+                      onClick={(e) => modalMoreOptions(song, e)}
+                    >
+                      ⋮
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
             ))
           ))}
         </div>
@@ -465,13 +495,13 @@ const AlbumPage = () => {
                   </button>
                 )
               )}
-              
+
               {isAdmin && (
                 <div className="adminOptions">
                   <div className="inserirMusica">
-                    <select 
-                      className="form-input" 
-                      name="musicas" 
+                    <select
+                      className="form-input"
+                      name="musicas"
                       id="musicas"
                       value={selectedSongToAlbum}
                       onChange={(e) => setSelectedSongToAlbum(e.target.value)}
@@ -486,7 +516,7 @@ const AlbumPage = () => {
                     <button onClick={addMusicToAlbum}>Adicionar Música No Álbum</button>
                     <button onClick={removeMusicFromPlaylist}>Remover Música do Álbum</button>
                   </div>
-                  
+
                 </div>
               )}
             </div>

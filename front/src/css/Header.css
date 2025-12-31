@@ -236,6 +236,24 @@
   background: #4a4a4a;
 }
 
+.likedSongsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+  padding: 8px;
+}
+
+.boxLikedSong {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  background-color: blue;
+}
+
 /* Responsivo para telas menores */
 @media (max-width: 1024px) {
   .header {
