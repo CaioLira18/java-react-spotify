@@ -78,7 +78,6 @@ O projeto segue uma arquitetura clara e separada por responsabilidades:
 3. Execute o comando:
 ```bash
 mvn spring-boot:run
-
 ```
 
 ### 2. Frontend
@@ -87,40 +86,40 @@ mvn spring-boot:run
 2. Instale as dependências:
 ```bash
 npm install
-
 ```
 
 3. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
-
 ```
 
-## Imagens Do Projeto
+---
 
-- Home
-- src/pages/9.png
+## 📸 Imagens do Projeto
 
-- Artist Page
-- src/pages/1.png
+### Home
+![Home](/pages/9.png)
 
-- Musics Favorites Page
-- src/pages/2.png
+### Artist Page
+![Artist Page](/pages/1.png)
 
-- Album Page
-- src/pages/3.png
+### Musics Favorites Page
+![Musics Favorites Page](/pages/2.png)
 
-- Info Artists
-- src/pages/4.png
+### Album Page
+![Album Page](/pages/3.png)
 
-- Admin Page
-- src/pages/5.png
+### Info Artists
+![Info Artists](/pages/4.png)
 
-- Delete Album Page
-- src/pages/6.png
+### Admin Page
+![Admin Page](/pages/5.png)
 
-- Delete Song Page
-- src/pages/7.png
+### Delete Album Page
+![Delete Album Page](/pages/6.png)
 
-- Delete Artist Page
-- src/pages/8.png
+### Delete Song Page
+![Delete Song Page](/pages/7.png)
+
+### Delete Artist Page
+![Delete Artist Page](/pages/8.png)
