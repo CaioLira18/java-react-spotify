@@ -137,6 +137,20 @@
   cursor: pointer;
 }
 
+.columnArtist {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
+}
+
+.columnArtist p {
+  color: rgb(189, 189, 189);
+  font-weight: 100;
+  font-size: 14px;
+
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .navBarBox {
