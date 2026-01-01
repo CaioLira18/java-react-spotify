@@ -78,7 +78,6 @@ O projeto segue uma arquitetura clara e separada por responsabilidades:
 3. Execute o comando:
 ```bash
 mvn spring-boot:run
-
 ```
 
 ### 2. Frontend
@@ -87,15 +86,40 @@ mvn spring-boot:run
 2. Instale as dependências:
 ```bash
 npm install
-
 ```
 
 3. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
-
 ```
 
-### Sugestão de Próximo Passo:
+---
 
-Deseja que eu crie uma seção detalhada descrevendo os **Endpoints da API** (como os caminhos de `/auth/login` ou `/music/add`) para ajudar outros desenvolvedores a entenderem como o seu backend funciona?
+## 📸 Imagens do Projeto
+
+### Home
+![Home](/pages/9.png)
+
+### Artist Page
+![Artist Page](/pages/1.png)
+
+### Musics Favorites Page
+![Musics Favorites Page](/pages/2.png)
+
+### Album Page
+![Album Page](/pages/3.png)
+
+### Info Artists
+![Info Artists](/pages/4.png)
+
+### Admin Page
+![Admin Page](/pages/5.png)
+
+### Delete Album Page
+![Delete Album Page](/pages/6.png)
+
+### Delete Song Page
+![Delete Song Page](/pages/7.png)
+
+### Delete Artist Page
+![Delete Artist Page](/pages/8.png)
