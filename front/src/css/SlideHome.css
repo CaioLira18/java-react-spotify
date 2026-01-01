@@ -1,0 +1,82 @@
+.slideTopPlaylistsHomeBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 70vw;
+    background-color: rgb(42, 42, 42);
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.slideTopPlaylistsHomeInformations {
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+}
+
+.slideTopPlaylistsHomeInformationsPlaylist h1 {
+    font-size: 40px;
+}
+
+.slideTopPlaylistsHomeImagePlaylist img {
+    width: 250px;
+}
+
+.slideTopPlaylistsHomeButton {
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.slideTopPlaylistsHomeButton button {
+    width: 100px;
+    height: 50px;
+    border-radius: 40px;
+}
+
+.play-button {
+    background-color: #1ed760;
+    color: black;
+    font-weight: bold;
+    font-size: 15px;
+    border: none;
+    transition: 0.3s all ease-in-out;
+}
+
+.play-button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.follow_button {
+    background-color: transparent;
+    border: 2px solid gray;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.3s all ease-in-out;
+}
+
+.follow_button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.more_button {
+    background-color: transparent;
+    border: none;
+    font-size: 25px;
+}
+
+.more_button i {
+    cursor: pointer;
+    color: rgb(137, 137, 137);
+    transition: 0.3s all ease-in-out;
+}
+
+.more_button i:hover {
+    color: white;
+}

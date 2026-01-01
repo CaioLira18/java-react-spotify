@@ -190,6 +190,7 @@ const NavBar = () => {
           )}
           {isAuthenticated && (
             <div className="userBox">
+              <i class="fa-regular fa-bell"></i>
               <div className="userImage">
                 <img
                   src={

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
+import SlideHome from "../components/SlideHome";
 
 const Home = () => {
     const API_URL = "http://localhost:8080/api";
@@ -31,6 +32,7 @@ const Home = () => {
     return (
 
         <div className="homeFlex">
+            <SlideHome />
             <div className="artistas">
                 <h1>Artistas Populares</h1>
                 <div className="containerArtists">

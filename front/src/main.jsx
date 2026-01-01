@@ -15,6 +15,7 @@ import './css/ModalMusic.css'
 import './css/Album.css'
 import './css/deletePages.css'
 import './css/ViewPages.css'
+import './css/SlideHome.css'
 import './utils/Fonts.css'
 
 import App from './App.jsx'

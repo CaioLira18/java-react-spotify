@@ -100,15 +100,27 @@
   border-radius: 20px;
 }
 
+.fa-regular {
+  font-size: 20px;
+}
+
 .userImage{
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  background-color: rgb(30, 30, 30);
+  padding: 10px;
+  border-radius: 50%;
+  transition: 0.3s all ease-in-out;
+}
+
+.userImage:hover {
+  transform: scale(1.1);
 }
 
 .userImage img {
-  width: 60px;
+  width: 40px;
   border-radius: 50%;
   object-fit: cover;
 }
