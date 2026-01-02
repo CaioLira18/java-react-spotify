@@ -69,12 +69,16 @@ const AdminPage = () => {
           <a href="/updateAlbum"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985811/240628-babymonster-x-wwd-japan-magazine-v0-kps35qkhc89d1_hfs2k2.webp" alt="" />
             <h2>Atualizar Álbums</h2></a>
         </div>
-         <div className="adminPageBox">
+        <div className="adminPageBox">
           <a href="/viewAlbums"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1766985896/1728448268079vlcsnap-2024-10-09-12h19m57s120_s2ied3.avif" alt="" />
             <h2>Visualizar Álbums</h2></a>
         </div>
+        <div className="adminPageBox">
+          <a href="/playlist"><img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767326460/Guns-N-Roses-anuncia-turne-no-Brasil-e-confirma-show-em-Curitiba-Incheon-14-scaled_cvdsp7.jpg" alt="" />
+            <h2>Adicionar Playlist</h2></a>
+        </div>
       </div>
-        <div className="space"></div>
+      <div className="space"></div>
     </div>
   )
 }

@@ -1,27 +1,45 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 const SlideHome = () => {
+    const API_URL = "http://localhost:8080/api";
+    const [playlists, setPlaylists] = useState([]);
+
+    useEffect(() => {
+        fetch(`${API_URL}/playlists`)
+            .then(response => response.json())
+            .then(data => {
+                setPlaylists(data)
+            })
+            .catch(() => alert("Erro ao buscar Playlists."))
+    }, [])
+
     return (
         <div>
+            {playlists.map((playlist) => (
             <div className="slideTopPlaylistsHomeContainer">
                 <div className="slideTopPlaylistsHomeBox">
                     <div className="slideTopPlaylistsHomeImagePlaylist">
-                        <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767248696/461d0e2f20b7b7faa9b5929d2d5e0f0d.640x640x1_z05ept.jpg" alt="" />
+                        <img src={playlist.cover} alt="" />
                     </div>
                     <div className="slideTopPlaylistsHomeInformations">
                         <div className="slideTopPlaylistsHomeInformationsPlaylist">
                             <strong><span>Playlist</span></strong>
-                            <h1>TOP HITS · Os Sucessos Mais Ouvidos Top Charts · Today's Best Songs</h1>
-                            <p>Ressaca de ano novo? Vem curar ouvindo o melhor do pop internacional.</p>
+                            <h1>{playlist.name}</h1>
+                            <p>{playlist.description}</p>
                         </div>
                         <div className="slideTopPlaylistsHomeButton">
-                            <button className='play-button'>Play</button>
+                            <a href={`/playlist/${playlist.id}`}><button className='play-button'>Play</button></a>
                             <button className='follow_button'>Seguir</button>
                             <button className='more_button'><i className="fa-solid fa-ellipsis"></i></button>
+                        </div>
+                        <div className="slideBars">
+                            <i class="fa-regular fa-circle"></i>
+                            <i class="fa-solid fa-circle"></i>
                         </div>
                     </div>
                 </div>
             </div>
+            ))}
         </div>
     )
 }

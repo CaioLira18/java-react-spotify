@@ -1,0 +1,247 @@
+import React, { useEffect, useState } from 'react'
+
+const AddPlaylistPage = () => {
+  const API_URL = "http://localhost:8080/api";
+
+  const [name, setName] = useState("");
+  const [cover, setCover] = useState("");
+  const [year, setYear] = useState("");
+  const [musicUrl, setMusicUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [type, setType] = useState("SPOTIFY_PLAYLIST");
+  const [songs, setSongs] = useState([]);
+  const [status, setStatus] = useState("");
+  const [songsIds, setSongsIds] = useState([]);
+  const [coverFile, setCoverFile] = useState(null)
+
+  async function uploadCoverToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", coverFile)
+    formData.append("upload_preset", "Covers")
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    )
+
+    if (!response.ok) throw new Error()
+
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  useEffect(() => {
+    fetch(`${API_URL}/songs`)
+      .then(response => {
+        if (!response.ok) throw new Error();
+        return response.json();
+      })
+      .then(data => setSongs(data))
+      .catch(() => alert("Erro ao buscar Musicas."));
+  }, []);
+
+  async function addItem() {
+    if (
+      !name.trim() ||
+      !description.trim() ||
+      !coverFile ||
+      !status ||
+      !year ||
+      !type
+    ) {
+      alert("Preencha os campos obrigatórios.")
+      return
+    }
+
+    try {
+
+      const uploadedCoverUrl = await uploadCoverToCloudinary()
+      setCover(uploadedCoverUrl)
+
+      const payload = {
+        name,
+        description,
+        cover: uploadedCoverUrl,
+        type,
+        year,
+        status,
+        songsIds,
+      }
+
+      await fetch(`${API_URL}/playlists`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+
+      alert("Adicionado com sucesso!")
+
+      setName("")
+      setDescription("")
+      setCover("")
+      setMusicUrl("")
+      setType("")
+      setYear("")
+      setStatus("")
+      setSongsIds([])
+    } catch {
+      alert("Erro ao adicionar.")
+    } finally {
+    }
+  }
+
+  return (
+    <div>
+      <div className="artist">
+        <div className="containerItem">
+          <div className="boxItem">
+            <div className="logoBox">
+              <img
+                src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp"
+                alt=""
+              />
+            </div>
+
+            <h1>Adicionar Playlist</h1>
+
+            {/* Nome */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Name</h2>
+              </div>
+              <div className="inputArea">
+                <input value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+            </div>
+
+            {/* Descrição */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Descrição</h2>
+              </div>
+              <div className="inputArea">
+                <input value={description} onChange={(e) => setDescription(e.target.value)} />
+              </div>
+            </div>
+
+            {/* Cover */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Cover</h2>
+              </div>
+              <div className="inputArea">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCoverFile(e.target.files[0])}
+                />
+                {coverFile && <p style={{ color: 'green', marginTop: '5px' }}>Arquivo selecionado: {coverFile.name}</p>}
+              </div>
+            </div>
+
+            {/* Ano */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Ano de Lançamento</h2>
+              </div>
+              <div className="inputArea">
+                <input value={year} onChange={(e) => setYear(e.target.value)} />
+              </div>
+            </div>
+
+            {/* Musicas */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Musicas</h2>
+              </div>
+              <div className="inputArea">
+                <select
+                  multiple
+                  className="form-input"
+                  value={songsIds}
+                  onChange={(e) => {
+                    const values = Array.from(
+                      e.target.selectedOptions,
+                      option => option.value
+                    );
+                    setSongsIds(values);
+                  }}
+                >
+                  {songs.map(song => (
+                    <option key={song.id} value={song.id}>
+                      {song.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Musicas Selecionadas */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Musicas Selecionadas</h2>
+              </div>
+              <div className="inputArea">
+                <ul>
+                  {songsIds.map(id => {
+                    const song = songs.find(s => s.id === id);
+                    return <li key={id}>{song?.name}</li>;
+                  })}
+                </ul>
+              </div>
+            </div>
+
+            {/* Tipo */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Role</h2>
+              </div>
+              <div className="inputArea">
+                <select className='form-input' value={type} onChange={(e) => setType(e.target.value)}>
+                  <option value="">Selecione a Opção</option>
+                  <option value="SPOTIFY_PLAYLIST">Spotify Playlist</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-pencil"></i>
+                <h2>Status</h2>
+              </div>
+              <div className="inputArea">
+                <select
+                  className="form-input"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">Selecione o status</option>
+                  <option value="RELEASED">Lançada</option>
+                  <option value="NOT_RELEASED">Não Lançada</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="addItemButton">
+              <button onClick={addItem}>Adicionar</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AddPlaylistPage;

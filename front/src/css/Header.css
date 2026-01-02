@@ -15,6 +15,26 @@
   gap: 12px;
 }
 
+.createButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #1f1f1f;
+  padding: 10px;
+  border-radius: 50px;
+  width: 80px;
+  height: 35px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: 0.3s all ease-in-out;
+}
+
+.createButton:hover {
+  background-color: #4f4f4f;
+  cursor: pointer;
+}
+
 .titleHeader h2 {
   font-size: 16px;
   font-weight: 700;
@@ -258,6 +278,72 @@
 .informationsLikedSongBox {
   display: flex;
   flex-direction: column;
+}
+
+/* Adicione isso ao seu Header.css */
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+.createModalContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  flex-direction: column;
+  background-color: #282828;
+  width: 540px;
+  height: 330px;
+  gap: 10px;
+  border-radius: 15px;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.optionCreateBox {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  width: 100%;
+  transition: 0.3s all ease-in-out;
+}
+
+.optionCreateBox:hover {
+  background-color: #3e3e3e;
+  cursor: pointer;
+}
+
+.playlistCreate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  transition: 0.3s all ease-in-out;
+  border-radius: 10px;
+}
+
+.playlistIcon {
+  background-color: #4a4a4a;
+  padding: 10px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsivo para telas menores */

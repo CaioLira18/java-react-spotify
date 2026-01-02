@@ -14,6 +14,7 @@
     align-items: start;
     justify-content: start;
     flex-direction: column;
+    gap: 10px;
 }
 
 .slideTopPlaylistsHomeInformationsPlaylist h1 {
@@ -79,4 +80,16 @@
 
 .more_button i:hover {
     color: white;
+}
+
+.slideBars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.slideBars i {
+    font-size: 10px;
 }

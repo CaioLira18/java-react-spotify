@@ -23,7 +23,7 @@ const Home = () => {
             setArtists(artistsData);
             setSongs(songsData);
             setAlbums(albumsData);
-            
+
             // Inicializa os artistas online logo após o fetch
             updateArtistsOnline(artistsData);
         }).catch(err => console.error("Erro ao carregar dados:", err));

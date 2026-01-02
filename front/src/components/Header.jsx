@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactDOM from 'react-dom'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
 
@@ -13,7 +14,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userID, setUserID] = useState(null)
   const [filteredSongs, setFilteredSongs] = useState([])
-
+  const [modalCreateOpen, setModalCreateOpen] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -24,7 +25,6 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
         setIsAdmin(parsedUser.role === 'ADMIN')
         setUserID(parsedUser.id)
 
-        // Corrigir os nomes das propriedades
         const userPlaylists = parsedUser.listPlaylists || []
         const userSongs = parsedUser.listMusic || []
 
@@ -38,17 +38,17 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   }, [])
 
   useEffect(() => {
-      fetch(`${API_URL}/artists`)
-        .then(res => res.json())
-        .then(data => setArtists(data))
-        .catch(console.error)
+    fetch(`${API_URL}/artists`)
+      .then(res => res.json())
+      .then(data => setArtists(data))
+      .catch(console.error)
   }, [])
 
   useEffect(() => {
-      fetch(`${API_URL}/albums`)
-        .then(res => res.json())
-        .then(data => setAlbums(data))
-        .catch(console.error)
+    fetch(`${API_URL}/albums`)
+      .then(res => res.json())
+      .then(data => setAlbums(data))
+      .catch(console.error)
   }, [])
 
   const handlePlayPlaylist = (playlist) => {
@@ -58,22 +58,28 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
     }
   }
 
+  function openCreateModal() {
+    setModalCreateOpen(true)
+  }
+
+  function closeCreateModal() {
+    setModalCreateOpen(false)
+  }
+
   function search(value) {
     setSearchTerm(value)
 
     if (!value.trim()) {
       setFilteredSongs(songs)
-      setFilteredArtists(artists)
-      setFilteredAlbums(albums)
       return
     }
 
     const filteredSongsSearch = songs.filter(song =>
-      song.name.toLowerCase().includes(value.toLowerCase()) 
+      song.name.toLowerCase().includes(value.toLowerCase())
     )
 
     const filteredArtistsSearch = artists.filter(artist =>
-      artist.name.toLowerCase().includes(value.toLowerCase()) 
+      artist.name.toLowerCase().includes(value.toLowerCase())
     )
 
     const filteredAlbumSearch = albums.filter(album =>
@@ -81,105 +87,134 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
     )
 
     setFilteredSongs(filteredSongsSearch)
-    setFilteredAlbums(filteredAlbumSearch)
-    setFilteredArtists(filteredArtistsSearch)
   }
 
   return (
-    <header>
-      <div className="header">
-        <div className="headerInformations">
-          <div className="titleHeader">
-            <i className="fa-solid fa-grip"></i>
-            <h2>Sua Biblioteca</h2>
-          </div>
-        </div>
-
-        <div className="othersOptions">
-          <div className="otherOption" onClick={() => setType("ALL")}>
-            <h2>All</h2>
-          </div>
-          <div className="otherOption" onClick={() => setType("PLAYLIST")}>
-            <h2>Playlist</h2>
-          </div>
-          <div className="otherOption" onClick={() => setType("ALBUM")}>
-            <h2>Album</h2>
-          </div>
-          <div className="otherOption" onClick={() => setType("MUSIC")}>
-            <h2>Músicas</h2>
-          </div>
-        </div>
-
-        <div className="searchFilterOption">
-          <div className="search">
-            <i className="fa-solid fa-magnifying-glass"></i>
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={(e) => search(e.target.value)}
-            />
-          </div>
-
-          <div className="filter">
-            <select>
-              <option>Recentes</option>
-            </select>
-            <i className="fa-solid fa-list"></i>
-          </div>
-        </div>
-
-        <div className="likedSongs">
-          <a href="/likedSongs">
-          <div className="boxOption">
-            <div className="boxImage">
-              <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="" />
+    <>
+      <header>
+        <div className="header">
+          <div className="headerInformations">
+            <div className="titleHeader">
+              <i className="fa-solid fa-grip"></i>
+              <h2>Sua Biblioteca</h2>
             </div>
-            <div className="informationsLikedSongBox">
-              <span> Musicas Curtidas</span>
-              <span>{songs.length} Musicas</span>
+            <div className="createButton" onClick={openCreateModal}>
+              <i className="fa-solid fa-plus"></i>
+              <span>Criar</span>
             </div>
-          </div></a>
-        </div>
+          </div>
 
-        {/* Renderizar playlists */}
-        {playlists.length > 0 && playlists.map((playlist) => (
-          (type === "PLAYLIST" || type === "ALL") && (
-            <div
-              className="optionsHeader"
-              key={playlist.id}
-              onClick={() => handlePlayPlaylist(playlist)}
-              style={{ cursor: "pointer" }}
-            >
-              <a href={`/albums/${playlist.id}`}>
-                <div className="boxOption">
-                  <div className="boxImage">
-                    <img src={playlist.cover} alt={playlist.name} />
-                  </div>
+          <div className="othersOptions">
+            <div className="otherOption" onClick={() => setType("ALL")}>
+              <h2>All</h2>
+            </div>
+            <div className="otherOption" onClick={() => setType("PLAYLIST")}>
+              <h2>Playlist</h2>
+            </div>
+            <div className="otherOption" onClick={() => setType("ALBUM")}>
+              <h2>Album</h2>
+            </div>
+            <div className="otherOption" onClick={() => setType("MUSIC")}>
+              <h2>Músicas</h2>
+            </div>
+          </div>
 
-                  <div className="boxInformations">
-                    <span>{playlist.name}</span>
-                    <p>
-                      Playlist –{" "}
-                      {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
-                    </p>
-                  </div>
+          <div className="searchFilterOption">
+            <div className="search">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                placeholder="Buscar em Sua Biblioteca"
+                value={searchTerm}
+                onChange={(e) => search(e.target.value)}
+              />
+            </div>
+
+            <div className="filter">
+              <select>
+                <option>Recentes</option>
+              </select>
+              <i className="fa-solid fa-list"></i>
+            </div>
+          </div>
+
+          <div className="likedSongs">
+            <a href="/likedSongs">
+              <div className="boxOption">
+                <div className="boxImage">
+                  <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="" />
                 </div>
-              </a>
-            </div>
-          )
-        ))}
+                <div className="informationsLikedSongBox">
+                  <span>Músicas Curtidas</span>
+                  <span>{songs.length} Músicas</span>
+                </div>
+              </div>
+            </a>
+          </div>
 
-        <div className="headerButtons">
-          <div className="buttonHeader">
-            <button><i className="fa-solid fa-plus"></i></button>
-          </div>
-          <div className="buttonHeader">
-            <button><i className="fa-solid fa-plus"></i></button>
-          </div>
+          {/* Renderizar playlists */}
+          {playlists.length > 0 && playlists.map((playlist) => (
+            (type === "PLAYLIST" || type === "ALL") && (
+              <div
+                className="optionsHeader"
+                key={playlist.id}
+                onClick={() => handlePlayPlaylist(playlist)}
+                style={{ cursor: "pointer" }}
+              >
+                <a href={`/albums/${playlist.id}`}>
+                  <div className="boxOption">
+                    <div className="boxImage">
+                      <img src={playlist.cover} alt={playlist.name} />
+                    </div>
+
+                    <div className="boxInformations">
+                      <span>{playlist.name}</span>
+                      <p>
+                        Playlist • {" "}
+                        {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            )
+          ))}
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* MODAL RENDERIZADO FORA DO HEADER */}
+      {modalCreateOpen && ReactDOM.createPortal(
+        <>
+          <div className="modalOverlay" onClick={closeCreateModal}></div>
+
+          <div className="createModalContainer">
+            <div className="optionCreateBox">
+              <div className="playlistCreate">
+                <div className="playlistIcon">
+                  <i className="fa-solid fa-plus"></i>
+                </div>
+                <div className="playlistCreateInformation">
+                  <span>Playlist</span>
+                  <p>Crie uma playlist com músicas</p>
+                </div>
+              </div>
+            </div>
+            <div className="optionCreateBox">
+              <div className="playlistCreate">
+                <div className="playlistIcon">
+                  <i className="fa-solid fa-folder"></i>
+                </div>
+                <div className="playlistCreateInformation">
+                  <span>Pasta</span>
+                  <p>Organize Suas Playlists</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   )
 }
 
