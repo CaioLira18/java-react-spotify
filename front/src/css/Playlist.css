@@ -1,0 +1,114 @@
+.addMusicsToPlaylistRecomendContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 10px;
+    padding: 15px;
+    margin-top: 200px;
+    border-top: 1px solid rgb(85, 85, 85);
+}
+
+.searchPlaylist {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 12px;
+  gap: 8px;
+  transition: all 0.2s ease;
+  width: 20%;
+}
+
+.searchFilterOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.searchPlaylist:hover {
+  background-color: #3a3a3a;
+}
+
+.searchPlaylist i {
+  color: #b3b3b3;
+  font-size: 14px;
+}
+
+.searchPlaylist input {
+  flex: 1;
+  height: 24px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 13px;
+}
+
+.search input::placeholder {
+  color: #6a6a6a;
+}
+
+.songPlaylistPageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+}
+
+.songPlaylistPageBox {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 15px;
+  width: 100%;
+  padding: 10px;
+  transition: 0.3s all ease-in-out;
+}
+
+.songPlaylistPageBox:hover {
+  background-color: #2a2a2a;
+}
+
+.songPlaylistPageInformations {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+}
+
+.songPlaylistPageImage img {
+  width: 50px;
+}
+
+.songPlaylistPageAlbum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.songPlaylistPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 25px;
+}
+
+.songPlaylistPageButton button {
+  width: 100px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid #7b7b7b;
+  border-radius: 50px;
+  font-weight: bold;
+}
+
+.songPlaylistPageButton button:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+  border: 1px solid #ffffff;
+}

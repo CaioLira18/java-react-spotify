@@ -21,6 +21,8 @@ const PlaylistPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [name, setName] = useState("")
+  const [filteredSongs, setFilteredSongs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const API_URL = "http://localhost:8080/api"
 
   useEffect(() => {
@@ -39,6 +41,16 @@ const PlaylistPage = () => {
       }
     }
   }, [])
+
+  function search(value) {
+    setSearchTerm(value);
+    if (!value.trim()) {
+      return;
+    }
+    const lowerValue = value.toLowerCase();
+
+    setFilteredSongs(songs.filter(s => s.name.toLowerCase().includes(lowerValue)));
+  }
 
   useEffect(() => {
     fetch(`${API_URL}/users`)
@@ -181,70 +193,6 @@ const PlaylistPage = () => {
     }
   }
 
-  const addAlbumToFavorites = async () => {
-    if (!playlistData || !userID) return
-
-    try {
-      const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/album/${playlistData.id}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-
-      if (response.ok) {
-        const updatedFavorites = [...favoritesListAlbums, playlistData]
-        setFavoritesListAlbums(updatedFavorites)
-
-        const storedUser = JSON.parse(localStorage.getItem('user'))
-        if (storedUser) {
-          storedUser.listPlaylists = updatedFavorites
-          localStorage.setItem('user', JSON.stringify(storedUser))
-        }
-
-        showToast("Álbum adicionado aos favoritos!", "success")
-      } else {
-        showToast("Erro ao adicionar album aos favoritos", "error")
-      }
-    } catch (error) {
-      console.error(error)
-      showToast("Erro ao adicionar album aos favoritos", "error")
-    }
-  }
-
-  const deleteAlbumFromFavorites = async () => {
-    if (!playlistData || !userID) return
-
-    try {
-      const response = await fetch(
-        `${API_URL}/users/${userID}/favorites/playlist/${playlistData.id}`,
-        {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        }
-      )
-
-      if (response.ok) {
-        const updatedFavorites = favoritesListAlbums.filter(p => p.id !== playlistData.id)
-        setFavoritesListAlbums(updatedFavorites)
-
-        const storedUser = JSON.parse(localStorage.getItem('user'))
-        if (storedUser) {
-          storedUser.listPlaylists = updatedFavorites
-          localStorage.setItem('user', JSON.stringify(storedUser))
-        }
-
-        showToast("Album removido dos favoritos!", "success")
-      } else {
-        showToast("Erro ao remover album dos favoritos", "error")
-      }
-    } catch (error) {
-      console.error(error)
-      showToast("Erro ao remover album dos favoritos", "error")
-    }
-  }
-
   const findAlbumForSong = (songId) => {
     const album = albums.find(album =>
       album.musicsNames?.some(music => music.id === songId)
@@ -252,73 +200,67 @@ const PlaylistPage = () => {
     return album ? album.name : '---'
   }
 
-  const addMusicToAlbum = async () => {
-    if (!selectedSongToAlbum || !playlistData) return
+  // Adicione o 'async' antes da função
+  async function addMusicToPlaylist(songId) {
+    // Verificamos se a playlist foi carregada
+    if (!playlistData) return;
 
     try {
-      const response = await fetch(
-        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToAlbum}`,
+      const response = await fetch( // Adicionado await
+        `${API_URL}/playlists/${playlistData.id}/music/${songId}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         }
-      )
+      );
 
       if (response.ok) {
-        showToast("Música adicionada à playlist!", "success")
+        showToast("Música adicionada à playlist!", "success");
 
-        // Recarregar dados da playlist
-        fetch(`${API_URL}/playlists/${id}`)
-          .then(res => res.json())
-          .then(data => setPlaylistData(data))
-          .catch(console.error)
+        const res = await fetch(`${API_URL}/playlists/${id}`);
+        const data = await res.json();
+        setPlaylistData(data);
 
-        closeAdminModal()
+        closeAdminModal();
       } else {
-        const errorData = await response.json().catch(() => ({}))
-        console.error('Erro ao adicionar música:', errorData)
-        showToast("Erro ao adicionar música à playlist", "error")
+        showToast("Erro ao adicionar música à playlist", "error");
       }
     } catch (error) {
-      console.error('Erro ao adicionar música:', error)
-      showToast("Erro ao adicionar música à playlist", "error")
+      console.error('Erro ao adicionar música:', error);
+      showToast("Erro ao conectar com o servidor", "error");
     }
   }
 
-  const removeMusicFromPlaylist = async () => {
-    if (!selectedSongToAlbum || !playlistData) return
+  async function removeMusicToPlaylist(songId) {
+    if (!playlistData) return;
 
     try {
       const response = await fetch(
-        `${API_URL}/playlists/${playlistData.id}/music/${selectedSongToAlbum}`,
+        `${API_URL}/playlists/${playlistData.id}/music/${songId}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' }
         }
-      )
+      );
 
       if (response.ok) {
-        showToast("Música deletada da playlist!", "success")
+        showToast("Música deletada à playlist!", "success");
 
-        // Recarregar dados da playlist
-        fetch(`${API_URL}/albums/${id}`)
-          .then(res => res.json())
-          .then(data => setPlaylistData(data))
-          .catch(console.error)
+        const res = await fetch(`${API_URL}/playlists/${id}`);
+        const data = await res.json();
+        setPlaylistData(data);
 
-        closeAdminModal()
+        closeModal();
       } else {
-        const errorData = await response.json().catch(() => ({}))
-        console.error('Erro ao remover música:', errorData)
-        showToast("Erro ao remover música da playlist", "error")
+        showToast("Erro ao adicionar música à playlist", "error");
       }
     } catch (error) {
-      console.error('Erro ao remover música:', error)
-      showToast("Erro ao remover música da playlist", "error")
+      console.error('Erro ao adicionar música:', error);
+      showToast("Erro ao conectar com o servidor", "error");
     }
   }
 
-  // Calcular duração total
+
   const calculateTotalDuration = (songs) => {
     const totalSeconds = songs.reduce((acc, song) => {
       const [min, sec] = song.duration.split(':').map(Number);
@@ -329,7 +271,6 @@ const PlaylistPage = () => {
     return `${minutes} min ${seconds} s`;
   }
 
-  // --- FILTROS DE RENDERIZAÇÃO ---
 
   if (!playlistData) {
     return <h1>Carregando Playlist...</h1>
@@ -352,38 +293,18 @@ const PlaylistPage = () => {
             <h1 className="playlist-main-title">{playlistData.name}</h1>
             <div className="playlist-meta-info">
               <img src={
-                    users.find(user => user.id === userID)?.image ||
-                    "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
-                  }
-                  alt="Sem foto" className="playlist-artist-avatar" />
-              <span>{name} • {playlistData.year} • {playlistSongs.length} músicas, {calculateTotalDuration(playlistSongs)}</span>
+                users.find(user => user.id === userID)?.image ||
+                "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
+              }
+                alt="Sem foto" className="playlist-artist-avatar" />
+              <span>{name} • {playlistData.year}</span>
+              {playlistData.musicsNames.length != 0 && (
+                <span> • {playlistSongs.length} músicas, {calculateTotalDuration(playlistSongs)}</span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Controles de ação */}
-        <div className="playlist-action-bar">
-          <button className="playlist-play-button" onClick={() => handlePlay(0)}>
-            <i className="fa-solid fa-play"></i>
-          </button>
-          <button className="playlist-action-btn">
-            <i className="fa-solid fa-shuffle"></i>
-          </button>
-          <button
-            className="playlist-action-btn"
-            onClick={isPlaylistFavorited ? deleteAlbumFromFavorites : addAlbumToFavorites}
-          >
-            <i className={isPlaylistFavorited ? "fa-solid fa-check" : "fa-regular fa-heart"}></i>
-          </button>
-          <button className="playlist-action-btn">
-            <i className="fa-solid fa-arrow-down"></i>
-          </button>
-          {isAdmin && (
-            <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
-              <i className="fa-solid fa-ellipsis"></i>
-            </button>
-          )}
-        </div>
 
         {/* Lista de Músicas */}
         <div className="playlist-songs-list">
@@ -438,7 +359,48 @@ const PlaylistPage = () => {
           ))}
         </div>
 
-        <div className="playlist-bottom-space"></div>
+        {playlistData.musicsNames.length == 0 && (
+          <div className="addMusicsToPlaylistRecomendContainer">
+            <div className="addMusicsToPlaylistRecomendBox">
+              <h2>Vamos Incrementar Sua Playlist Com Uma Musica</h2>
+            </div>
+            <div className="searchPlaylist">
+              <i className="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                placeholder="Buscar Músicas ou Episodios"
+                value={searchTerm}
+                onChange={(e) => search(e.target.value)}
+              />
+            </div>
+          </div>
+        )}
+
+
+        {filteredSongs.map((song) => (
+          playlistData.musicsNames.length == 0 && (
+            <div className="songPlaylistPageContainer">
+              <div className="songPlaylistPageBox">
+                <div className="songPlaylistPageImage">
+                  <img src={song.cover} alt="" />
+                </div>
+                <div className="songPlaylistPage">
+                  <div className="songPlaylistPageInformations">
+                    <span>{song.name}</span>
+                    <span>{song.artistsNames.map(artist => artist.name).join(", ")}</span>
+                  </div>
+                  <div className="songPlaylistPageAlbum">
+                    <span>{findAlbumForSong(song.id)}</span>
+                  </div>
+                  <div className="songPlaylistPageButton">
+                    <button onClick={() => addMusicToPlaylist(song.id)}>Adicionar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        ))}
+
       </div>
 
       {/* Modal Música */}
@@ -473,6 +435,16 @@ const PlaylistPage = () => {
                     <span>Adicionar aos Favoritos</span>
                   </button>
                 )
+              )}
+
+              {selectedSong && (
+                <button
+                  className="modal-action-option"
+                  onClick={() => removeMusicToPlaylist(selectedSong.id)}
+                >
+                  <i className="fa-solid fa-trash"></i>
+                  <span>Remover Musica da Playlist</span>
+                </button>
               )}
             </div>
           </div>
@@ -540,6 +512,7 @@ const PlaylistPage = () => {
           </div>
         </div>
       )}
+
 
       {/* Notificações Toast */}
       <div className="notification-toast-container">

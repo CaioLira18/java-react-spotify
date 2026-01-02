@@ -110,14 +110,6 @@
   margin: 0;
 }
 
-.searchFilterOption {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
-  gap: 8px;
-}
-
 .search {
   display: flex;
   align-items: center;
