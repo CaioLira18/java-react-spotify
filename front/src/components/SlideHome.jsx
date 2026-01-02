@@ -16,29 +16,31 @@ const SlideHome = () => {
     return (
         <div>
             {playlists.map((playlist) => (
-            <div className="slideTopPlaylistsHomeContainer">
-                <div className="slideTopPlaylistsHomeBox">
-                    <div className="slideTopPlaylistsHomeImagePlaylist">
-                        <img src={playlist.cover} alt="" />
+                playlist.type === "SPOTIFY_PLAYLIST" && (
+                    <div className="slideTopPlaylistsHomeContainer">
+                        <div className="slideTopPlaylistsHomeBox">
+                            <div className="slideTopPlaylistsHomeImagePlaylist">
+                                <img src={playlist.cover} alt="" />
+                            </div>
+                            <div className="slideTopPlaylistsHomeInformations">
+                                <div className="slideTopPlaylistsHomeInformationsPlaylist">
+                                    <strong><span>Playlist</span></strong>
+                                    <h1>{playlist.name}</h1>
+                                    <p>{playlist.description}</p>
+                                </div>
+                                <div className="slideTopPlaylistsHomeButton">
+                                    <a href={`/playlist/${playlist.id}`}><button className='play-button'>Play</button></a>
+                                    <button className='follow_button'>Seguir</button>
+                                    <button className='more_button'><i className="fa-solid fa-ellipsis"></i></button>
+                                </div>
+                                <div className="slideBars">
+                                    <i class="fa-regular fa-circle"></i>
+                                    <i class="fa-solid fa-circle"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="slideTopPlaylistsHomeInformations">
-                        <div className="slideTopPlaylistsHomeInformationsPlaylist">
-                            <strong><span>Playlist</span></strong>
-                            <h1>{playlist.name}</h1>
-                            <p>{playlist.description}</p>
-                        </div>
-                        <div className="slideTopPlaylistsHomeButton">
-                            <a href={`/playlist/${playlist.id}`}><button className='play-button'>Play</button></a>
-                            <button className='follow_button'>Seguir</button>
-                            <button className='more_button'><i className="fa-solid fa-ellipsis"></i></button>
-                        </div>
-                        <div className="slideBars">
-                            <i class="fa-regular fa-circle"></i>
-                            <i class="fa-solid fa-circle"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                )
             ))}
         </div>
     )

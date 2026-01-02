@@ -54,7 +54,7 @@ public class User {
     private List<Artists> listArtists = new ArrayList<>();
 
     /**
-     * Lista de Playlists Favoritas
+     * Lista de Albums Favoritos
     */
     @ManyToMany
     @JoinTable(
@@ -63,4 +63,15 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "albums_id")
     )
     private List<Album> listAlbums = new ArrayList<>();
+
+    /**
+     * Lista de Albums Favoritos
+    */
+    @ManyToMany
+    @JoinTable(
+        name = "tb_user_favorite_playlists", 
+        joinColumns = @JoinColumn(name = "user_id"), 
+        inverseJoinColumns = @JoinColumn(name = "playlist_id")
+    )
+    private List<Playlist> listPlaylists = new ArrayList<>();
 }

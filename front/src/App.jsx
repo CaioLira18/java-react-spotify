@@ -22,6 +22,7 @@ import ViewMusicPage from './pages/ViewMusicPage'
 import ViewAlbumPage from './pages/ViewAlbumPage'
 import LikedSongsPage from './pages/LikedSongsPage'
 import AddPlaylistPage from './pages/AddPlaylistPage'
+import PlaylistPage from './pages/PlaylistPage'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/albums/:id" element={<AlbumPage />} />
+          <Route path="/playlists/:id" element={<PlaylistPage />} />
           <Route path="/likedSongs" element={<LikedSongsPage />} />
         </Route>
         <Route path="/music" element={<AddMusicPage />} />

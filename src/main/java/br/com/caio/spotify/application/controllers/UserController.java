@@ -109,4 +109,13 @@ public class UserController {
         Optional<User> updatedUser = userService.removeArtistFromFavorites(userId, artistId);
         return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+    // Adicionar playlist aos favoritos
+    @PostMapping("/{userId}/favorites/playlist/{playlistId}")
+    public ResponseEntity<User> addPlaylistToFavorites(
+            @PathVariable String userId, 
+            @PathVariable String playlistId) {
+        Optional<User> updatedUser = userService.addPlaylistToFavorites(userId, playlistId);
+        return updatedUser.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 }

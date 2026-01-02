@@ -11,6 +11,7 @@ import br.com.caio.spotify.application.entities.User;
 import br.com.caio.spotify.application.repositories.AlbumRepository;
 import br.com.caio.spotify.application.repositories.ArtistRepository;
 import br.com.caio.spotify.application.repositories.MusicRepository;
+import br.com.caio.spotify.application.repositories.PlaylistRepository;
 import br.com.caio.spotify.application.repositories.UserRepository;
 
 @Service
@@ -23,7 +24,10 @@ public class UserService {
     private MusicRepository musicRepository;
 
     @Autowired
-    private AlbumRepository playlistRepository;
+    private AlbumRepository albumRepository;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
 
     @Autowired
     private ArtistRepository artistsRepository;
@@ -96,7 +100,7 @@ public class UserService {
     // Adicionar playlist aos favoritos
     public Optional<User> addAlbumToFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
-            playlistRepository.findById(albumId).map(playlist -> {
+            albumRepository.findById(albumId).map(playlist -> {
                 if (!user.getListAlbums().contains(playlist)) {
                     user.getListAlbums().add(playlist);
                     return userRepository.save(user);
@@ -109,7 +113,7 @@ public class UserService {
     // Remover playlist dos favoritos
     public Optional<User> removeAlbumFromFavorites(String userId, String albumId) {
         return userRepository.findById(userId).flatMap(user -> 
-            playlistRepository.findById(albumId).map(playlist -> {
+            albumRepository.findById(albumId).map(playlist -> {
                 user.getListAlbums().remove(playlist);
                 return userRepository.save(user);
             })
@@ -135,6 +139,19 @@ public class UserService {
             artistsRepository.findById(artistId).map(artist -> {
                 user.getListArtists().remove(artist);
                 return userRepository.save(user);
+            })
+        );
+    }
+
+    // Adicionar playlist aos favoritos
+    public Optional<User> addPlaylistToFavorites(String userId, String playlistId) {
+        return userRepository.findById(userId).flatMap(user -> 
+            playlistRepository.findById(playlistId).map(playlist -> {
+                if (!user.getListPlaylists().contains(playlist)) {
+                    user.getListPlaylists().add(playlist);
+                    return userRepository.save(user);
+                }
+                return user;
             })
         );
     }

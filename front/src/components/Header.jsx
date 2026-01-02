@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import ReactDOM from 'react-dom'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
-
   const API_URL = "http://localhost:8080/api"
+  const [name, setName] = useState([])
   const [songs, setSongs] = useState([])
-  const [artists, setArtists] = useState([])
-  const [albums, setAlbums] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [userID, setUserID] = useState(null)
-  const [filteredSongs, setFilteredSongs] = useState([])
   const [modalCreateOpen, setModalCreateOpen] = useState(false)
+
+  const [userID, setUserID] = useState(null)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
@@ -22,71 +19,90 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
       try {
         const parsedUser = JSON.parse(storedUser)
         setIsAuthenticated(true)
-        setIsAdmin(parsedUser.role === 'ADMIN')
+        setName(parsedUser.name)
         setUserID(parsedUser.id)
-
-        const userPlaylists = parsedUser.listPlaylists || []
-        const userSongs = parsedUser.listMusic || []
-
-        setPlaylists(userPlaylists)
-        setSongs(userSongs)
-        setFilteredSongs(userSongs)
+        setPlaylists(parsedUser.listPlaylists || [])
+        setSongs(parsedUser.listMusic || [])
       } catch (err) {
-        console.error("Erro ao processar usuário do localStorage", err)
+        console.error("Erro ao carregar usuário", err)
       }
     }
   }, [])
 
-  useEffect(() => {
-    fetch(`${API_URL}/artists`)
-      .then(res => res.json())
-      .then(data => setArtists(data))
-      .catch(console.error)
-  }, [])
+  const filteredPlaylists = useMemo(() => {
+    return playlists.filter(playlist => 
+      playlist.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }, [playlists, searchTerm])
 
-  useEffect(() => {
-    fetch(`${API_URL}/albums`)
-      .then(res => res.json())
-      .then(data => setAlbums(data))
-      .catch(console.error)
-  }, [])
+  async function addPlaylistToUserList(playlistId) {
+    try {
+      const response = await fetch(
+        `${API_URL}/users/${userID}/favorites/playlist/${playlistId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      if (response.ok) {
+        // Buscar os dados completos da playlist para atualizar a UI
+        const resPlaylist = await fetch(`${API_URL}/playlists/${playlistId}`)
+        const fullPlaylistData = await resPlaylist.json()
+
+        // ATUALIZAÇÃO CRÍTICA: Atualiza o estado e o LocalStorage
+        const updatedPlaylists = [...playlists, fullPlaylistData]
+        setPlaylists(updatedPlaylists)
+
+        const storedUser = JSON.parse(localStorage.getItem('user'))
+        if (storedUser) {
+          storedUser.listPlaylists = updatedPlaylists
+          localStorage.setItem('user', JSON.stringify(storedUser))
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao vincular playlist ao usuário", error)
+    }
+  }
+
+  async function createPlaylist() {
+    const defaultPlaylist = {
+      name: "Minha Playlist",
+      description: "Playlist padrão",
+      cover: "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png",
+      type: "PLAYLIST",
+      year: "2026",
+      status: "RELEASED",
+      songsIds: [],
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/playlists`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(defaultPlaylist)
+      })
+
+      if (!response.ok) throw new Error("Erro ao criar playlist no servidor")
+
+      const createdData = await response.json()
+      
+      // Agora vinculamos essa nova playlist ao usuário logado
+      await addPlaylistToUserList(createdData.id)
+      
+      setModalCreateOpen(false)
+      alert("Playlist adicionada à sua biblioteca!")
+    } catch (err) {
+      console.error(err)
+      alert("Houve um erro ao criar a playlist.")
+    }
+  }
 
   const handlePlayPlaylist = (playlist) => {
     if (playlist.songs && playlist.songs.length > 0) {
       setPlaylist(playlist.songs)
       setCurrentIndex(0)
     }
-  }
-
-  function openCreateModal() {
-    setModalCreateOpen(true)
-  }
-
-  function closeCreateModal() {
-    setModalCreateOpen(false)
-  }
-
-  function search(value) {
-    setSearchTerm(value)
-
-    if (!value.trim()) {
-      setFilteredSongs(songs)
-      return
-    }
-
-    const filteredSongsSearch = songs.filter(song =>
-      song.name.toLowerCase().includes(value.toLowerCase())
-    )
-
-    const filteredArtistsSearch = artists.filter(artist =>
-      artist.name.toLowerCase().includes(value.toLowerCase())
-    )
-
-    const filteredAlbumSearch = albums.filter(album =>
-      album.name.toLowerCase().includes(value.toLowerCase())
-    )
-
-    setFilteredSongs(filteredSongsSearch)
   }
 
   return (
@@ -98,24 +114,18 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
               <i className="fa-solid fa-grip"></i>
               <h2>Sua Biblioteca</h2>
             </div>
-            <div className="createButton" onClick={openCreateModal}>
+            <div className="createButton" onClick={() => setModalCreateOpen(true)}>
               <i className="fa-solid fa-plus"></i>
               <span>Criar</span>
             </div>
           </div>
 
           <div className="othersOptions">
-            <div className="otherOption" onClick={() => setType("ALL")}>
-              <h2>All</h2>
+            <div className={`otherOption ${type === "ALL" ? "active" : ""}`} onClick={() => setType("ALL")}>
+              <h2>Tudo</h2>
             </div>
-            <div className="otherOption" onClick={() => setType("PLAYLIST")}>
-              <h2>Playlist</h2>
-            </div>
-            <div className="otherOption" onClick={() => setType("ALBUM")}>
-              <h2>Album</h2>
-            </div>
-            <div className="otherOption" onClick={() => setType("MUSIC")}>
-              <h2>Músicas</h2>
+            <div className={`otherOption ${type === "PLAYLIST" ? "active" : ""}`} onClick={() => setType("PLAYLIST")}>
+              <h2>Playlists</h2>
             </div>
           </div>
 
@@ -126,15 +136,8 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                 type="text"
                 placeholder="Buscar em Sua Biblioteca"
                 value={searchTerm}
-                onChange={(e) => search(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
-            </div>
-
-            <div className="filter">
-              <select>
-                <option>Recentes</option>
-              </select>
-              <i className="fa-solid fa-list"></i>
             </div>
           </div>
 
@@ -142,7 +145,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             <a href="/likedSongs">
               <div className="boxOption">
                 <div className="boxImage">
-                  <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="" />
+                  <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="Liked" />
                 </div>
                 <div className="informationsLikedSongBox">
                   <span>Músicas Curtidas</span>
@@ -152,61 +155,45 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </a>
           </div>
 
-          {/* Renderizar playlists */}
-          {playlists.length > 0 && playlists.map((playlist) => (
-            (type === "PLAYLIST" || type === "ALL") && (
-              <div
-                className="optionsHeader"
-                key={playlist.id}
-                onClick={() => handlePlayPlaylist(playlist)}
-                style={{ cursor: "pointer" }}
-              >
-                <a href={`/albums/${playlist.id}`}>
+          <div className="playlistsListContainer">
+            {filteredPlaylists.map((playlist) => (
+              (type === "PLAYLIST" || type === "ALL") && (
+                <div
+                  className="optionsHeader"
+                  key={playlist.id}
+                  onClick={() => handlePlayPlaylist(playlist)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <a href={`/playlists/${playlist.id}`}>
                   <div className="boxOption">
                     <div className="boxImage">
                       <img src={playlist.cover} alt={playlist.name} />
                     </div>
-
                     <div className="boxInformations">
                       <span>{playlist.name}</span>
-                      <p>
-                        Playlist • {" "}
-                        {playlist.artistsNames && playlist.artistsNames.map(a => a.name).join(", ")}
-                      </p>
+                      <p>Playlist • {name}</p>
                     </div>
                   </div>
-                </a>
-              </div>
-            )
-          ))}
+                  </a>
+                </div>
+              )
+            ))}
+          </div>
         </div>
       </header>
 
-      {/* MODAL RENDERIZADO FORA DO HEADER */}
       {modalCreateOpen && ReactDOM.createPortal(
         <>
-          <div className="modalOverlay" onClick={closeCreateModal}></div>
-
+          <div className="modalOverlay" onClick={() => setModalCreateOpen(false)}></div>
           <div className="createModalContainer">
-            <div className="optionCreateBox">
+            <div className="optionCreateBox" onClick={createPlaylist}>
               <div className="playlistCreate">
                 <div className="playlistIcon">
                   <i className="fa-solid fa-plus"></i>
                 </div>
                 <div className="playlistCreateInformation">
-                  <span>Playlist</span>
+                  <span>Criar uma nova playlist</span>
                   <p>Crie uma playlist com músicas</p>
-                </div>
-              </div>
-            </div>
-            <div className="optionCreateBox">
-              <div className="playlistCreate">
-                <div className="playlistIcon">
-                  <i className="fa-solid fa-folder"></i>
-                </div>
-                <div className="playlistCreateInformation">
-                  <span>Pasta</span>
-                  <p>Organize Suas Playlists</p>
                 </div>
               </div>
             </div>
