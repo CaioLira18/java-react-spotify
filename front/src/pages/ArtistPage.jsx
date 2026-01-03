@@ -7,22 +7,22 @@ import Toast from '../components/Modal/Toast'
 const ArtistPage = () => {
   const { id } = useParams()
   const { setPlaylist, setCurrentIndex } = useOutletContext()
-  
+
   // Estados de dados
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
-  
+
   // Estados de UI/Modais
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
   const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false)
-  
+
   // Seleção
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedAlbum, setSelectedAlbum] = useState(null)
-  
+
   // Estados de Usuário
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListAlbums, setFavoritesListAlbums] = useState([])
@@ -67,10 +67,10 @@ const ArtistPage = () => {
   }
 
   // Handlers de Modal
-  const openMusicModal = (song, e) => { 
-    e.stopPropagation(); 
-    setSelectedSong(song); 
-    setModalOpen(true); 
+  const openMusicModal = (song, e) => {
+    e.stopPropagation();
+    setSelectedSong(song);
+    setModalOpen(true);
     setModalOpenPlaylistAdd(false); // Garante que a lista de playlists comece fechada
   }
   const closeMusicModal = () => { setModalOpen(false); setSelectedSong(null); setModalOpenPlaylistAdd(false); }
@@ -112,8 +112,8 @@ const ArtistPage = () => {
       const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { method: 'POST' })
       if (res.ok) {
         showToast("Música adicionada à playlist!")
-        setModalOpenPlaylistAdd(false) 
-        closeMusicModal() 
+        setModalOpenPlaylistAdd(false)
+        closeMusicModal()
       } else {
         showToast("Erro ao adicionar na playlist", "error")
       }
@@ -121,20 +121,35 @@ const ArtistPage = () => {
   }
 
   const removeMusicToPlaylist = async (playlistId) => {
-    if (!selectedSong) return
+    console.log("Tentando remover...");
+    console.log("Playlist ID recebido:", playlistId);
+    console.log("Música selecionada:", selectedSong?.id);
+
+    if (!selectedSong || !playlistId) {
+      console.error("Faltam dados: selectedSong ou playlistId nulos");
+      return;
+    }
+
     try {
-      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { method: 'DELETE' })
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, {
+        method: 'DELETE'
+      });
+
       if (res.ok) {
-        showToast("Música excluida da playlist!")
-        setModalOpenPlaylistAdd(false) 
-        closeMusicModal() 
+        showToast("Música excluída da playlist!");
+        setModalOpenPlaylistAdd(false);
+        closeMusicModal();
       } else {
-        showToast("Erro ao excluir na playlist", "error")
+        const errorData = await res.json();
+        console.log("Erro da API:", errorData);
+        showToast("Erro ao excluir", "error");
       }
-    } catch (err) { showToast("Erro de conexão", "error") }
+    } catch (err) {
+      console.error("Erro na requisição:", err);
+      showToast("Erro de conexão", "error");
+    }
   }
 
-  // Ações de Favoritos (Álbum)
   const addAlbumToFavorites = async () => {
     if (!selectedAlbum || !userID) return
     try {
@@ -228,30 +243,35 @@ const ArtistPage = () => {
         </div>
       </div>
 
-      <MusicaModal 
-        isOpen={modalOpen} 
-        onClose={closeMusicModal} 
+      <MusicaModal
+        isOpen={modalOpen}
+        onClose={closeMusicModal}
         song={selectedSong}
-        favoritesListSongs={favoritesListSongs} 
-        onAddFavorite={addMusicToFavorites} 
+        favoritesListSongs={favoritesListSongs}
+        onAddFavorite={addMusicToFavorites}
         onDeleteFavorite={deleteMusicToFavorites}
-        
+
         isOpenPlaylistAdd={modalOpenPlaylistAdd}
         onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
         onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
         onMusicToPlaylist={addMusicToPlaylist}
         onRemoveFromPlaylist={removeMusicToPlaylist}
-        
-        API_URL={API_URL}
       />
 
-      <ModalAlbum 
-        isOpen={modalOpenAlbum} 
-        onClose={closeAlbumModal} 
-        album={selectedAlbum}
-        favoritesListAlbums={favoritesListAlbums} 
-        onAddFavorite={addAlbumToFavorites} 
-        onDeleteFavorite={deleteAlbumToFavorites}
+      <MusicaModal
+        isOpen={modalOpen}
+        onClose={closeMusicModal}
+        song={selectedSong}
+        favoritesListSongs={favoritesListSongs}
+        onAddFavorite={addMusicToFavorites}
+        onDeleteFavorite={deleteMusicToFavorites}
+
+        // Verifique estas linhas abaixo:
+        isOpenPlaylistAdd={modalOpenPlaylistAdd}
+        onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
+        onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
+        onMusicToPlaylist={addMusicToPlaylist}
+        onRemoveFromPlaylist={removeMusicToPlaylist}
       />
 
       <Toast toasts={toasts} removeToast={removeToast} />

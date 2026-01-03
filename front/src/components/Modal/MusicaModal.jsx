@@ -3,18 +3,19 @@ import React, { useState, useEffect } from 'react';
 const MusicaModal = ({
   isOpen,
   onClose,
-  isOpenPlaylistAdd, // Estado booleano vindo do pai
-  onOpenPlaylistAdd, // Função para abrir a lista de playlists
+  isOpenPlaylistAdd,
+  onOpenPlaylistAdd,
   onCloseOpenPlaylistAdd,
   song,
   favoritesListSongs,
   onAddFavorite,
   onDeleteFavorite,
   onRemoveFromPlaylist,
-  onMusicToPlaylist, 
-  API_URL
+  onMusicToPlaylist,
 }) => {
   const [playlists, setPlaylists] = useState([]);
+  const [modo, setModo] = useState(''); // 'add' ou 'remove'
+  const API_URL = "http://localhost:8080/api";
 
   useEffect(() => {
     if (isOpen) {
@@ -23,9 +24,17 @@ const MusicaModal = ({
         .then(data => setPlaylists(data))
         .catch(() => console.error("Erro ao buscar Playlists."));
     }
-  }, [isOpen, API_URL]);
+  }, [isOpen]);
 
   if (!isOpen || !song) return null;
+
+  const handleAbrirSeletor = (tipo) => {
+    setModo(tipo);
+    // Proteção para evitar o erro "is not a function"
+    if (typeof onOpenPlaylistAdd === 'function') {
+      onOpenPlaylistAdd();
+    }
+  };
 
   const isFavorite = favoritesListSongs.some(fav => fav.id === song.id);
 
@@ -48,46 +57,42 @@ const MusicaModal = ({
             </div>
           </div>
 
-          {isFavorite ? (
-            <button className="modal-action-option" onClick={onDeleteFavorite}>
-              <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
-              <span>Remover dos Favoritos</span>
-            </button>
-          ) : (
-            <button className="modal-action-option" onClick={onAddFavorite}>
-              <i className="fa-regular fa-heart"></i>
-              <span>Adicionar aos Favoritos</span>
-            </button>
-          )}
+          <button className="modal-action-option" onClick={isFavorite ? onDeleteFavorite : onAddFavorite}>
+            <i className={isFavorite ? "fa-solid fa-heart" : "fa-regular fa-heart"}
+              style={{ color: isFavorite ? '#1db954' : '' }}></i>
+            <span>{isFavorite ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}</span>
+          </button>
 
-          <button className="modal-action-option" onClick={() => onRemoveFromPlaylist?.(song.id)}>
+          {/* Botão para Remover */}
+          <button className="modal-action-option" onClick={() => handleAbrirSeletor('remove')}>
             <i className="fa-solid fa-minus-circle"></i>
-            <span>Remover desta Playlist</span>
+            <span>Remover de uma Playlist</span>
           </button>
 
-          <button className="modal-action-option" onClick={onOpenPlaylistAdd}>
+          {/* Botão para Adicionar */}
+          <button className="modal-action-option" onClick={() => handleAbrirSeletor('add')}>
             <i className="fa-solid fa-plus"></i>
-            <span>Adicionar em uma Playlist</span>
+            <span>Adicionar a uma Playlist</span>
           </button>
 
-          {/* Se o usuário clicou para ver as playlists */}
           {isOpenPlaylistAdd && (
             <div className="playlist-selector-container">
-              <p>Escolha a Playlist:</p>
+              <p>{modo === 'add' ? 'Adicionar à:' : 'Remover de:'}</p>
               <select
                 className="playlist-select"
                 onChange={(e) => {
-                  if (e.target.value) onMusicToPlaylist(e.target.value);
+                  const idPlaylist = e.target.value;
+                  if (modo === 'add') {
+                    onMusicToPlaylist(idPlaylist);
+                  } else {
+                    onRemoveFromPlaylist(idPlaylist);
+                  }
                 }}
                 defaultValue=""
               >
                 <option value="" disabled>Selecionar...</option>
-                {playlists.map(playlist => (
-                  playlist.type != "SPOTIFY_PLAYLIST" && (
-                    <option key={playlist.id} value={playlist.id}>
-                      {playlist.name}
-                    </option>
-                  )
+                {playlists.map(p => p.type !== "SPOTIFY_PLAYLIST" && (
+                  <option key={p.id} value={p.id}>{p.name}</option>
                 ))}
               </select>
               <button onClick={onCloseOpenPlaylistAdd}>Cancelar</button>
