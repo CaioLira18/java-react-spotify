@@ -48,7 +48,7 @@ public class PlaylistController {
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
         playlist.setStatus(dto.getStatus());
-        playlist.setYear(dto.getYear()); // Verifique se o DTO e a Entity têm esse campo
+        playlist.setYear(dto.getYear());
 
         return ResponseEntity.ok(
                 playlistService.createPlaylist(playlist, dto.getSongsIds()));
@@ -98,7 +98,7 @@ public class PlaylistController {
         return updatedPlaylist.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{playlistId}/music/{musicId}") // Corrigido o Path e a ordem
+    @DeleteMapping("/{playlistId}/music/{musicId}")
     public ResponseEntity<Playlist> removeMusicFromPlaylist(
             @PathVariable String playlistId,
             @PathVariable String musicId) {

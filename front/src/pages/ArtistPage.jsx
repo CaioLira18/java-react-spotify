@@ -8,29 +8,21 @@ const ArtistPage = () => {
   const { id } = useParams()
   const { setPlaylist, setCurrentIndex } = useOutletContext()
 
-  // Estados de dados
   const [artista, setArtista] = useState(null)
   const [songs, setSongs] = useState([])
   const [albums, setAlbums] = useState([])
-
-  // Estados de UI/Modais
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
   const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false)
-
-  // Seleção
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedAlbum, setSelectedAlbum] = useState(null)
-
-  // Estados de Usuário
   const [favoritesListSongs, setFavoritesListSongs] = useState([])
   const [favoritesListAlbums, setFavoritesListAlbums] = useState([])
   const [userID, setUserID] = useState(null)
 
-  const API_URL = "http://localhost:8080/api"
+  const API_URL = "http://localhost:8080/api";
 
-  // Carregar dados do usuário do LocalStorage
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
@@ -45,14 +37,12 @@ const ArtistPage = () => {
     }
   }, [])
 
-  // Carregar dados da API
   useEffect(() => {
     fetch(`${API_URL}/songs`).then(res => res.json()).then(data => setSongs(data))
     fetch(`${API_URL}/albums`).then(res => res.json()).then(data => setAlbums(Array.isArray(data) ? data : []))
     fetch(`${API_URL}/artists/${id}`).then(res => res.json()).then(data => setArtista(data))
   }, [id])
 
-  // Funções de Toast
   const showToast = (message, type = 'success') => {
     const toastId = Date.now()
     setToasts(prev => [...prev, { id: toastId, message, type }])
@@ -60,25 +50,22 @@ const ArtistPage = () => {
   }
   const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id))
 
-  // Player
   const handlePlay = (index) => {
     setPlaylist(artistSongs)
     setCurrentIndex(index)
   }
 
-  // Handlers de Modal
   const openMusicModal = (song, e) => {
     e.stopPropagation();
     setSelectedSong(song);
     setModalOpen(true);
-    setModalOpenPlaylistAdd(false); // Garante que a lista de playlists comece fechada
+    setModalOpenPlaylistAdd(false);
   }
   const closeMusicModal = () => { setModalOpen(false); setSelectedSong(null); setModalOpenPlaylistAdd(false); }
 
   const openAlbumModal = (album, e) => { e.stopPropagation(); setSelectedAlbum(album); setModalOpenAlbum(true); }
   const closeAlbumModal = () => { setModalOpenAlbum(false); setSelectedAlbum(null); }
 
-  // Ações de Favoritos (Música)
   const addMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
     try {
@@ -120,35 +107,24 @@ const ArtistPage = () => {
     } catch (err) { showToast("Erro de conexão", "error") }
   }
 
-  const removeMusicToPlaylist = async (playlistId) => {
-    console.log("Tentando remover...");
-    console.log("Playlist ID recebido:", playlistId);
-    console.log("Música selecionada:", selectedSong?.id);
-
-    if (!selectedSong || !playlistId) {
-      console.error("Faltam dados: selectedSong ou playlistId nulos");
+  const removeMusicFromPlaylist = async (playlistId, songId) => {
+    if (!songId || !playlistId) {
+      showToast("Erro: dados incompletos", "error");
       return;
     }
-
     try {
-      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, {
-        method: 'DELETE'
-      });
-
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { method: 'DELETE' });
       if (res.ok) {
         showToast("Música excluída da playlist!");
-        setModalOpenPlaylistAdd(false);
         closeMusicModal();
       } else {
-        const errorData = await res.json();
-        console.log("Erro da API:", errorData);
-        showToast("Erro ao excluir", "error");
+        showToast("Erro ao excluir da playlist", "error");
       }
     } catch (err) {
-      console.error("Erro na requisição:", err);
+      console.error("Erro ao remover música:", err);
       showToast("Erro de conexão", "error");
     }
-  }
+  };
 
   const addAlbumToFavorites = async () => {
     if (!selectedAlbum || !userID) return
@@ -255,23 +231,19 @@ const ArtistPage = () => {
         onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
         onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
         onMusicToPlaylist={addMusicToPlaylist}
-        onRemoveFromPlaylist={removeMusicToPlaylist}
+
+        onRemoveFromPlaylist={removeMusicFromPlaylist}
+
+        API_URL={API_URL}
       />
 
-      <MusicaModal
-        isOpen={modalOpen}
-        onClose={closeMusicModal}
-        song={selectedSong}
-        favoritesListSongs={favoritesListSongs}
-        onAddFavorite={addMusicToFavorites}
-        onDeleteFavorite={deleteMusicToFavorites}
-
-        // Verifique estas linhas abaixo:
-        isOpenPlaylistAdd={modalOpenPlaylistAdd}
-        onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
-        onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
-        onMusicToPlaylist={addMusicToPlaylist}
-        onRemoveFromPlaylist={removeMusicToPlaylist}
+      <ModalAlbum
+        isOpen={modalOpenAlbum}
+        onClose={closeAlbumModal}
+        album={selectedAlbum}
+        favoritesListAlbums={favoritesListAlbums}
+        onAddFavorite={addAlbumToFavorites}
+        onDeleteFavorite={deleteAlbumToFavorites}
       />
 
       <Toast toasts={toasts} removeToast={removeToast} />

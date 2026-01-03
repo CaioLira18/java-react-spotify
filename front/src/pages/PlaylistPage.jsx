@@ -16,6 +16,7 @@ const PlaylistPage = () => {
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalPlaylistOpen, setModalPlaylistOpen] = useState(false)
+  const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false)
 
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
@@ -49,11 +50,15 @@ const PlaylistPage = () => {
   }, [])
 
   useEffect(() => {
+    fetchPlaylistData()
+  }, [id])
+
+  const fetchPlaylistData = () => {
     fetch(`${API_URL}/playlists/${id}`)
       .then(r => r.json())
       .then(setPlaylistData)
       .catch(() => showToast("Erro ao carregar Playlist", "error"))
-  }, [id])
+  }
 
   const showToast = (message, type = 'success') => {
     const toastId = Date.now()
@@ -69,6 +74,7 @@ const PlaylistPage = () => {
     e.stopPropagation()
     setSelectedSong(song)
     setModalOpen(true)
+    setModalOpenPlaylistAdd(false)
   }
 
   const modalPlaylistMoreOptions = (playlist, e) => {
@@ -85,11 +91,91 @@ const PlaylistPage = () => {
   const closeModal = () => {
     setModalOpen(false)
     setSelectedSong(null)
+    setModalOpenPlaylistAdd(false)
   }
 
   const handlePlay = (index) => {
     setPlaylist(playlistSongs)
     setCurrentIndex(index)
+  }
+
+  const addMusicToFavorites = async () => {
+    if (!selectedSong || !userID) return
+    try {
+      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { 
+        method: 'POST' 
+      })
+      if (res.ok) {
+        const updated = [...favoritesListSongs, selectedSong]
+        setFavoritesListSongs(updated)
+        updateLocalStorage('listMusic', updated)
+        showToast("Música adicionada aos favoritos!")
+        closeModal()
+      }
+    } catch (err) { 
+      showToast("Erro ao adicionar", "error") 
+    }
+  }
+
+  const deleteMusicToFavorites = async () => {
+    if (!selectedSong || !userID) return
+    try {
+      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { 
+        method: 'DELETE' 
+      })
+      if (res.ok) {
+        const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id)
+        setFavoritesListSongs(updated)
+        updateLocalStorage('listMusic', updated)
+        showToast("Música removida dos favoritos!")
+        closeModal()
+      }
+    } catch (err) { 
+      showToast("Erro ao remover", "error") 
+    }
+  }
+
+  const addMusicToPlaylist = async (playlistId) => {
+    if (!selectedSong) return
+    try {
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { 
+        method: 'POST' 
+      })
+      if (res.ok) {
+        showToast("Música adicionada à playlist!")
+        setModalOpenPlaylistAdd(false)
+        closeModal()
+      } else {
+        showToast("Erro ao adicionar na playlist", "error")
+      }
+    } catch (err) { 
+      showToast("Erro de conexão", "error") 
+    }
+  }
+
+  const removeMusicFromPlaylist = async (playlistId, songId) => {
+    if (!songId || !playlistId) {
+      showToast("Erro: dados incompletos", "error")
+      return
+    }
+    try {
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { 
+        method: 'DELETE' 
+      })
+      if (res.ok) {
+        showToast("Música removida da playlist!")
+        closeModal()
+        // Recarregar os dados da playlist para atualizar a lista
+        fetchPlaylistData()
+        // Atualizar a lista de músicas
+        fetch(`${API_URL}/songs`).then(r => r.json()).then(setSongs)
+      } else {
+        showToast("Erro ao remover da playlist", "error")
+      }
+    } catch (err) {
+      console.error("Erro ao remover música:", err)
+      showToast("Erro de conexão", "error")
+    }
   }
 
   const deletePlaylist = async () => {
@@ -116,6 +202,14 @@ const PlaylistPage = () => {
     } catch (error) {
       console.error(error)
       showToast("Erro ao remover Playlist", "error")
+    }
+  }
+
+  const updateLocalStorage = (key, data) => {
+    const user = JSON.parse(localStorage.getItem('user'))
+    if (user) { 
+      user[key] = data
+      localStorage.setItem('user', JSON.stringify(user)) 
     }
   }
 
@@ -238,6 +332,17 @@ const PlaylistPage = () => {
         onClose={closeModal}
         song={selectedSong}
         favoritesListSongs={favoritesListSongs}
+        onAddFavorite={addMusicToFavorites}
+        onDeleteFavorite={deleteMusicToFavorites}
+        
+        isOpenPlaylistAdd={modalOpenPlaylistAdd}
+        onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
+        onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
+        onMusicToPlaylist={addMusicToPlaylist}
+        
+        onRemoveFromPlaylist={removeMusicFromPlaylist}
+        
+        API_URL={API_URL}
       />
 
       <ModalPlaylist
