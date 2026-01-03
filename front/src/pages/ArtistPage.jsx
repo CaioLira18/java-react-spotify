@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
 import MusicaModal from '../components/Modal/MusicaModal'
 import ModalAlbum from '../components/Modal/ModalAlbum'
+import Toast from '../components/Modal/Toast'
 
 const ArtistPage = () => {
   const { id } = useParams()
@@ -190,14 +191,8 @@ const ArtistPage = () => {
         favoritesListAlbums={favoritesListAlbums} onAddFavorite={addAlbumToFavorites} onDeleteFavorite={deleteAlbumToFavorites}
       />
 
-      <div className="toast-container">
-        {toasts.map(t => (
-          <div key={t.id} className={`toast toast-${t.type}`}>
-            <span>{t.message}</span>
-            <button onClick={() => removeToast(t.id)}>×</button>
-          </div>
-        ))}
-      </div>
+      <Toast toasts={toasts} removeToast={removeToast} />
+      
     </>
   )
 }

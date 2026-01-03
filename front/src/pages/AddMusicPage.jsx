@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ArtistsSelect from '../components/ArtistsSelect'
 
 const AddMusicPage = () => {
   const API_URL = "http://localhost:8080/api"
@@ -221,20 +222,7 @@ const AddMusicPage = () => {
             </div>
 
             {/* Artistas Selecionados */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Artistas Selecionados</h2>
-              </div>
-              <div className="inputArea">
-                <ul>
-                  {artistsIds.map(id => {
-                    const artist = artists.find(a => a.id === id)
-                    return <li key={id}>{artist?.name}</li>
-                  })}
-                </ul>
-              </div>
-            </div>
+            <ArtistsSelect artistsIds={artistsIds} />
 
             {/* Tipo */}
             <div className="inputBox">

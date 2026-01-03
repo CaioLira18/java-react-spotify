@@ -1,8 +1,10 @@
 package br.com.caio.spotify.application.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,27 +33,29 @@ public class AlbumService {
     }
 
     public Optional<Album> findPlaylistById(String id) {
-        return albumRepository.findById(id);
+        // Usando o método otimizado que criamos no repository
+        return albumRepository.findByIdCustom(id);
     }
 
     public Album createAlbum(Album album, List<String> artistsIds, List<String> musicsIds) {
-        List<Artists> artists = artistRepository.findAllById(artistsIds);
-        List<Music> musics = musicRepository.findAllById(musicsIds);
+        // Convertendo as buscas para Set
+        Set<Artists> artists = new HashSet<>(artistRepository.findAllById(artistsIds));
+        Set<Music> musics = new HashSet<>(musicRepository.findAllById(musicsIds));
 
         album.setArtistsNames(artists);
         album.setMusicsNames(musics);
-        return albumRepository.save(album); // Agora salvará sem erros de duplicidade
+        return albumRepository.save(album); 
     }
 
     public Optional<Album> updateAlbum(String id, Album updatedAlbum, List<String> artistsIds, List<String> songsIds) {
         return albumRepository.findById(id).map(item -> {
-            List<Artists> artists = (artistsIds != null && !artistsIds.isEmpty())
-                    ? artistRepository.findAllById(artistsIds)
-                    : new ArrayList<>();
+            Set<Artists> artists = (artistsIds != null && !artistsIds.isEmpty())
+                    ? new HashSet<>(artistRepository.findAllById(artistsIds))
+                    : new HashSet<>();
 
-            List<Music> musics = (songsIds != null && !songsIds.isEmpty())
-                    ? musicRepository.findAllById(songsIds)
-                    : new ArrayList<>();
+            Set<Music> musics = (songsIds != null && !songsIds.isEmpty())
+                    ? new HashSet<>(musicRepository.findAllById(songsIds))
+                    : new HashSet<>();
 
             item.setName(updatedAlbum.getName());
             item.setCover(updatedAlbum.getCover());
@@ -59,7 +63,7 @@ public class AlbumService {
             item.setType(updatedAlbum.getType());
             item.setStatus(updatedAlbum.getStatus());
             item.setYear(updatedAlbum.getYear());
-            item.setArtistsNames(artists);
+            item.setArtistsNames(artists); // Corrigido para usar a lista buscada
             item.setMusicsNames(musics);
 
             return albumRepository.save(item);
@@ -76,17 +80,17 @@ public class AlbumService {
 
     public Optional<Album> addMusicToAlbum(String musicId, String albumId) {
         return musicRepository.findById(musicId)
-                .flatMap(music -> albumRepository.findById(albumId).map(playlist -> {
-                    playlist.getMusicsNames().add(music);
-                    return albumRepository.save(playlist);
+                .flatMap(music -> albumRepository.findById(albumId).map(album -> {
+                    album.getMusicsNames().add(music);
+                    return albumRepository.save(album);
                 }));
     }
 
     public Optional<Album> removeMusicFromAlbum(String musicId, String albumId) {
         return musicRepository.findById(musicId)
-                .flatMap(music -> albumRepository.findById(albumId).map(playlist -> {
-                    playlist.getMusicsNames().remove(music);
-                    return albumRepository.save(playlist);
+                .flatMap(music -> albumRepository.findById(albumId).map(album -> {
+                    album.getMusicsNames().remove(music);
+                    return albumRepository.save(album);
                 }));
     }
 }

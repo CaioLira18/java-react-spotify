@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Toast from '../components/Modal/Toast'
 
 const DeleteArtistPage = () => {
 
@@ -152,14 +153,7 @@ const DeleteArtistPage = () => {
             )}
 
             {/* Notificações Toast */}
-            <div className="toast-container">
-                {toasts.map(toast => (
-                    <div key={toast.id} className={`toast toast-${toast.type}`}>
-                        <span>{toast.message}</span>
-                        <button onClick={() => removeToast(toast.id)}>×</button>
-                    </div>
-                ))}
-            </div>
+            <Toast toasts={toasts} removeToast={removeToast} />
         </div>
     )
 }

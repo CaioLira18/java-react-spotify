@@ -57,6 +57,7 @@ public class PlaylistService {
 
     public boolean deletePlaylist(String id) {
         return playlistRepository.findById(id).map(item -> {
+            playlistRepository.removePlaylistFromAllFavorites(id);
             playlistRepository.delete(item);
             return true;
         }).orElse(false);

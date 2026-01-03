@@ -11,8 +11,10 @@ import org.springframework.stereotype.Repository;
 import br.com.caio.spotify.application.entities.Music;
 
 @Repository
-public interface MusicRepository extends  JpaRepository<Music, String> {
-    Optional<Music> findAllById(String id);
+public interface MusicRepository extends JpaRepository<Music, String> {
+
+    @Query("SELECT m FROM Music m LEFT JOIN FETCH m.artistsNames WHERE m.id = :id")
+    Optional<Music> findByIdCustom(@Param("id") String id);
 
     @Modifying
     @Query(value = "DELETE FROM tb_user_favorite_musics WHERE music_id = :musicId", nativeQuery = true)

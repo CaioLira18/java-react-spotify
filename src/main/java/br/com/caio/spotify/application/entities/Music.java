@@ -2,6 +2,8 @@ package br.com.caio.spotify.application.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
 import br.com.caio.spotify.application.entities.enums.StatusMusic;
 import jakarta.persistence.Entity;
@@ -32,6 +34,7 @@ public class Music {
     private StatusMusic status;
     
     @ManyToMany
+    @JsonIgnoreProperties({"musicas", "listMusic"})
     @JoinTable(name = "tb_music_artists", joinColumns = @JoinColumn(name = "music_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private List<Artists> artistsNames;
 

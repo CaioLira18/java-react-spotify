@@ -1,7 +1,9 @@
 package br.com.caio.spotify.application.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
 import br.com.caio.spotify.application.entities.enums.StatusMusic;
@@ -31,12 +33,13 @@ public class Album {
     private ContentEnum type;
     private StatusMusic status;
 
-    @ManyToMany 
+    @ManyToMany
+    @JsonIgnoreProperties({"listAlbums", "musicas"})
     @JoinTable(name = "tb_album_artists", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private List<Artists> artistsNames = new ArrayList<>(); // Inicialize a lista
-
-    @ManyToMany 
+    private Set<Artists> artistsNames = new HashSet<>();
+    
+    @ManyToMany
     @JoinTable(name = "tb_album_musics", joinColumns = @JoinColumn(name = "album_id"), inverseJoinColumns = @JoinColumn(name = "music_id"))
-    private List<Music> musicsNames = new ArrayList<>(); // Inicialize a lista
+    private Set<Music> musicsNames = new HashSet<>(); 
 
 }

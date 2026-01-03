@@ -13,7 +13,13 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, String> {
-    Optional<Album> findAllById(String id);
+    
+    // Otimizado com JOIN FETCH
+    @Query("SELECT a FROM Album a " +
+           "LEFT JOIN FETCH a.artistsNames " +
+           "LEFT JOIN FETCH a.musicsNames " +
+           "WHERE a.id = :id")
+    Optional<Album> findByIdCustom(@Param("id") String id);
 
     @Modifying
     @Transactional
