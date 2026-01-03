@@ -260,6 +260,26 @@ const PlaylistPage = () => {
     }
   }
 
+  async function deletePlaylist(id)  {
+        if (!playlistData) return
+
+        try {
+            const response = await fetch(
+                `${API_URL}/playlists/${id}`,
+                { method: 'DELETE' }
+            )
+
+            if (response.ok) {
+                showToast("Album removido!", "success")
+                closeModal()
+            } else {
+                showToast("Erro ao remover Playlist", "error")
+            }
+        } catch (error) {
+            console.error(error)
+            showToast("Erro ao remover Playlist", "error")
+        }
+    }
 
   const calculateTotalDuration = (songs) => {
     const totalSeconds = songs.reduce((acc, song) => {
@@ -305,6 +325,23 @@ const PlaylistPage = () => {
           </div>
         </div>
 
+        {/* Controles de ação */}
+        <div className="playlist-action-bar">
+          <button className="playlist-play-button" onClick={() => handlePlay(0)}>
+            <i className="fa-solid fa-play"></i>
+          </button>
+          <button className="playlist-action-btn">
+            <i className="fa-solid fa-shuffle"></i>
+          </button>
+          <button className="playlist-action-btn">
+            <i className="fa-solid fa-arrow-down"></i>
+          </button>
+          {isAdmin && (
+            <button className="playlist-action-btn" onClick={(e) => modalAdminMoreOptions(playlistData, e)}>
+              <i className="fa-solid fa-ellipsis"></i>
+            </button>
+          )}
+        </div>
 
         {/* Lista de Músicas */}
         <div className="playlist-songs-list">
@@ -472,15 +509,10 @@ const PlaylistPage = () => {
               )}
 
               {selectedPlaylist && (
-                favoritesListAlbums.some(playlist => playlist.id === selectedPlaylist.id) ? (
-                  <button className="modal-action-option" onClick={deleteAlbumFromFavorites}>
+                favoritesListAlbums.some(playlist => playlist.id === selectedPlaylist.id) && (
+                  <button className="modal-action-option" onClick={deletePlaylistFromFavorites}>
                     <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
                     <span>Remover dos Favoritos</span>
-                  </button>
-                ) : (
-                  <button className="modal-action-option" onClick={addAlbumToFavorites}>
-                    <i className="fa-regular fa-heart"></i>
-                    <span>Adicionar aos Favoritos</span>
                   </button>
                 )
               )}
