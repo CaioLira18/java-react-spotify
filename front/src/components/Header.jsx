@@ -3,37 +3,41 @@ import ReactDOM from 'react-dom'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
   const API_URL = "http://localhost:8080/api"
-  const [name, setName] = useState([])
+  const [name, setName] = useState("")
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
   const [modalCreateOpen, setModalCreateOpen] = useState(false)
+  const [playlistData, setPlaylistData] = useState(null)
 
   const [userID, setUserID] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser)
-        setIsAuthenticated(true)
-        setName(parsedUser.name)
-        setUserID(parsedUser.id)
-        setPlaylists(parsedUser.listPlaylists || [])
-        setSongs(parsedUser.listMusic || [])
-      } catch (err) {
-        console.error("Erro ao carregar usuário", err)
-      }
-    }
-  }, [])
+  const storedUser = localStorage.getItem('user')
 
-  const filteredPlaylists = useMemo(() => {
-    return playlists.filter(playlist => 
-      playlist.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [playlists, searchTerm])
+  if (!storedUser) return
+
+  const parsedUser = JSON.parse(storedUser)
+
+  fetch(`${API_URL}/users/${parsedUser.id}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Erro ao buscar usuário")
+      return res.json()
+    })
+    .then(userData => {
+      setIsAuthenticated(true)
+      setName(userData.name)
+      setUserID(userData.id)
+      setPlaylists(userData.listPlaylists || [])
+      setSongs(userData.listMusic || [])
+
+      localStorage.setItem('user', JSON.stringify(userData))
+    })
+    .catch(err => console.error(err))
+}, [])
+
 
   async function addPlaylistToUserList(playlistId) {
     try {
@@ -46,11 +50,9 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
       )
 
       if (response.ok) {
-        // Buscar os dados completos da playlist para atualizar a UI
         const resPlaylist = await fetch(`${API_URL}/playlists/${playlistId}`)
         const fullPlaylistData = await resPlaylist.json()
 
-        // ATUALIZAÇÃO CRÍTICA: Atualiza o estado e o LocalStorage
         const updatedPlaylists = [...playlists, fullPlaylistData]
         setPlaylists(updatedPlaylists)
 
@@ -86,8 +88,6 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
       if (!response.ok) throw new Error("Erro ao criar playlist no servidor")
 
       const createdData = await response.json()
-      
-      // Agora vinculamos essa nova playlist ao usuário logado
       await addPlaylistToUserList(createdData.id)
       
       setModalCreateOpen(false)
@@ -99,8 +99,8 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   }
 
   const handlePlayPlaylist = (playlist) => {
-    if (playlist.songs && playlist.songs.length > 0) {
-      setPlaylist(playlist.songs)
+    if (playlist.musicsNames && playlist.musicsNames.length > 0) {
+      setPlaylist(playlist.musicsNames)
       setCurrentIndex(0)
     }
   }
@@ -126,6 +126,9 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </div>
             <div className={`otherOption ${type === "PLAYLIST" ? "active" : ""}`} onClick={() => setType("PLAYLIST")}>
               <h2>Playlists</h2>
+            </div>
+            <div className={`otherOption ${type === "ALBUM" ? "active" : ""}`} onClick={() => setType("ALBUM")}>
+              <h2>Albums</h2>
             </div>
           </div>
 
@@ -156,27 +159,25 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
           </div>
 
           <div className="playlistsListContainer">
-            {filteredPlaylists.map((playlist) => (
-              (type === "PLAYLIST" || type === "ALL") && (
+            {playlists.map((playlist) => (
                 <div
                   className="optionsHeader"
                   key={playlist.id}
                   onClick={() => handlePlayPlaylist(playlist)}
                   style={{ cursor: "pointer" }}
                 >
-                  <a href={`/playlists/${playlist.id}`}>
-                  <div className="boxOption">
-                    <div className="boxImage">
-                      <img src={playlist.cover} alt={playlist.name} />
+                  <a href={`/playlists/${playlist.id}`} onClick={(e) => e.stopPropagation()}>
+                    <div className="boxOption">
+                      <div className="boxImage">
+                        <img src={playlist.cover} alt={playlist.name} />
+                      </div>
+                      <div className="boxInformations">
+                        <span>{playlist.name}</span>
+                        <p>Playlist • {name}</p>
+                      </div>
                     </div>
-                    <div className="boxInformations">
-                      <span>{playlist.name}</span>
-                      <p>Playlist • {name}</p>
-                    </div>
-                  </div>
                   </a>
                 </div>
-              )
             ))}
           </div>
         </div>

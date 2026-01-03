@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useOutletContext } from 'react-router-dom'
+import MusicaModal from '../components/Modal/MusicaModal'
 
 const AlbumPage = () => {
 
@@ -425,42 +426,14 @@ const AlbumPage = () => {
       </div>
 
       {/* Modal Música */}
-      {modalOpen && (
-        <div className="song-modal-overlay" onClick={closeModal}>
-          <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="song-modal-header">
-              <h3>Opções</h3>
-              <button className="song-modal-close" onClick={closeModal}><i className="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div className="song-modal-body">
-              {selectedSong && (
-                <div className="modal-song-preview">
-                  <img src={selectedSong.cover} alt={selectedSong.name} />
-                  <div>
-                    <h4>{selectedSong.name}</h4>
-                    <p>{selectedSong.artistsNames?.map(a => a.name).join(', ')}</p>
-                  </div>
-                </div>
-              )}
-
-              {selectedSong && (
-                favoritesListSongs.some(song => song.id === selectedSong.id) ? (
-                  <button className="modal-action-option" onClick={deleteMusicToFavorites}>
-                    <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
-                    <span>Remover dos Favoritos</span>
-                  </button>
-                ) : (
-                  <button className="modal-action-option" onClick={addMusicToFavorites}>
-                    <i className="fa-regular fa-heart"></i>
-                    <span>Adicionar aos Favoritos</span>
-                  </button>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <MusicaModal 
+        isOpen={modalOpen}
+        onClose={closeModal}
+        song={selectedSong}
+        favoritesListSongs={favoritesListSongs}
+        onAddFavorite={addMusicToFavorites}
+        onDeleteFavorite={deleteMusicToFavorites}
+      />
 
       {/* Modal Admin */}
       {modalAdminOpen && (

@@ -29,7 +29,7 @@ const SlideHome = () => {
                                     <p>{playlist.description}</p>
                                 </div>
                                 <div className="slideTopPlaylistsHomeButton">
-                                    <a href={`/playlist/${playlist.id}`}><button className='play-button'>Play</button></a>
+                                    <a href={`/playlists/${playlist.id}`}><button className='play-button'>Play</button></a>
                                     <button className='follow_button'>Seguir</button>
                                     <button className='more_button'><i className="fa-solid fa-ellipsis"></i></button>
                                 </div>
