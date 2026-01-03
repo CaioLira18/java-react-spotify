@@ -112,3 +112,88 @@
   cursor: pointer;
   border: 1px solid #ffffff;
 }
+
+/* Modal Music */
+/* Container que engloba o seletor e o texto */
+.playlist-selector-container {
+    background-color: #333333; /* Cinza ligeiramente mais claro que o fundo do modal */
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid #404040;
+    animation: slideDown 0.3s ease-out; /* Animação de entrada */
+}
+
+/* Texto de instrução */
+.playlist-selector-container p {
+    margin: 0;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Estilização do Select */
+.playlist-select {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: #181818; /* Cor de fundo escura profunda */
+    color: #b3b3b3;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Mudança de cor ao interagir com o select */
+.playlist-select:hover {
+    border-color: #b3b3b3;
+    color: #ffffff;
+}
+
+.playlist-select:focus {
+    border-color: #1db954; /* Verde Spotify no foco */
+    color: #ffffff;
+}
+
+/* Estilização das opções dentro do select (limitado pelo navegador) */
+.playlist-select option {
+    background-color: #282828;
+    color: #ffffff;
+}
+
+/* Botão de Cancelar */
+.playlist-selector-container button {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    color: #b3b3b3;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: color 0.2s;
+}
+
+.playlist-selector-container button:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* Animação suave para o seletor aparecer */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

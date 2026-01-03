@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const MusicaModal = ({ 
-  isOpen, 
-  onClose, 
-  song, 
-  favoritesListSongs, 
-  onAddFavorite, 
-  onDeleteFavorite, 
-  onRemoveFromPlaylist 
+const MusicaModal = ({
+  isOpen,
+  onClose,
+  isOpenPlaylistAdd, // Estado booleano vindo do pai
+  onOpenPlaylistAdd, // Função para abrir a lista de playlists
+  onCloseOpenPlaylistAdd,
+  song,
+  favoritesListSongs,
+  onAddFavorite,
+  onDeleteFavorite,
+  onRemoveFromPlaylist,
+  onMusicToPlaylist, 
+  API_URL
 }) => {
-  // Se o modal não estiver aberto ou não houver música selecionada, não renderiza nada
+  const [playlists, setPlaylists] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch(`${API_URL}/playlists`)
+        .then(response => response.json())
+        .then(data => setPlaylists(data))
+        .catch(() => console.error("Erro ao buscar Playlists."));
+    }
+  }, [isOpen, API_URL]);
+
   if (!isOpen || !song) return null;
 
-  // Verifica se a música atual está na lista de favoritos
   const isFavorite = favoritesListSongs.some(fav => fav.id === song.id);
 
   return (
@@ -34,7 +48,6 @@ const MusicaModal = ({
             </div>
           </div>
 
-          {/* Lógica de Favoritos baseada na prop isFavorite */}
           {isFavorite ? (
             <button className="modal-action-option" onClick={onDeleteFavorite}>
               <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
@@ -47,13 +60,39 @@ const MusicaModal = ({
             </button>
           )}
 
-          <button
-            className="modal-action-option"
-            onClick={() => onRemoveFromPlaylist(song.id)}
-          >
-            <i className="fa-solid fa-trash"></i>
-            <span>Remover Musica da Playlist</span>
+          <button className="modal-action-option" onClick={() => onRemoveFromPlaylist?.(song.id)}>
+            <i className="fa-solid fa-minus-circle"></i>
+            <span>Remover desta Playlist</span>
           </button>
+
+          <button className="modal-action-option" onClick={onOpenPlaylistAdd}>
+            <i className="fa-solid fa-plus"></i>
+            <span>Adicionar em uma Playlist</span>
+          </button>
+
+          {/* Se o usuário clicou para ver as playlists */}
+          {isOpenPlaylistAdd && (
+            <div className="playlist-selector-container">
+              <p>Escolha a Playlist:</p>
+              <select
+                className="playlist-select"
+                onChange={(e) => {
+                  if (e.target.value) onMusicToPlaylist(e.target.value);
+                }}
+                defaultValue=""
+              >
+                <option value="" disabled>Selecionar...</option>
+                {playlists.map(playlist => (
+                  playlist.type != "SPOTIFY_PLAYLIST" && (
+                    <option key={playlist.id} value={playlist.id}>
+                      {playlist.name}
+                    </option>
+                  )
+                ))}
+              </select>
+              <button onClick={onCloseOpenPlaylistAdd}>Cancelar</button>
+            </div>
+          )}
         </div>
       </div>
     </div>
