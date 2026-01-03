@@ -12,25 +12,34 @@ const MusicaModal = ({
   onAddFavorite,
   onDeleteFavorite,
   onMusicToPlaylist,
-  onRemoveFromPlaylist, // O nome deve ser idêntico ao passado no pai
+  onRemoveFromPlaylist,
+  API_URL,
 }) => {
 
   const [playlists, setPlaylists] = useState([]);
+  const [currentPlaylist, setCurrentPlaylist] = useState(null);
   const { id: playlistIdFromUrl } = useParams();
-  const API_URL = "http://localhost:8080/api"
 
   useEffect(() => {
     fetch(`${API_URL}/playlists`)
       .then(response => response.json())
       .then(data => {
-        setPlaylists(data)
+        setPlaylists(data);
+        // Buscar a playlist atual se estiver em uma página de playlist
+        if (playlistIdFromUrl) {
+          const current = data.find(p => p.id === playlistIdFromUrl);
+          setCurrentPlaylist(current);
+        }
       })
       .catch(() => alert("Erro ao buscar Playlists."))
-  }, [API_URL])
+  }, [API_URL, playlistIdFromUrl])
 
   if (!isOpen || !song) return null;
 
   const isFavorite = favoritesListSongs.some(fav => fav.id === song.id);
+  
+  // Verificar se está em uma playlist do usuário (não do Spotify)
+  const isUserPlaylist = currentPlaylist && currentPlaylist.type !== "SPOTIFY_PLAYLIST";
 
   return (
     <div className="song-modal-overlay" onClick={onClose}>
@@ -68,7 +77,8 @@ const MusicaModal = ({
             <span>Adicionar em uma Playlist</span>
           </button>
 
-          {playlistIdFromUrl && onRemoveFromPlaylist && (
+          {/* Botão só aparece se estiver em uma playlist do USUÁRIO (não do Spotify) */}
+          {playlistIdFromUrl && isUserPlaylist && onRemoveFromPlaylist && (
             <button
               className="modal-action-option"
               onClick={() => onRemoveFromPlaylist(playlistIdFromUrl, song.id)}
