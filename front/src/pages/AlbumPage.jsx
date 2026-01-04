@@ -249,7 +249,7 @@ const AlbumPage = () => {
         </div>
       </div>
 
-      <MusicaModal 
+      <MusicaModal
         isOpen={modalOpen} onClose={closeModal} song={selectedSong}
         favoritesListSongs={favoritesListSongs} onAddFavorite={addMusicToFavorites} onDeleteFavorite={deleteMusicToFavorites}
       />
@@ -262,12 +262,14 @@ const AlbumPage = () => {
               <button className="song-modal-close" onClick={closeAdminModal}>×</button>
             </div>
             <div className="song-modal-body">
-               <select className="form-input" value={selectedSongToAlbum} onChange={(e) => setSelectedSongToAlbum(e.target.value)}>
-                  <option value="">Selecione uma música</option>
-                  {songs.map(song => <option key={song.id} value={song.id}>{song.name}</option>)}
-               </select>
-               <button onClick={addMusicToAlbum}>Adicionar ao Álbum</button>
-               <button onClick={removeMusicFromPlaylist}>Remover do Álbum</button>
+              <select className="form-input" value={selectedSongToAlbum} onChange={(e) => setSelectedSongToAlbum(e.target.value)}>
+                <option value="">Selecione uma música</option>
+                {playlistSongs.map(song => <option key={song.id} value={song.id}>{song.name}</option>)}
+              </select>
+              <div className="form-input-button">
+                <button onClick={addMusicToAlbum}>Adicionar ao Álbum</button>
+                <button onClick={removeMusicFromPlaylist}>Remover do Álbum</button>
+              </div>
             </div>
           </div>
         </div>

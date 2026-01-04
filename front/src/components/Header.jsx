@@ -6,6 +6,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const [name, setName] = useState("")
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
+  const [albums, setAlbums] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
   const [modalCreateOpen, setModalCreateOpen] = useState(false)
@@ -15,28 +16,29 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-  const storedUser = localStorage.getItem('user')
+    const storedUser = localStorage.getItem('user')
 
-  if (!storedUser) return
+    if (!storedUser) return
 
-  const parsedUser = JSON.parse(storedUser)
+    const parsedUser = JSON.parse(storedUser)
 
-  fetch(`${API_URL}/users/${parsedUser.id}`)
-    .then(res => {
-      if (!res.ok) throw new Error("Erro ao buscar usuário")
-      return res.json()
-    })
-    .then(userData => {
-      setIsAuthenticated(true)
-      setName(userData.name)
-      setUserID(userData.id)
-      setPlaylists(userData.listPlaylists || [])
-      setSongs(userData.listMusic || [])
+    fetch(`${API_URL}/users/${parsedUser.id}`)
+      .then(res => {
+        if (!res.ok) throw new Error("Erro ao buscar usuário")
+        return res.json()
+      })
+      .then(userData => {
+        setIsAuthenticated(true)
+        setName(userData.name)
+        setUserID(userData.id)
+        setPlaylists(userData.listPlaylists || [])
+        setAlbums(userData.listAlbums || [])
+        setSongs(userData.listMusic || [])
 
-      localStorage.setItem('user', JSON.stringify(userData))
-    })
-    .catch(err => console.error(err))
-}, [])
+        localStorage.setItem('user', JSON.stringify(userData))
+      })
+      .catch(err => console.error(err))
+  }, [])
 
 
   async function addPlaylistToUserList(playlistId) {
@@ -89,7 +91,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
 
       const createdData = await response.json()
       await addPlaylistToUserList(createdData.id)
-      
+
       setModalCreateOpen(false)
       alert("Playlist adicionada à sua biblioteca!")
     } catch (err) {
@@ -158,8 +160,9 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </a>
           </div>
 
-          <div className="playlistsListContainer">
-            {playlists.map((playlist) => (
+          {(type == "ALL" || type == "PLAYLIST") && (
+            <div className="playlistsListContainer">
+              {playlists.map((playlist) => (
                 <div
                   className="optionsHeader"
                   key={playlist.id}
@@ -178,8 +181,35 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                     </div>
                   </a>
                 </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
+           {(type == "ALL" || type == "ALBUM") && (
+            <div className="playlistsListContainer">
+              {albums.map((album) => (
+                <div
+                  className="optionsHeader"
+                  key={album.id}
+                  onClick={() => handlePlayPlaylist(album)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <a href={`/albums/${album.id}`} onClick={(e) => e.stopPropagation()}>
+                    <div className="boxOption">
+                      <div className="boxImage">
+                        <img src={album.cover} alt={album.name} />
+                      </div>
+                      <div className="boxInformations">
+                        <span>{album.name}</span>
+                        <p>Album • {album.artistsNames.map(artist => artist.name)}</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+
         </div>
       </header>
 

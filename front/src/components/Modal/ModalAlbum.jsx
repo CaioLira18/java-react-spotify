@@ -8,10 +8,8 @@ const ModalAlbum = ({
     onAddFavorite,
     onDeleteFavorite,
 }) => {
-    // Se o modal não estiver aberto ou não houver álbum, não renderiza nada
     if (!isOpen || !album) return null;
 
-    // Verifica se o álbum atual está nos favoritos
     const isFavorite = favoritesListAlbums?.some(fav => fav.id === album.id);
 
     return (

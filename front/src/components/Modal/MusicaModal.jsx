@@ -26,13 +26,11 @@ const MusicaModal = ({
       .then(response => response.json())
       .then(data => {
         setPlaylists(data);
-        // Buscar a playlist atual se estiver em uma página de playlist
         if (playlistIdFromUrl) {
           const current = data.find(p => p.id === playlistIdFromUrl);
           setCurrentPlaylist(current);
         }
       })
-      .catch(() => alert("Erro ao buscar Playlists."))
   }, [API_URL, playlistIdFromUrl])
 
   if (!isOpen || !song) return null;
