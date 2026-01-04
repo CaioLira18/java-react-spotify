@@ -48,7 +48,6 @@ public class PlaylistController {
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
         playlist.setStatus(dto.getStatus());
-        playlist.setYear(dto.getYear());
 
         return ResponseEntity.ok(
                 playlistService.createPlaylist(playlist, dto.getSongsIds()));
@@ -66,7 +65,6 @@ public class PlaylistController {
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
         playlist.setStatus(dto.getStatus());
-        playlist.setYear(dto.getYear());
 
         Optional<Playlist> updatedItem = playlistService.updatePlaylist(id, playlist,dto.getSongsIds());
 

@@ -13,10 +13,12 @@ const PlaylistPage = () => {
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [toasts, setToasts] = useState([])
+  const [coverFile, setCoverFile] = useState(null)
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalPlaylistOpen, setModalPlaylistOpen] = useState(false)
   const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false)
+  const [modalEditOpenPlaylist, setModalEditOpenPlaylist] = useState(false)
 
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
@@ -28,6 +30,7 @@ const PlaylistPage = () => {
 
   const [isAdmin, setIsAdmin] = useState(false)
   const [name, setName] = useState("")
+  const [coverKey, setCoverKey] = useState(0) // Para forçar atualização da imagem
 
   const API_URL = "http://localhost:8080/api"
 
@@ -53,11 +56,11 @@ const PlaylistPage = () => {
     fetchPlaylistData()
   }, [id])
 
-  const fetchPlaylistData = () => {
-    fetch(`${API_URL}/playlists/${id}`)
-      .then(r => r.json())
-      .then(setPlaylistData)
-      .catch(() => showToast("Erro ao carregar Playlist", "error"))
+  const fetchPlaylistData = async () => {
+    const res = await fetch(`${API_URL}/playlists/${id}`)
+    const data = await res.json()
+    setPlaylistData(data)
+    return data
   }
 
   const showToast = (message, type = 'success') => {
@@ -94,6 +97,10 @@ const PlaylistPage = () => {
     setModalOpenPlaylistAdd(false)
   }
 
+  const CloseModalEditPlaylist = () => {
+    setModalEditOpenPlaylist(false)
+  }
+
   const handlePlay = (index) => {
     setPlaylist(playlistSongs)
     setCurrentIndex(index)
@@ -102,8 +109,8 @@ const PlaylistPage = () => {
   const addMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
     try {
-      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { 
-        method: 'POST' 
+      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, {
+        method: 'POST'
       })
       if (res.ok) {
         const updated = [...favoritesListSongs, selectedSong]
@@ -112,16 +119,16 @@ const PlaylistPage = () => {
         showToast("Música adicionada aos favoritos!")
         closeModal()
       }
-    } catch (err) { 
-      showToast("Erro ao adicionar", "error") 
+    } catch (err) {
+      showToast("Erro ao adicionar", "error")
     }
   }
 
   const deleteMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
     try {
-      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { 
-        method: 'DELETE' 
+      const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, {
+        method: 'DELETE'
       })
       if (res.ok) {
         const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id)
@@ -130,50 +137,50 @@ const PlaylistPage = () => {
         showToast("Música removida dos favoritos!")
         closeModal()
       }
-    } catch (err) { 
-      showToast("Erro ao remover", "error") 
+    } catch (err) {
+      showToast("Erro ao remover", "error")
     }
   }
 
   const addMusicToPlaylist = async (playlistId) => {
     if (!selectedSong) return
     try {
-      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { 
-        method: 'POST' 
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, {
+        method: 'POST'
       })
       if (res.ok) {
         showToast("Música adicionada à playlist!")
         setModalOpenPlaylistAdd(false)
         closeModal()
+
+        // Se adicionou música na playlist atual, atualizar
+        if (playlistId === id) {
+          await fetchPlaylistData()
+          await updatePlaylistCover(playlistId)
+        }
       } else {
         showToast("Erro ao adicionar na playlist", "error")
       }
-    } catch (err) { 
-      showToast("Erro de conexão", "error") 
+    } catch (err) {
+      showToast("Erro de conexão", "error")
     }
   }
 
   const removeMusicFromPlaylist = async (playlistId, songId) => {
-    if (!songId || !playlistId) {
-      showToast("Erro: dados incompletos", "error")
-      return
-    }
     try {
-      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { 
-        method: 'DELETE' 
-      })
+      const res = await fetch(
+        `${API_URL}/playlists/${playlistId}/music/${songId}`,
+        { method: 'DELETE' }
+      )
+
       if (res.ok) {
         showToast("Música removida da playlist!")
         closeModal()
-        // Recarregar os dados da playlist para atualizar a lista
-        fetchPlaylistData()
-        // Atualizar a lista de músicas
-        fetch(`${API_URL}/songs`).then(r => r.json()).then(setSongs)
-      } else {
-        showToast("Erro ao remover da playlist", "error")
+
+        const updatedPlaylist = await fetchPlaylistData()
+        await updatePlaylistCover(updatedPlaylist)
       }
     } catch (err) {
-      console.error("Erro ao remover música:", err)
       showToast("Erro de conexão", "error")
     }
   }
@@ -207,9 +214,104 @@ const PlaylistPage = () => {
 
   const updateLocalStorage = (key, data) => {
     const user = JSON.parse(localStorage.getItem('user'))
-    if (user) { 
+    if (user) {
       user[key] = data
-      localStorage.setItem('user', JSON.stringify(user)) 
+      localStorage.setItem('user', JSON.stringify(user))
+    }
+  }
+
+  const updatePlaylistCover = async (playlist) => {
+    try {
+      let newCover =
+        "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png"
+
+      if (playlist.musicsNames?.length > 0) {
+        const firstSong = songs.find(
+          s => s.id === playlist.musicsNames[0].id
+        )
+        if (firstSong?.cover) {
+          newCover = firstSong.cover
+        }
+      }
+
+      const payload = {
+        name: playlist.name,
+        cover: newCover,
+        status: playlist.status,
+        type: playlist.type,
+        description: playlist.description,
+        year: playlist.year
+      }
+
+      await fetch(`${API_URL}/playlists/${playlist.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+
+      setCoverKey(prev => prev + 1)
+    } catch (err) {
+      console.error("Erro ao atualizar capa:", err)
+    }
+  }
+
+  async function uploadCoverToCloudinary() {
+    const formData = new FormData()
+    formData.append("file", coverFile)
+    formData.append("upload_preset", "Covers")
+    const response = await fetch("https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload", {
+      method: "POST",
+      body: formData
+    })
+    if (!response.ok) throw new Error("Erro no upload")
+    const data = await response.json()
+    return data.secure_url
+  }
+
+  const updatePlaylist = async (data) => {
+    try {
+      let coverUrl = data.currentCover
+
+      if (data.coverFile) {
+        const formData = new FormData()
+        formData.append("file", data.coverFile)
+        formData.append("upload_preset", "Covers")
+
+        const response = await fetch(
+          "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+          { method: "POST", body: formData }
+        )
+
+        if (response.ok) {
+          const cloudData = await response.json()
+          coverUrl = cloudData.secure_url
+        }
+      }
+
+      const payload = {
+        name: data.name,
+        description: data.description,
+        cover: coverUrl,
+        status: data.status,
+        type: data.type
+      }
+
+      const response = await fetch(`${API_URL}/playlists/${data.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+
+      if (response.ok) {
+        showToast("Playlist atualizada com sucesso!", "success")
+        await fetchPlaylistData()
+        setCoverKey(prev => prev + 1)
+      } else {
+        throw new Error("Erro ao atualizar")
+      }
+    } catch (error) {
+      console.error("Erro:", error)
+      showToast("Erro ao atualizar playlist", "error")
     }
   }
 
@@ -218,6 +320,14 @@ const PlaylistPage = () => {
       a.musicsNames?.some(m => m.id === songId)
     )
     return album ? album.name : '---'
+  }
+
+  const calculateTotalDuration = (songs) => {
+    const totalSeconds = songs.reduce((acc, song) => {
+      const [min, sec] = song.duration.split(':').map(Number)
+      return acc + (min * 60 + sec)
+    }, 0)
+    return `${Math.floor(totalSeconds / 60)} min ${totalSeconds % 60} s`
   }
 
   if (!playlistData) return <h1>Carregando Playlist...</h1>
@@ -230,18 +340,24 @@ const PlaylistPage = () => {
     users.find(u => u.id === userID)?.image ||
     "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
 
+  // Pegar a capa da playlist (já deve estar atualizada no backend)
+  const playlistCover = playlistData.cover ||
+    "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png"
+
   return (
     <>
       <div className="playlist-page-wrapper">
         <div className="playlist-header-section">
           <img
-            src={playlistData.cover}
+            key={coverKey}
+            src={playlistCover}
             alt={playlistData.name}
             className="playlist-cover-image"
           />
           <div className="playlist-header-info">
             <span className="playlist-label-type">Playlist</span>
             <h1 className="playlist-main-title">{playlistData.name}</h1>
+            <p>{playlistData.description}</p>
             <div className="playlist-meta-info">
               <img
                 src={
@@ -253,8 +369,15 @@ const PlaylistPage = () => {
               />
               <span>
                 {playlistData.type === "SPOTIFY_PLAYLIST" ? "Spotify" : name}
-                {" • "}
-                {playlistData.year}
+              </span>
+              <span>
+                •
+              </span>
+              <span>
+                {playlistSongs.length} Musicas,
+              </span>
+              <span>
+                {calculateTotalDuration(playlistSongs)}
               </span>
             </div>
           </div>
@@ -267,15 +390,12 @@ const PlaylistPage = () => {
           >
             <i className="fa-solid fa-play"></i>
           </button>
-
-          {isAdmin && (
-            <button
-              className="playlist-action-btn"
-              onClick={(e) => modalPlaylistMoreOptions(playlistData, e)}
-            >
-              <i className="fa-solid fa-ellipsis"></i>
-            </button>
-          )}
+          <button
+            className="playlist-action-btn"
+            onClick={(e) => modalPlaylistMoreOptions(playlistData, e)}
+          >
+            <i className="fa-solid fa-ellipsis"></i>
+          </button>
         </div>
 
         <div className="playlist-songs-list">
@@ -334,14 +454,14 @@ const PlaylistPage = () => {
         favoritesListSongs={favoritesListSongs}
         onAddFavorite={addMusicToFavorites}
         onDeleteFavorite={deleteMusicToFavorites}
-        
+
         isOpenPlaylistAdd={modalOpenPlaylistAdd}
         onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
         onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
         onMusicToPlaylist={addMusicToPlaylist}
-        
+
         onRemoveFromPlaylist={removeMusicFromPlaylist}
-        
+
         API_URL={API_URL}
       />
 
@@ -350,6 +470,8 @@ const PlaylistPage = () => {
         onClose={closePlaylistModal}
         playlist={selectedPlaylist}
         deletePlaylist={deletePlaylist}
+        updatePlaylist={updatePlaylist}
+        API_URL={API_URL}
       />
 
       <Toast toasts={toasts} removeToast={removeToast} />

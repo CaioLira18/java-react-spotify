@@ -17,6 +17,7 @@ import './css/deletePages.css'
 import './css/ViewPages.css'
 import './css/SlideHome.css'
 import './css/Playlist.css'
+import './css/EditPlaylist.css'
 import './utils/Fonts.css'
 
 import App from './App.jsx'

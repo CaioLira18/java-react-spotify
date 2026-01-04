@@ -13,6 +13,7 @@ const MusicaModal = ({
   onDeleteFavorite,
   onMusicToPlaylist,
   onRemoveFromPlaylist,
+  updateCover,
   API_URL,
 }) => {
 

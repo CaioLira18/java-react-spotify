@@ -29,7 +29,6 @@ public class Playlist {
     private String name;
     private String description;
     private String cover;
-    private String year;
     
     @Enumerated(EnumType.STRING) 
     private ContentEnum type;

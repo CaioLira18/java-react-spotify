@@ -48,7 +48,6 @@ public class PlaylistService {
             item.setDescription(updatedPlaylist.getDescription());
             item.setType(updatedPlaylist.getType());
             item.setStatus(updatedPlaylist.getStatus());
-            item.setYear(updatedPlaylist.getYear());
             item.setMusicsNames(musics);
 
             return playlistRepository.save(item);
