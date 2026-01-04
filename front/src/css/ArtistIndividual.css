@@ -51,19 +51,19 @@
   z-index: 2;
   color: white;
   max-width: 70%;
-  margin-top: -140px;
+  margin-top: -200px;
   margin-left: 100px;
 }
 
 .artistInformation h1 {
-  font-size: 4rem;
+  font-size: 82px;
   font-weight: 800;
-  margin: 8px 0;
 }
 
 .artistInformation h2 {
-  font-size: 0.95rem;
+  font-size: 16px;
   font-weight: 400;
+  margin: 6px;
   color: #b3b3b3;
 }
 
@@ -76,11 +76,11 @@
 
 .verificy i {
   color: #3b82f6;
-  font-size: 14px;
+  font-size: 20px;
 }
 
 .verificy p {
-  font-size: 0.85rem;
+  font-size: 14px;
   font-weight: 500;
 }
 
@@ -310,6 +310,15 @@
   align-items: center;
   justify-content: center;
   margin-top: 30px;
+}
+
+.followButton button {
+  width: 100px;
+  height: 30px;
+  background-color: transparent;
+  border: 1px solid gray;
+  border-radius: 20px;
+  font-weight: bold;
 }
 
 /* ===========================

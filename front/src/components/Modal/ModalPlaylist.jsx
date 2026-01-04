@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
 const ModalPlaylist = ({ 
   isOpen, 
@@ -8,69 +8,58 @@ const ModalPlaylist = ({
   updatePlaylist,
   API_URL 
 }) => {
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [name, setName] = useState('')
-  const [year, setYear] = useState('')
-  const [description, setDescription] = useState('')
-  const [coverFile, setCoverFile] = useState(null)
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [coverFile, setCoverFile] = useState(null);
 
-  // Resetar estados quando o modal abrir/fechar ou playlist mudar
   useEffect(() => {
     if (isOpen && playlist) {
-      setName(playlist.name || '')
-      setYear(playlist.year || '')
-      setDescription(playlist.description || '')
-      setCoverFile(null)
-      setIsEditMode(false)
+      setName(playlist.name || '');
+      setDescription(playlist.description || '');
+      setCoverFile(null);
+      setIsEditMode(false);
     }
-  }, [isOpen, playlist])
+  }, [isOpen, playlist]);
 
-  if (!isOpen || !playlist) return null
+  if (!isOpen || !playlist) return null;
 
   const handleEditClick = (e) => {
-    e.preventDefault()
-    setIsEditMode(true)
-  }
+    e.preventDefault();
+    setIsEditMode(true);
+  };
 
   const handleCancelEdit = () => {
-    setIsEditMode(false)
-    setName(playlist.name || '')
-    setYear(playlist.year || '')
-    setDescription(playlist.description || '')
-    setCoverFile(null)
-  }
+    setIsEditMode(false);
+    setName(playlist.name || '');
+    setDescription(playlist.description || '');
+    setCoverFile(null);
+  };
 
   const handleUpdatePlaylist = async () => {
     try {
       await updatePlaylist({
         id: playlist.id,
         name: name.trim() || playlist.name,
-        year: year || playlist.year,
         description: description || playlist.description,
         coverFile: coverFile,
         status: playlist.status,
         type: playlist.type,
         currentCover: playlist.cover
-      })
-      setIsEditMode(false)
-      onClose()
+      });
+      setIsEditMode(false);
+      onClose();
     } catch (error) {
-      console.error('Erro ao atualizar playlist:', error)
+      console.error('Erro ao atualizar playlist:', error);
     }
-  }
+  };
 
   return (
     <div className="song-modal-overlay" onClick={onClose}>
-      <div
-        className="song-modal-box"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
         <div className="song-modal-header">
           <h3>{isEditMode ? 'Editar Playlist' : 'Opções da Playlist'}</h3>
-          <button
-            className="song-modal-close"
-            onClick={onClose}
-          >
+          <button className="song-modal-close" onClick={onClose}>
             <i className="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -82,23 +71,22 @@ const ModalPlaylist = ({
                 <img src={playlist.cover} alt={playlist.name} />
                 <div>
                   <h4>{playlist.name}</h4>
-                  <p>Playlist • {playlist.year}</p>
+                  <p>Playlist • {playlist.year || 'N/A'}</p>
                 </div>
               </div>
 
-              <button
-                className="modal-action-option"
-                onClick={handleEditClick}
-              >
-                <i className="fa-solid fa-pencil"></i>
-                <span>Editar Playlist</span>
-              </button>
+              {playlist.type !== "SPOTIFY_PLAYLIST" && (
+                <button className="modal-action-option" onClick={handleEditClick}>
+                  <i className="fa-solid fa-pencil"></i>
+                  <span>Editar Playlist</span>
+                </button>
+              )}
 
               <button
                 className="modal-action-option delete-option"
                 onClick={() => {
-                  onClose()
-                  deletePlaylist()
+                  onClose();
+                  deletePlaylist();
                 }}
               >
                 <i className="fa-solid fa-trash"></i>
@@ -130,7 +118,6 @@ const ModalPlaylist = ({
                   <label>Nome da Playlist</label>
                   <input 
                     type="text"
-                    placeholder={playlist.name} 
                     value={name} 
                     onChange={(e) => setName(e.target.value)} 
                   />
@@ -139,7 +126,6 @@ const ModalPlaylist = ({
                 <div className="input-group">
                   <label>Descrição</label>
                   <textarea 
-                    placeholder={playlist.description || 'Adicione uma descrição'} 
                     value={description} 
                     onChange={(e) => setDescription(e.target.value)}
                     rows="3"
@@ -148,25 +134,15 @@ const ModalPlaylist = ({
               </div>
 
               <div className="buttonEditPlaylist">
-                <button 
-                  className="btn-cancel"
-                  onClick={handleCancelEdit}
-                >
-                  Cancelar
-                </button>
-                <button 
-                  className="btn-save"
-                  onClick={handleUpdatePlaylist}
-                >
-                  Salvar
-                </button>
+                <button className="btn-cancel" onClick={handleCancelEdit}>Cancelar</button>
+                <button className="btn-save" onClick={handleUpdatePlaylist}>Salvar</button>
               </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ModalPlaylist
+export default ModalPlaylist;

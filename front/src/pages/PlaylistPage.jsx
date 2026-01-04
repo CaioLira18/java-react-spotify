@@ -429,7 +429,7 @@ const PlaylistPage = () => {
       />
 
       <ModalPlaylist
-        isOpen={modalPlaylistOpen}
+        isOpen={modalPlaylistMoreOptions}
         onClose={closePlaylistModal}
         playlist={selectedPlaylist}
         deletePlaylist={deletePlaylist}

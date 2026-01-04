@@ -196,9 +196,16 @@
 .boxImage img {
   width: 56px;
   height: 56px;
-  border-radius: 4px;
   object-fit: cover;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.normalBox {
+  border-radius: 4px;
+}
+
+.profileArtist {
+  border-radius: 50px;
 }
 
 .boxInformations {

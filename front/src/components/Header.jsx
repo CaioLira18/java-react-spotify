@@ -7,6 +7,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [albums, setAlbums] = useState([])
+  const [artists, setArtists] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [type, setType] = useState("ALL")
   const [modalCreateOpen, setModalCreateOpen] = useState(false)
@@ -34,6 +35,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
         setPlaylists(userData.listPlaylists || [])
         setAlbums(userData.listAlbums || [])
         setSongs(userData.listMusic || [])
+        setArtists(userData.listArtists || [])
 
         localStorage.setItem('user', JSON.stringify(userData))
       })
@@ -170,11 +172,11 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                   <a href={`/playlists/${playlist.id}`} onClick={(e) => e.stopPropagation()}>
                     <div className="boxOption">
                       <div className="boxImage">
-                        <img src={playlist.cover} alt={playlist.name} />
+                        <img className='normalBox' src={playlist.cover} alt={playlist.name} />
                       </div>
                       <div className="boxInformations">
                         <span>{playlist.name}</span>
-                        <p>Playlist • {name}</p>
+                        <p>Playlist • {playlist.type == "SPOTIFY_PLAYLIST" ? 'Spotify' : name}</p>
                       </div>
                     </div>
                   </a>
@@ -183,7 +185,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </div>
           )}
 
-           {(type == "ALL" || type == "ALBUM") && (
+          {(type == "ALL" || type == "ALBUM") && (
             <div className="playlistsListContainer">
               {albums.map((album) => (
                 <div
@@ -195,7 +197,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                   <a href={`/albums/${album.id}`} onClick={(e) => e.stopPropagation()}>
                     <div className="boxOption">
                       <div className="boxImage">
-                        <img src={album.cover} alt={album.name} />
+                        <img className='normalBox' src={album.cover} alt={album.name} />
                       </div>
                       <div className="boxInformations">
                         <span>{album.name}</span>
@@ -207,6 +209,33 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
               ))}
             </div>
           )}
+
+          {(type == "ALL" || type == "ARTIST") && (
+            <div className="artistListContainer">
+              {artists.map((artist) => (
+                <div
+                  className="optionsHeader"
+                  key={artist.id}
+                  onClick={() => handlePlayPlaylist(artist)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <a href={`/artists/${artist.id}`} onClick={(e) => e.stopPropagation()}>
+                    <div className="boxOption">
+                      <div className="boxImage">
+                        <img className='profileArtist' src={artist.profilePhoto} alt={artist.name} />
+                      </div>
+                      <div className="boxInformations">
+                        <span>{artist.name}</span>
+                        <p>Artista</p>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
+
+
 
         </div>
       </header>

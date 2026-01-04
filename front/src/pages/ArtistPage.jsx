@@ -176,7 +176,6 @@ const ArtistPage = () => {
                     <button className="playlist-play-button" onClick={() => { setPlaylist(artistSongs); setCurrentIndex(0); }}>
                         <i className="fa-solid fa-play"></i>
                     </button>
-                    
                     <button 
                         className="playlist-action-btn" 
                         onClick={isArtistFavorite ? deleteArtistFromFavorite : addArtistToFavorite}

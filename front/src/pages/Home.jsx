@@ -6,6 +6,7 @@ const Home = () => {
     const API_URL = "http://localhost:8080/api";
     const [artistsOn, setArtistsOn] = useState([]);
     const [songs, setSongs] = useState([]);
+    const [name, setName] = useState("");
     const [albums, setAlbums] = useState([]);
     const [artists, setArtists] = useState([]);
     const [playlists, setPlaylists] = useState([])
@@ -31,6 +32,7 @@ const Home = () => {
                 setPlaylists(userData.listPlaylists || [])
                 setAlbums(userData.listAlbums || [])
                 setSongs(userData.listMusic || [])
+                setName(parsedUser.name)
 
                 localStorage.setItem('user', JSON.stringify(userData))
             })
@@ -85,20 +87,17 @@ const Home = () => {
 
                     <div className="gridMyPlaylists">
                         {playlists.map((playlist) => (
+                            <a href={`/playlists/${playlist.id}`}>
                             <div className="secctionHomeContent" key={playlist.id}>
                                 <div className="secctionHomeContentImage">
                                     <img src={playlist.cover} alt={playlist.name} />
                                 </div>
                                 <div className="secctionHomeContainerArtists">
-                                    {playlist.musicsNames && playlist.musicsNames.map((music) => (
-                                        <div key={music.id}>
-                                            <p>
-                                                {music.artistsNames && music.artistsNames.map(artist => artist.name).join(", ") + " e mais"}
-                                            </p>
-                                        </div>
-                                    ))}
+                                    <h4>{playlist.name}</h4>
+                                    <p>De {name}</p>
                                 </div>
                             </div>
+                            </a>
                         ))}
                     </div>
                 </div>
