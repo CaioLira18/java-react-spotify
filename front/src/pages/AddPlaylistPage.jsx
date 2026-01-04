@@ -132,16 +132,20 @@ const AddPlaylistPage = () => {
             {/* Cover */}
             <div className="inputBox">
               <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Cover</h2>
+                <i className="fa-solid fa-panorama"></i>
+                <h2>Capa da Musica</h2>
               </div>
               <div className="inputArea">
+                <label htmlFor="file-upload" className="custom-file-upload">
+                  <i className="fas fa-cloud-upload-alt"></i> 
+                  {coverFile ? coverFile.name : "Escolher arquivo"}
+                </label>
                 <input
+                  id="file-upload"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setCoverFile(e.target.files[0])}
+                  onChange={(e) => setCover(e.target.files[0])}
                 />
-                {coverFile && <p style={{ color: 'green', marginTop: '5px' }}>Arquivo selecionado: {coverFile.name}</p>}
               </div>
             </div>
 

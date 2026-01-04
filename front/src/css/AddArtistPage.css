@@ -62,7 +62,6 @@ h1:first-child {
   text-transform: none;
 }
 
-/* Input area */
 .inputArea {
   position: relative;
 }
@@ -94,7 +93,35 @@ h1:first-child {
   border-color: #535353;
 }
 
-/* Botão de adicionar - estilo exato do Spotify */
+.inputArea input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 12px 20px;
+    cursor: pointer;
+    background-color: #1a1a1a; 
+    color: #ffffff;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    width: 100%; 
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.custom-file-upload:hover {
+    background-color: #252525;
+    border-color: #00ff88; 
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.custom-file-upload:active {
+    transform: scale(0.98);
+}
+
 .addItemButton {
   margin-top: 32px;
   display: flex;

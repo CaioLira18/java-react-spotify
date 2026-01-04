@@ -5,7 +5,7 @@ const AddArtistPage = () => {
   const [description, setDescription] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
-  const [status, setStatus] = useState("ON"); 
+  const [status, setStatus] = useState("ON");
   const [toasts, setToasts] = useState([])
 
   const API_URL = "http://localhost:8080/api";
@@ -81,7 +81,7 @@ const AddArtistPage = () => {
         profilePhoto: uploadedPhoto,
         bannerPhoto: uploadedBanner,
         description,
-        status 
+        status
       };
 
       // 3. Envia para o seu API local
@@ -145,7 +145,12 @@ const AddArtistPage = () => {
                 <h2>Foto de Perfil</h2>
               </div>
               <div className="inputArea">
+                <label htmlFor="file-upload" className="custom-file-upload">
+                  <i className="fas fa-cloud-upload-alt"></i> {/* Opcional: ícone */}
+                  {photoFile ? photoFile.name : "Escolher arquivo"}
+                </label>
                 <input
+                  id="file-upload"
                   type="file"
                   accept="image/*"
                   onChange={(e) => setPhotoFile(e.target.files[0])}
@@ -160,7 +165,12 @@ const AddArtistPage = () => {
                 <h2>Banner do Artista</h2>
               </div>
               <div className="inputArea">
+                <label htmlFor="banner-upload" className="custom-file-upload">
+                  <i className="fas fa-cloud-upload-alt"></i> 
+                  {bannerFile ? bannerFile.name : "Escolher arquivo"}
+                </label>
                 <input
+                  id="banner-upload"
                   type="file"
                   accept="image/*"
                   onChange={(e) => setBannerFile(e.target.files[0])}

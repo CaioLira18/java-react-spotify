@@ -168,7 +168,7 @@ const ArtistPage = () => {
           <div className="artistInformation">
             <div className="verificy"><i className="fa-solid fa-certificate"></i><p>Artista Verificado</p></div>
             <h1>{artista.name}</h1>
-            <h2>9 Milhões de Ouvintes Mensais</h2>
+            <h2>9 Milhões de Ouvintes Mensais</h2> {/* Atualizar com Base na API*/}
           </div>
         </div>
 
