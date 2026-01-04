@@ -93,10 +93,8 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
       await addPlaylistToUserList(createdData.id)
 
       setModalCreateOpen(false)
-      alert("Playlist adicionada à sua biblioteca!")
     } catch (err) {
       console.error(err)
-      alert("Houve um erro ao criar a playlist.")
     }
   }
 

@@ -53,7 +53,7 @@ public class UserService {
             // Se as listas vierem no objeto, precisamos convertê-las/atualizá-las
             // cuidadosamente
             item.setListMusic(updatedItem.getListMusic());
-            item.setArtistsNames(updatedItem.getArtistsNames());
+            item.setListArtists(updatedItem.getListArtists());
             item.setListAlbums(updatedItem.getListAlbums());
             item.setListPlaylists(updatedItem.getListPlaylists());
 
@@ -99,7 +99,7 @@ public class UserService {
     // Adicionar Artista aos favoritos
     public Optional<User> addArtistToFavorites(String userId, String artistId) {
         return userRepository.findById(userId).flatMap(user -> artistsRepository.findById(artistId).map(artist -> {
-            user.getArtistsNames().add(artist);
+            user.getListArtists().add(artist);
             return userRepository.save(user);
         }));
     }
@@ -107,7 +107,7 @@ public class UserService {
     // Remover Artista dos favoritos
     public Optional<User> removeArtistFromFavorites(String userId, String artistId) {
         return userRepository.findById(userId).flatMap(user -> artistsRepository.findById(artistId).map(artist -> {
-            user.getArtistsNames().remove(artist);
+            user.getListArtists().remove(artist);
             return userRepository.save(user);
         }));
     }

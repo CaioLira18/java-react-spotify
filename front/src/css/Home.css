@@ -140,6 +140,57 @@ body {
     font-weight: bold;
 }
 
+.secctionHomeContainer {
+    width: 100%;
+}
+
+.secctionHomeHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 50px;
+    margin: 0 auto;
+}
+
+.secctionHomeHeader p {
+    color: gray;
+}
+
+.secctionHomeHeader p:hover {
+    color: rgb(177, 177, 177);
+    border-bottom: 0.5px solid rgb(177, 177, 177);
+    cursor: pointer;
+}
+
+.secctionHomeContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 200px;
+}
+
+.secctionHomeContentImage img {
+    width: 170px;
+    border-radius: 8px;
+}
+
+.secctionHomeContainerArtists {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    width: 80%;
+}
+
+.secctionHomeContainerArtists p {
+    color: rgb(179, 179, 179);
+}
+
+.gridMyPlaylists {
+    display: flex;
+}
+
 /* Ajuste para Mobile */
 @media (max-width: 768px) {
     .searchContainer {

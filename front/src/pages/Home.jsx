@@ -8,11 +8,34 @@ const Home = () => {
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]);
     const [artists, setArtists] = useState([]);
+    const [playlists, setPlaylists] = useState([])
 
     const updateArtistsOnline = (allArtists) => {
         const online = allArtists.filter(artist => artist.status !== "OFF");
         setArtistsOn(online);
     };
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user')
+
+        if (!storedUser) return
+
+        const parsedUser = JSON.parse(storedUser)
+
+        fetch(`${API_URL}/users/${parsedUser.id}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Erro ao buscar usuário")
+                return res.json()
+            })
+            .then(userData => {
+                setPlaylists(userData.listPlaylists || [])
+                setAlbums(userData.listAlbums || [])
+                setSongs(userData.listMusic || [])
+
+                localStorage.setItem('user', JSON.stringify(userData))
+            })
+            .catch(err => console.error(err))
+    }, [])
 
     useEffect(() => {
         Promise.all([
@@ -52,6 +75,35 @@ const Home = () => {
                     ))}
                 </div>
             </div>
+
+            <div className="secctionHomeContainer">
+                <div className="secctionHomeBox">
+                    <div className="secctionHomeHeader">
+                        <h1>Suas Playlists</h1>
+                        <p>Mostrar Tudo</p>
+                    </div>
+
+                    <div className="gridMyPlaylists">
+                        {playlists.map((playlist) => (
+                            <div className="secctionHomeContent" key={playlist.id}>
+                                <div className="secctionHomeContentImage">
+                                    <img src={playlist.cover} alt={playlist.name} />
+                                </div>
+                                <div className="secctionHomeContainerArtists">
+                                    {playlist.musicsNames && playlist.musicsNames.map((music) => (
+                                        <div key={music.id}>
+                                            <p>
+                                                {music.artistsNames && music.artistsNames.map(artist => artist.name).join(", ") + " e mais"}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
 
             {artistsOn.length === 0 && (
                 <div className="withoutArtists">

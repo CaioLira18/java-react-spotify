@@ -45,7 +45,7 @@ public class User {
      */
     @ManyToMany
     @JoinTable(name = "tb_user_favorite_artists", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "artist_id"))
-    private Set<Artists> artistsNames = new HashSet<>();
+    private Set<Artists> listArtists = new HashSet<>();
     
     /**
      * Lista de Albums Favoritos
