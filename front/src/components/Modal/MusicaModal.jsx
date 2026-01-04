@@ -76,7 +76,6 @@ const MusicaModal = ({
             <span>Adicionar em uma Playlist</span>
           </button>
 
-          {/* Botão só aparece se estiver em uma playlist do USUÁRIO (não do Spotify) */}
           {playlistIdFromUrl && isUserPlaylist && onRemoveFromPlaylist && (
             <button
               className="modal-action-option"

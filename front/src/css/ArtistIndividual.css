@@ -305,6 +305,13 @@
   margin-left: 50px;
 }
 
+.withoutSong {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
 /* ===========================
    RESPONSIVO
 =========================== */
