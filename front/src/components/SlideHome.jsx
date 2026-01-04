@@ -10,7 +10,6 @@ const SlideHome = () => {
             .then(data => {
                 setPlaylists(data)
             })
-            .catch(() => alert("Erro ao buscar Playlists."))
     }, [])
 
     return (

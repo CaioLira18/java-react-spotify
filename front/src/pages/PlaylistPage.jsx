@@ -156,7 +156,6 @@ const PlaylistPage = () => {
         // Se adicionou música na playlist atual, atualizar
         if (playlistId === id) {
           await fetchPlaylistData()
-          await updatePlaylistCover(playlistId)
         }
       } else {
         showToast("Erro ao adicionar na playlist", "error")
@@ -178,7 +177,6 @@ const PlaylistPage = () => {
         closeModal()
 
         const updatedPlaylist = await fetchPlaylistData()
-        await updatePlaylistCover(updatedPlaylist)
       }
     } catch (err) {
       showToast("Erro de conexão", "error")
@@ -217,41 +215,6 @@ const PlaylistPage = () => {
     if (user) {
       user[key] = data
       localStorage.setItem('user', JSON.stringify(user))
-    }
-  }
-
-  const updatePlaylistCover = async (playlist) => {
-    try {
-      let newCover =
-        "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png"
-
-      if (playlist.musicsNames?.length > 0) {
-        const firstSong = songs.find(
-          s => s.id === playlist.musicsNames[0].id
-        )
-        if (firstSong?.cover) {
-          newCover = firstSong.cover
-        }
-      }
-
-      const payload = {
-        name: playlist.name,
-        cover: newCover,
-        status: playlist.status,
-        type: playlist.type,
-        description: playlist.description,
-        year: playlist.year
-      }
-
-      await fetch(`${API_URL}/playlists/${playlist.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-
-      setCoverKey(prev => prev + 1)
-    } catch (err) {
-      console.error("Erro ao atualizar capa:", err)
     }
   }
 
