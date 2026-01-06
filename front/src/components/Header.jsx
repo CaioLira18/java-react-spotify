@@ -235,8 +235,6 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </div>
           )}
 
-
-
         </div>
       </header>
 

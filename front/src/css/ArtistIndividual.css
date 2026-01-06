@@ -89,7 +89,6 @@
 =========================== */
 
 .songsContainer {
-  padding: 32px;
   background-color: #000;
 }
 
@@ -319,6 +318,12 @@
   border: 1px solid gray;
   border-radius: 20px;
   font-weight: bold;
+  transition: 0.2s all ease-in-out;
+}
+
+.followButton button:hover {
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 /* ===========================

@@ -62,20 +62,16 @@ const AddArtistPage = () => {
     return data.secure_url;
   }
 
-  // Função principal para adicionar o artista
   async function addItem() {
-    // Validação: Verificando se os campos obrigatórios e o status estão preenchidos
-    if (!name.trim() || !photoFile || !bannerFile || !status) {
+    if (!name.trim() || !photoFile || !status) {
       alert("Por favor, preencha todos os campos obrigatórios.");
       return;
     }
 
     try {
-      // 1. Faz o upload das imagens primeiro
       const uploadedPhoto = await uploadPhotoToCloudinary();
       const uploadedBanner = await uploadBannerToCloudinary();
 
-      // 2. Monta o payload para o seu backend
       const payload = {
         name,
         profilePhoto: uploadedPhoto,
@@ -84,7 +80,6 @@ const AddArtistPage = () => {
         status
       };
 
-      // 3. Envia para o seu API local
       const response = await fetch(`${API_URL}/artists`, {
         method: "POST",
         headers: {

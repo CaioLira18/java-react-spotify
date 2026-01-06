@@ -303,7 +303,7 @@
   flex-direction: column;
   background-color: #282828;
   width: 540px;
-  height: 330px;
+  height: auto;
   gap: 10px;
   border-radius: 15px;
   padding: 10px;

@@ -7,11 +7,9 @@ import AppLayout from './components/AppLayout'
 import AddMusicPage from './pages/AddMusicPage'
 import AddArtistPage from './pages/AddArtistPage'
 import AdminPage from './pages/AdminPage'
-import NavBar from './components/NavBar'
 import AddAlbumPage from './pages/AddAlbumPage'
 import DeleteAlbumPage from './pages/DeleteAlbumPage'
 import AlbumPage from './pages/AlbumPage'
-import SearchPage from './pages/SearchPage'
 import DeleteMusicPage from './pages/DeleteMusicPage'
 import DeleteArtistPage from './pages/DeleteArtistPage'
 import UpdateArtistPage from './pages/UpdateArtistPage'
@@ -24,11 +22,12 @@ import LikedSongsPage from './pages/LikedSongsPage'
 import AddPlaylistPage from './pages/AddPlaylistPage'
 import PlaylistPage from './pages/PlaylistPage'
 
+
+
 function App() {
+  
   return (
     <div>
-
-      <NavBar />
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
@@ -55,7 +54,6 @@ function App() {
         <Route path="/viewAlbums" element={<ViewAlbumPage />} />
       </Routes>
     </div>
-
   )
 }
 

@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
 import Header from './Header'
 import MusicPlayer from './MusicPlayer'
+import NavBar from './NavBar'
 
 const AppLayout = () => {
   const [playlist, setPlaylist] = useState([])
@@ -10,6 +11,12 @@ const AppLayout = () => {
   return (
     <>
       <div className="app-layout">
+
+
+        <NavBar
+          setPlaylist={setPlaylist}
+          setCurrentIndex={setCurrentIndex} />
+
         <Header
           setPlaylist={setPlaylist}
           setCurrentIndex={setCurrentIndex}

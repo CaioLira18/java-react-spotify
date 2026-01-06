@@ -8,12 +8,10 @@ const ArtistPage = () => {
     const { id } = useParams();
     const { setPlaylist, setCurrentIndex } = useOutletContext();
 
-    // Estados de Dados
     const [artistaLocal, setArtistaLocal] = useState(null);
     const [songs, setSongs] = useState([]);
     const [albums, setAlbums] = useState([]);
 
-    // Spotify e UI
     const [spotifyData, setSpotifyData] = useState(null);
     const [ouvintes, setOuvintes] = useState('---');
     const [modalOpen, setModalOpen] = useState(false);
@@ -22,9 +20,9 @@ const ArtistPage = () => {
 
     const [modalOpenAlbum, setModalOpenAlbum] = useState(false);
     const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false);
+    const [modalOpenArtist, setModalOpenArtist] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
-    
-    // Listas de Favoritos
+
     const [favoritesListSongs, setFavoritesListSongs] = useState([]);
     const [favoritesListAlbums, setFavoritesListAlbums] = useState([]);
     const [favoritesListArtists, setFavoritesListArtists] = useState([]);
@@ -32,10 +30,8 @@ const ArtistPage = () => {
 
     const API_URL = 'http://localhost:8080/api';
 
-    // 🔹 Lógica de Verificação: Verifica se o artista atual está na lista de favoritos
     const isArtistFavorite = favoritesListArtists.some(artist => artist.id === id);
 
-    // Carregar dados do usuário logado
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData && userData.id) {
@@ -46,7 +42,6 @@ const ArtistPage = () => {
         }
     }, []);
 
-    // Carregar Dados do Artista, Músicas e Álbuns
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -71,7 +66,6 @@ const ArtistPage = () => {
         if (id) fetchInitialData();
     }, [id]);
 
-    // Integração com Spotify para ouvintes mensais
     useEffect(() => {
         const fetchSpotifyInfo = async () => {
             if (!artistaLocal?.name) return;
@@ -93,7 +87,37 @@ const ArtistPage = () => {
         fetchSpotifyInfo();
     }, [artistaLocal]);
 
-    // 🔹 Função para Seguir Artista
+    const spotifyAlbums =
+        spotifyData?.discography?.popularReleases?.items
+            ?.flatMap(item => item.releases?.items || []) || [];
+
+    const addMusicToFavorites = async () => {
+        if (!selectedSong || !userID) return
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'POST' })
+            if (res.ok) {
+                const updated = [...favoritesListSongs, selectedSong]
+                setFavoritesListSongs(updated)
+                updateLocalStorage('listMusic', updated)
+                showToast("Música adicionada aos favoritos!")
+                closeMusicModal()
+            }
+        } catch (err) { showToast("Erro ao adicionar", "error") }
+    }
+
+    const deleteMusicToFavorites = async () => {
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'DELETE' })
+            if (res.ok) {
+                const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id)
+                setFavoritesListSongs(updated)
+                updateLocalStorage('listMusic', updated)
+                showToast("Música removida dos favoritos!")
+                closeMusicModal()
+            }
+        } catch (err) { showToast("Erro ao remover", "error") }
+    }
+
     const addArtistToFavorite = async () => {
         if (!id || !userID) return;
         try {
@@ -104,12 +128,11 @@ const ArtistPage = () => {
                 updateLocalStorage('listArtists', updated);
                 showToast("Seguindo esse Artista");
             }
-        } catch (error) { 
-            showToast("Erro ao salvar Artista", "error"); 
+        } catch (error) {
+            showToast("Erro ao salvar Artista", "error");
         }
     };
 
-    // 🔹 Função para Parar de Seguir Artista
     const deleteArtistFromFavorite = async () => {
         if (!id || !userID) return;
         try {
@@ -120,12 +143,11 @@ const ArtistPage = () => {
                 updateLocalStorage('listArtists', updated);
                 showToast("Você não segue mais este artista");
             }
-        } catch (error) { 
-            showToast("Erro ao remover Artista", "error"); 
+        } catch (error) {
+            showToast("Erro ao remover Artista", "error");
         }
     };
 
-    // Handlers de UI e Modais
     const showToast = (message, type = 'success') => {
         const toastId = Date.now();
         setToasts(prev => [...prev, { id: toastId, message, type }]);
@@ -145,11 +167,63 @@ const ArtistPage = () => {
     const openAlbumModal = (album, e) => { e.stopPropagation(); setSelectedAlbum(album); setModalOpenAlbum(true); };
     const closeAlbumModal = () => { setModalOpenAlbum(false); setSelectedAlbum(null); };
 
-    // Funções de Favoritos para Músicas e Álbuns (mantenha como estão ou ajuste conforme os de Artista)
-    const addMusicToFavorites = async () => { /* ... sua lógica de POST music ... */ };
-    const deleteMusicToFavorites = async () => { /* ... sua lógica de DELETE music ... */ };
-    const addAlbumToFavorites = async () => { /* ... sua lógica de POST album ... */ };
-    const deleteAlbumToFavorites = async () => { /* ... sua lógica de DELETE album ... */ };
+    const addMusicToPlaylist = async (playlistId) => {
+        if (!selectedSong) return
+        try {
+            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { method: 'POST' })
+            if (res.ok) {
+                showToast("Música adicionada à playlist!")
+                setModalOpenPlaylistAdd(false)
+                closeMusicModal()
+            } else {
+                showToast("Erro ao adicionar na playlist", "error")
+            }
+        } catch (err) { showToast("Erro de conexão", "error") }
+    }
+
+    const removeMusicFromPlaylist = async (playlistId, songId) => {
+        if (!songId || !playlistId) {
+            showToast("Erro: dados incompletos", "error");
+            return;
+        }
+        try {
+            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { method: 'DELETE' });
+            if (res.ok) {
+                showToast("Música excluída da playlist!");
+                closeMusicModal();
+            } else {
+                showToast("Erro ao excluir da playlist", "error");
+            }
+        } catch (err) {
+            console.error("Erro ao remover música:", err);
+            showToast("Erro de conexão", "error");
+        }
+    };
+
+    const addAlbumToFavorites = async () => {
+        if (!selectedAlbum || !userID) return
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'POST' })
+            if (res.ok) {
+                const updated = [...favoritesListAlbums, selectedAlbum]
+                setFavoritesListAlbums(updated)
+                updateLocalStorage('listAlbums', updated)
+                showToast("Álbum adicionado!"); closeAlbumModal()
+            }
+        } catch (err) { showToast("Erro ao adicionar", "error") }
+    }
+
+    const deleteAlbumToFavorites = async () => {
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'DELETE' })
+            if (res.ok) {
+                const updated = favoritesListAlbums.filter(a => a.id !== selectedAlbum.id)
+                setFavoritesListAlbums(updated)
+                updateLocalStorage('listAlbums', updated)
+                showToast("Álbum removido!"); closeAlbumModal()
+            }
+        } catch (err) { showToast("Erro ao remover", "error") }
+    }
 
     if (!artistaLocal) return <div className="loading">Carregando perfil...</div>;
 
@@ -176,8 +250,8 @@ const ArtistPage = () => {
                     <button className="playlist-play-button" onClick={() => { setPlaylist(artistSongs); setCurrentIndex(0); }}>
                         <i className="fa-solid fa-play"></i>
                     </button>
-                    <button 
-                        className="playlist-action-btn" 
+                    <button
+                        className="playlist-action-btn"
                         onClick={isArtistFavorite ? deleteArtistFromFavorite : addArtistToFavorite}
                     >
                         <div className="followButton">
@@ -221,7 +295,7 @@ const ArtistPage = () => {
                 </div>
 
                 <div className="albumsContainer">
-                    <h2>Álbuns Disponíveis</h2>
+                    <h2 className='sectionTitle'>Álbuns Disponíveis</h2>
                     <div className="flexAlbums">
                         {albums.map((album) => (
                             album.artistsNames?.some(a => a.name === artistaLocal.name) &&
@@ -248,7 +322,35 @@ const ArtistPage = () => {
                         ))}
                     </div>
                 </div>
+
+                {/* DISCOGRAFIA SPOTIFY */}
+                <div className="albumsContainer">
+                    <h2 className="sectionTitle">Discografia Completa</h2>
+                    <div className="flexAlbums">
+                        {spotifyAlbums.map((album, idx) => (
+                            <div className="albumsArtistPage" key={album.id || idx}>
+                                <div className="albumContainer">
+                                    <img
+                                        src={
+                                            album.coverArt?.sources?.[0]?.url ||
+                                            album.coverArt?.sources?.slice(-1)[0]?.url
+                                        }
+                                        alt={album.name}
+                                    />
+
+                                    <div className="albumInformation">
+                                        <h4>{album.name}</h4>
+                                        <p>
+                                            Álbum • {album.date?.year || '—'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
+
 
             <MusicaModal
                 isOpen={modalOpen}
