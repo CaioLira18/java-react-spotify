@@ -1,5 +1,6 @@
 package br.com.caio.spotify.application.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.com.caio.spotify.application.entities.Music;
+import br.com.caio.spotify.application.entities.enums.StyleMusic;
 
 @Repository
 public interface MusicRepository extends JpaRepository<Music, String> {
@@ -23,4 +25,6 @@ public interface MusicRepository extends JpaRepository<Music, String> {
     @Modifying
     @Query(value = "DELETE FROM tb_album_musics WHERE music_id = :musicId", nativeQuery = true)
     void removeMusicFromAlbum(@Param("musicId") String musicId);
+
+    List<Music> findTop20ByStyleInAndYearBetween(List<StyleMusic> styles, String startYear, String endYear);
 }

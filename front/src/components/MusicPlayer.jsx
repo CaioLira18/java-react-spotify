@@ -1,9 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { usePlayer } from "../components/PlayerContext"; // Importe o seu novo contexto
 
-const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
-    const audioRef = useRef(null);
+const MusicPlayer = () => {
+    // Consumindo estados e a referência de áudio global do Contexto
+    const { 
+        playlist, 
+        currentIndex, 
+        setCurrentIndex, 
+        isPlaying, 
+        togglePlay, 
+        audioRef 
+    } = usePlayer();
 
-    const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
@@ -13,49 +21,31 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
     const currentSong = playlist[currentIndex];
 
     useEffect(() => {
-        if (!currentSong) return;
+        const audio = audioRef.current;
 
-        if (audioRef.current) {
-            audioRef.current.pause();
-        }
-
-        audioRef.current = new Audio(currentSong.musicUrl);
-        audioRef.current.volume = volume;
-
-        audioRef.current.onloadedmetadata = () => {
-            setDuration(audioRef.current.duration);
-        };
-
-        audioRef.current.ontimeupdate = () => {
-            setProgress(audioRef.current.currentTime);
-        };
-
-        audioRef.current.onended = () => {
+        // Atualiza o progresso visual sem interromper o áudio
+        const updateTime = () => setProgress(audio.currentTime);
+        const updateMetadata = () => setDuration(audio.duration);
+        const handleEnded = () => {
             if (repeat) {
-                audioRef.current.currentTime = 0;
-                audioRef.current.play();
+                audio.currentTime = 0;
+                audio.play();
             } else {
                 handleNext();
             }
         };
 
-        audioRef.current.play();
-        setIsPlaying(true);
+        // Adiciona listeners diretamente à instância global de áudio
+        audio.addEventListener("timeupdate", updateTime);
+        audio.addEventListener("loadedmetadata", updateMetadata);
+        audio.addEventListener("ended", handleEnded);
 
-        return () => audioRef.current?.pause();
-    }, [currentIndex]);
-
-    const togglePlay = () => {
-        if (!audioRef.current) return;
-
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
-        }
-
-        setIsPlaying(!isPlaying);
-    };
+        return () => {
+            audio.removeEventListener("timeupdate", updateTime);
+            audio.removeEventListener("loadedmetadata", updateMetadata);
+            audio.removeEventListener("ended", handleEnded);
+        };
+    }, [currentIndex, repeat, playlist]); // Re-executa se a música ou modo de repetição mudar
 
     const handleSeek = (e) => {
         const time = Number(e.target.value);
@@ -74,19 +64,16 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
             const randomIndex = Math.floor(Math.random() * playlist.length);
             setCurrentIndex(randomIndex);
         } else {
-            setCurrentIndex((prev) =>
-                prev + 1 < playlist.length ? prev + 1 : 0
-            );
+            setCurrentIndex((prev) => (prev + 1 < playlist.length ? prev + 1 : 0));
         }
     };
 
     const handlePrev = () => {
-        setCurrentIndex((prev) =>
-            prev - 1 >= 0 ? prev - 1 : playlist.length - 1
-        );
+        setCurrentIndex((prev) => (prev - 1 >= 0 ? prev - 1 : playlist.length - 1));
     };
 
     const formatTime = (time) => {
+        if (isNaN(time)) return "0:00";
         const min = Math.floor(time / 60);
         const sec = Math.floor(time % 60).toString().padStart(2, "0");
         return `${min}:${sec}`;
@@ -96,32 +83,38 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
 
     return (
         <div className="spotify-player">
-            {/* LEFT */}
+            {/* LADO ESQUERDO: INFO DA MÚSICA */}
             <div className="player-left">
                 <img src={currentSong.cover} alt={currentSong.name} />
                 <div>
                     <strong>{currentSong.name}</strong>
-                    <p>{currentSong.artistsNames.map(artist => artist.name).join(', ')}</p>
+                    <p>{currentSong.artistsNames?.map(artist => artist.name).join(', ')}</p>
                 </div>
             </div>
 
-            {/* CENTER */}
+            {/* CENTRO: CONTROLES DE REPRODUÇÃO */}
             <div className="player-center">
-                <div style={{ display: "flex", gap: 12 }}>
-                    <button onClick={() => setShuffle(!shuffle)}>
-                        <i class="fa-solid fa-shuffle"></i>
+                <div style={{ display: "flex", gap: 12, justifyContent: "center", alignItems: "center" }}>
+                    <button 
+                        onClick={() => setShuffle(!shuffle)} 
+                        className={shuffle ? "active-btn" : ""}
+                    >
+                        <i className="fa-solid fa-shuffle"></i>
                     </button>
 
-                    <button onClick={handlePrev}><i class="fa-solid fa-backward-fast"></i></button>
+                    <button onClick={handlePrev}><i className="fa-solid fa-backward-fast"></i></button>
 
-                    <button onClick={togglePlay}>
-                        {isPlaying ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
+                    <button onClick={togglePlay} className="play-pause-btn">
+                        {isPlaying ? <i className="fa-solid fa-pause"></i> : <i className="fa-solid fa-play"></i>}
                     </button>
 
-                    <button onClick={handleNext}><i class="fa-solid fa-forward-fast"></i></button>
+                    <button onClick={handleNext}><i className="fa-solid fa-forward-fast"></i></button>
 
-                    <button className="repeat-button active" onClick={() => setRepeat(!repeat)}>
-                        <i class="fa-solid fa-repeat"></i>
+                    <button 
+                        className={repeat ? "active-btn" : ""} 
+                        onClick={() => setRepeat(!repeat)}
+                    >
+                        <i className="fa-solid fa-repeat"></i>
                     </button>
                 </div>
 
@@ -130,7 +123,7 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
                     <input
                         type="range"
                         min="0"
-                        max={duration}
+                        max={duration || 0}
                         value={progress}
                         onChange={handleSeek}
                     />
@@ -138,9 +131,9 @@ const MusicPlayer = ({ playlist = [], currentIndex, setCurrentIndex }) => {
                 </div>
             </div>
 
-            {/* RIGHT */}
-            <div className="volume" style={{ width: "30%", display: "flex", justifyContent: "flex-end" }}>
-                <i class="fa-solid fa-volume-high"></i>
+            {/* LADO DIREITO: VOLUME */}
+            <div className="volume" style={{ width: "30%", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "10px" }}>
+                <i className="fa-solid fa-volume-high"></i>
                 <input
                     type="range"
                     min="0"

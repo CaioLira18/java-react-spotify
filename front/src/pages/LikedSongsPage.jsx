@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useOutletContext } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { usePlayer } from '../components/PlayerContext';
 
 const LikedSongsPage = () => {
   const { id } = useParams()
-  const { setPlaylist, setCurrentIndex } = useOutletContext()
+  // Usando o contexto global para não parar a música ao navegar
+  const { setPlaylist, setCurrentIndex } = usePlayer();
+
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedSong, setSelectedSong] = useState(null)
@@ -12,36 +15,30 @@ const LikedSongsPage = () => {
   const [users, setUsers] = useState([])
   const [albums, setAlbums] = useState([])
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [name, setName] = useState("")
-  const [filteredSongs, setFilteredSongs] = useState([])
 
   const API_URL = "http://localhost:8080/api"
 
+  // 1. Carregar dados do usuário logado
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser)
         setIsAuthenticated(true)
-        setIsAdmin(parsedUser.role === 'ADMIN')
         setUserID(parsedUser.id)
         setName(parsedUser.name)
         
+        // Carrega as músicas curtidas que estão salvas no objeto do usuário
         const userSongs = parsedUser.listMusic || []
         setFavoritesListSongs(userSongs)
-        setFilteredSongs(userSongs)
       } catch (err) {
-        console.error(err)
+        console.error("Erro ao carregar usuário:", err)
       }
     }
   }, [])
 
-  const handlePlaySong = (index) => {
-    setPlaylist(favoritesListSongs)
-    setCurrentIndex(index)
-  }
-
+  // 2. Buscar lista de usuários (para a foto do perfil no cabeçalho)
   useEffect(() => {
     fetch(`${API_URL}/users`)
       .then(res => res.json())
@@ -49,12 +46,21 @@ const LikedSongsPage = () => {
       .catch(console.error)
   }, [])
 
+  // 3. Buscar álbuns para identificar a qual álbum a música pertence
   useEffect(() => {
     fetch(`${API_URL}/albums`)
       .then(res => res.json())
       .then(data => setAlbums(data))
       .catch(console.error)
   }, [])
+
+  // Função para dar play
+  const playLikedSong = (index) => {
+    // Filtramos apenas músicas lançadas para a playlist do player
+    const playableSongs = favoritesListSongs.filter(s => s.status !== "NOT_RELEASED");
+    setPlaylist(playableSongs); 
+    setCurrentIndex(index);
+  };
 
   const showToast = (message, type = 'success') => {
     const toastId = Date.now()
@@ -79,69 +85,47 @@ const LikedSongsPage = () => {
 
   const addMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
-
     try {
       const response = await fetch(
         `${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { method: 'POST' }
       )
-
       if (response.ok) {
         const updatedFavorites = [...favoritesListSongs, selectedSong]
-        setFavoritesListSongs(updatedFavorites)
-        setFilteredSongs(updatedFavorites)
-
-        const storedUser = JSON.parse(localStorage.getItem('user'))
-        if (storedUser) {
-          storedUser.listMusic = updatedFavorites
-          localStorage.setItem('user', JSON.stringify(storedUser))
-        }
-
-        showToast("Música adicionada aos favoritos!", "success")
+        updateLocalState(updatedFavorites)
+        showToast("Música adicionada!", "success")
         closeModal()
-      } else {
-        showToast("Erro ao adicionar música aos favoritos", "error")
       }
     } catch (error) {
-      console.error(error)
-      showToast("Erro ao adicionar música aos favoritos", "error")
+      showToast("Erro ao favoritar", "error")
     }
   }
 
   const deleteMusicToFavorites = async () => {
     if (!selectedSong || !userID) return
-
     try {
       const response = await fetch(
         `${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`,
-        {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { method: 'DELETE' }
       )
-
       if (response.ok) {
         const updatedFavorites = favoritesListSongs.filter(song => song.id !== selectedSong.id)
-        setFavoritesListSongs(updatedFavorites)
-        setFilteredSongs(updatedFavorites)
-
-        const storedUser = JSON.parse(localStorage.getItem('user'))
-        if (storedUser) {
-          storedUser.listMusic = updatedFavorites
-          localStorage.setItem('user', JSON.stringify(storedUser))
-        }
-
-        showToast("Música removida dos favoritos!", "success")
+        updateLocalState(updatedFavorites)
+        showToast("Removida dos favoritos", "success")
         closeModal()
-      } else {
-        showToast("Erro ao remover música dos favoritos", "error")
       }
     } catch (error) {
-      console.error(error)
-      showToast("Erro ao remover música dos favoritos", "error")
+      showToast("Erro ao remover", "error")
+    }
+  }
+
+  // Helper para atualizar estado e localStorage simultaneamente
+  const updateLocalState = (newList) => {
+    setFavoritesListSongs(newList);
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      storedUser.listMusic = newList;
+      localStorage.setItem('user', JSON.stringify(storedUser));
     }
   }
 
@@ -163,10 +147,10 @@ const LikedSongsPage = () => {
           />
           <div className="playlist-header-info">
             <p className="playlist-label-type">Playlist</p>
-            <h1 className="playlist-main-title">Musicas Curtidas</h1>
+            <h1 className="playlist-main-title">Músicas Curtidas</h1>
             <div className="playlist-meta-info">
               <img
-                src={users.find(user => user.id === userID)?.image || ''}
+                src={users.find(user => user.id === userID)?.image || 'https://via.placeholder.com/150'}
                 alt={name}
                 className="playlist-artist-avatar"
               />
@@ -178,7 +162,7 @@ const LikedSongsPage = () => {
         </div>
 
         <div className="playlist-action-bar">
-          <button className="playlist-play-button" onClick={() => handlePlaySong(0)}>
+          <button className="playlist-play-button" onClick={() => playLikedSong(0)}>
             <i className="fa-solid fa-play"></i>
           </button>
         </div>
@@ -187,15 +171,15 @@ const LikedSongsPage = () => {
           <div className="playlist-table-header">
             <div className="table-col-number">#</div>
             <div className="table-col-title">Título</div>
-            <div className="table-col-album">Album</div>
+            <div className="table-col-album">Álbum</div>
             <div className="table-col-plays">Reproduções</div>
-            <div className="table-col-duration">Duração</div>
+            <div className="table-col-duration"><i className="fa-regular fa-clock"></i></div>
           </div>
 
           {favoritesListSongs.map((song, index) => (
-            song.status != "NOT_RELEASED" && (
-              <div key={song.id} className="playlist-song-row">
-                <div className="playlist-song-item" onClick={() => handlePlaySong(index)}>
+            song.status !== "NOT_RELEASED" && (
+              <div key={song.id} className="playlist-song-row" onClick={() => playLikedSong(index)}>
+                <div className="playlist-song-item">
                   <span className="song-index-number">{index + 1}</span>
 
                   <div className="song-title-section">
@@ -217,7 +201,8 @@ const LikedSongsPage = () => {
                   </div>
 
                   <div className="song-plays-count">
-                    {(Math.random() * 100000000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
+                    {/* Exemplo de formatação de número */}
+                    {Math.floor(Math.random() * 1000000).toLocaleString('pt-BR')}
                   </div>
 
                   <div className="song-duration-section">
@@ -234,10 +219,10 @@ const LikedSongsPage = () => {
             )
           ))}
         </div>
-
         <div className="playlist-bottom-space"></div>
       </div>
 
+      {/* MODAL DE OPÇÕES */}
       {modalOpen && (
         <div className="song-modal-overlay" onClick={closeModal}>
           <div className="song-modal-box" onClick={(e) => e.stopPropagation()}>
@@ -277,12 +262,10 @@ const LikedSongsPage = () => {
         </div>
       )}
 
+      {/* TOASTS */}
       <div className="notification-toast-container">
         {toasts.map(toast => (
-          <div
-            key={toast.id}
-            className={`notification-toast toast-style-${toast.type}`}
-          >
+          <div key={toast.id} className={`notification-toast toast-style-${toast.type}`}>
             <span>{toast.message}</span>
             <button onClick={() => removeToast(toast.id)}>×</button>
           </div>
@@ -292,4 +275,4 @@ const LikedSongsPage = () => {
   )
 }
 
-export default LikedSongsPage
+export default LikedSongsPage;

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useOutletContext, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import MusicaModal from '../components/Modal/MusicaModal'
 import Toast from '../components/Modal/Toast'
 import ModalPlaylist from '../components/Modal/ModalPlaylist'
+import { usePlayer } from '../components/PlayerContext' // Importação do contexto global
 
 const PlaylistPage = () => {
   const { id } = useParams()
-  const { setPlaylist, setCurrentIndex } = useOutletContext()
   const navigate = useNavigate()
+  
+  // Usando o hook do Player global em vez do OutletContext
+  const { setPlaylist, setCurrentIndex } = usePlayer()
 
   const [playlistData, setPlaylistData] = useState(null)
   const [songs, setSongs] = useState([])
@@ -18,7 +21,6 @@ const PlaylistPage = () => {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalPlaylistOpen, setModalPlaylistOpen] = useState(false)
   const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false)
-  const [modalEditOpenPlaylist, setModalEditOpenPlaylist] = useState(false)
 
   const [selectedSong, setSelectedSong] = useState(null)
   const [selectedPlaylist, setSelectedPlaylist] = useState(null)
@@ -30,7 +32,7 @@ const PlaylistPage = () => {
 
   const [isAdmin, setIsAdmin] = useState(false)
   const [name, setName] = useState("")
-  const [coverKey, setCoverKey] = useState(0) // Para forçar atualização da imagem
+  const [coverKey, setCoverKey] = useState(0)
 
   const API_URL = "http://localhost:8080/api"
 
@@ -57,10 +59,14 @@ const PlaylistPage = () => {
   }, [id])
 
   const fetchPlaylistData = async () => {
-    const res = await fetch(`${API_URL}/playlists/${id}`)
-    const data = await res.json()
-    setPlaylistData(data)
-    return data
+    try {
+      const res = await fetch(`${API_URL}/playlists/${id}`)
+      const data = await res.json()
+      setPlaylistData(data)
+      return data
+    } catch (error) {
+      console.error("Erro ao buscar dados da playlist:", error)
+    }
   }
 
   const showToast = (message, type = 'success') => {
@@ -97,13 +103,12 @@ const PlaylistPage = () => {
     setModalOpenPlaylistAdd(false)
   }
 
-  const CloseModalEditPlaylist = () => {
-    setModalEditOpenPlaylist(false)
-  }
-
+  // Lógica de Reprodução integrada ao PlayerContext
   const handlePlay = (index) => {
-    setPlaylist(playlistSongs)
-    setCurrentIndex(index)
+    if (playlistSongs.length > 0) {
+      setPlaylist(playlistSongs)
+      setCurrentIndex(index)
+    }
   }
 
   const addMusicToFavorites = async () => {
@@ -152,11 +157,7 @@ const PlaylistPage = () => {
         showToast("Música adicionada à playlist!")
         setModalOpenPlaylistAdd(false)
         closeModal()
-
-        // Se adicionou música na playlist atual, atualizar
-        if (playlistId === id) {
-          await fetchPlaylistData()
-        }
+        if (playlistId === id) await fetchPlaylistData()
       } else {
         showToast("Erro ao adicionar na playlist", "error")
       }
@@ -167,16 +168,11 @@ const PlaylistPage = () => {
 
   const removeMusicFromPlaylist = async (playlistId, songId) => {
     try {
-      const res = await fetch(
-        `${API_URL}/playlists/${playlistId}/music/${songId}`,
-        { method: 'DELETE' }
-      )
-
+      const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { method: 'DELETE' })
       if (res.ok) {
         showToast("Música removida da playlist!")
         closeModal()
-
-        const updatedPlaylist = await fetchPlaylistData()
+        await fetchPlaylistData()
       }
     } catch (err) {
       showToast("Erro de conexão", "error")
@@ -185,27 +181,17 @@ const PlaylistPage = () => {
 
   const deletePlaylist = async () => {
     if (!selectedPlaylist) return
-
     try {
-      const response = await fetch(
-        `${API_URL}/playlists/${selectedPlaylist.id}`,
-        { method: 'DELETE' }
-      )
-
+      const response = await fetch(`${API_URL}/playlists/${selectedPlaylist.id}`, { method: 'DELETE' })
       if (response.ok) {
         showToast("Playlist removida!", "success")
-
-        setPlaylists(prev =>
-          prev.filter(p => p.id !== selectedPlaylist.id)
-        )
-
+        setPlaylists(prev => prev.filter(p => p.id !== selectedPlaylist.id))
         closePlaylistModal()
         navigate('/')
       } else {
         showToast("Erro ao remover Playlist", "error")
       }
     } catch (error) {
-      console.error(error)
       showToast("Erro ao remover Playlist", "error")
     }
   }
@@ -218,33 +204,14 @@ const PlaylistPage = () => {
     }
   }
 
-  async function uploadCoverToCloudinary() {
-    const formData = new FormData()
-    formData.append("file", coverFile)
-    formData.append("upload_preset", "Covers")
-    const response = await fetch("https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload", {
-      method: "POST",
-      body: formData
-    })
-    if (!response.ok) throw new Error("Erro no upload")
-    const data = await response.json()
-    return data.secure_url
-  }
-
   const updatePlaylist = async (data) => {
     try {
       let coverUrl = data.currentCover
-
       if (data.coverFile) {
         const formData = new FormData()
         formData.append("file", data.coverFile)
         formData.append("upload_preset", "Covers")
-
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
-          { method: "POST", body: formData }
-        )
-
+        const response = await fetch("https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload", { method: "POST", body: formData })
         if (response.ok) {
           const cloudData = await response.json()
           coverUrl = cloudData.secure_url
@@ -269,19 +236,14 @@ const PlaylistPage = () => {
         showToast("Playlist atualizada com sucesso!", "success")
         await fetchPlaylistData()
         setCoverKey(prev => prev + 1)
-      } else {
-        throw new Error("Erro ao atualizar")
       }
     } catch (error) {
-      console.error("Erro:", error)
       showToast("Erro ao atualizar playlist", "error")
     }
   }
 
   const findAlbumForSong = (songId) => {
-    const album = albums.find(a =>
-      a.musicsNames?.some(m => m.id === songId)
-    )
+    const album = albums.find(a => a.musicsNames?.some(m => m.id === songId))
     return album ? album.name : '---'
   }
 
@@ -293,70 +255,43 @@ const PlaylistPage = () => {
     return `${Math.floor(totalSeconds / 60)} min ${totalSeconds % 60} s`
   }
 
-  if (!playlistData) return <h1>Carregando Playlist...</h1>
+  if (!playlistData) return <h1 style={{color: 'white', padding: '20px'}}>Carregando Playlist...</h1>
 
   const playlistSongs = songs.filter(song =>
     playlistData.musicsNames?.some(m => m.id === song.id)
   )
 
-  const userPhoto =
-    users.find(u => u.id === userID)?.image ||
-    "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
-
-  // Pegar a capa da playlist (já deve estar atualizada no backend)
-  const playlistCover = playlistData.cover ||
-    "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png"
+  const userPhoto = users.find(u => u.id === userID)?.image || "https://res.cloudinary.com/dthgw4q5d/image/upload/v1766771462/user-solid-full_hixynk.svg"
+  const playlistCover = playlistData.cover || "https://res.cloudinary.com/dthgw4q5d/image/upload/v1767333292/playlist_photo_uz7btp.png"
 
   return (
     <>
       <div className="playlist-page-wrapper">
         <div className="playlist-header-section">
-          <img
-            key={coverKey}
-            src={playlistCover}
-            alt={playlistData.name}
-            className="playlist-cover-image"
-          />
+          <img key={coverKey} src={playlistCover} alt={playlistData.name} className="playlist-cover-image" />
           <div className="playlist-header-info">
             <span className="playlist-label-type">Playlist</span>
             <h1 className="playlist-main-title">{playlistData.name}</h1>
             <p>{playlistData.description}</p>
             <div className="playlist-meta-info">
-              <img
-                src={
-                  playlistData.type === "SPOTIFY_PLAYLIST"
-                    ? "https://res.cloudinary.com/dthgw4q5d/image/upload/v1764399202/Spotify_logo_without_text.svg_b0pw0i.png"
-                    : userPhoto
-                }
-                className="playlist-artist-avatar"
+              <img 
+                src={playlistData.type === "SPOTIFY_PLAYLIST" ? "https://res.cloudinary.com/dthgw4q5d/image/upload/v1764399202/Spotify_logo_without_text.svg_b0pw0i.png" : userPhoto} 
+                className="playlist-artist-avatar" 
+                alt="Owner"
               />
-              <span>
-                {playlistData.type === "SPOTIFY_PLAYLIST" ? "Spotify" : name}
-              </span>
-              <span>
-                •
-              </span>
-              <span>
-                {playlistSongs.length} Musicas,
-              </span>
-              <span>
-                {calculateTotalDuration(playlistSongs)}
-              </span>
+              <span>{playlistData.type === "SPOTIFY_PLAYLIST" ? "Spotify" : name}</span>
+              <span>•</span>
+              <span>{playlistSongs.length} Músicas,</span>
+              <span>{calculateTotalDuration(playlistSongs)}</span>
             </div>
           </div>
         </div>
 
         <div className="playlist-action-bar">
-          <button
-            className="playlist-play-button"
-            onClick={() => handlePlay(0)}
-          >
+          <button className="playlist-play-button" onClick={() => handlePlay(0)}>
             <i className="fa-solid fa-play"></i>
           </button>
-          <button
-            className="playlist-action-btn"
-            onClick={(e) => modalPlaylistMoreOptions(playlistData, e)}
-          >
+          <button className="playlist-action-btn" onClick={(e) => modalPlaylistMoreOptions(playlistData, e)}>
             <i className="fa-solid fa-ellipsis"></i>
           </button>
         </div>
@@ -365,44 +300,25 @@ const PlaylistPage = () => {
           <div className="playlist-table-header">
             <div className="table-col-number">#</div>
             <div className="table-col-title">Título</div>
-            <div className="table-col-album">Album</div>
+            <div className="table-col-album">Álbum</div>
             <div className="table-col-duration">Duração</div>
           </div>
 
           {playlistSongs.map((song, index) => (
-            <div key={song.id} className="playlist-song-row">
-              <div
-                className="playlist-song-item"
-                onClick={() => handlePlay(index)}
-              >
+            <div key={song.id} className="playlist-song-row" onClick={() => handlePlay(index)}>
+              <div className="playlist-song-item">
                 <span className="song-index-number">{index + 1}</span>
-
                 <div className="song-title-section">
-                  <img
-                    src={song.cover}
-                    alt={song.name}
-                    className="song-cover-thumb"
-                  />
+                  <img src={song.cover} alt={song.name} className="song-cover-thumb" />
                   <div className="song-text-info">
                     <p className="song-title-text">{song.name}</p>
-                    <p className="song-artist-text">
-                      {song.artistsNames?.map(a => a.name).join(', ')}
-                    </p>
+                    <p className="song-artist-text">{song.artistsNames?.map(a => a.name).join(', ')}</p>
                   </div>
                 </div>
-
-                <div className="song-album-name">
-                  {findAlbumForSong(song.id)}
-                </div>
-
+                <div className="song-album-name">{findAlbumForSong(song.id)}</div>
                 <div className="song-duration-section">
                   <p className="song-time-text">{song.duration}</p>
-                  <button
-                    className="song-options-btn"
-                    onClick={(e) => modalMoreOptions(song, e)}
-                  >
-                    ⋮
-                  </button>
+                  <button className="song-options-btn" onClick={(e) => modalMoreOptions(song, e)}>⋮</button>
                 </div>
               </div>
             </div>
@@ -417,19 +333,16 @@ const PlaylistPage = () => {
         favoritesListSongs={favoritesListSongs}
         onAddFavorite={addMusicToFavorites}
         onDeleteFavorite={deleteMusicToFavorites}
-
         isOpenPlaylistAdd={modalOpenPlaylistAdd}
         onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
         onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
         onMusicToPlaylist={addMusicToPlaylist}
-
         onRemoveFromPlaylist={removeMusicFromPlaylist}
-
         API_URL={API_URL}
       />
 
       <ModalPlaylist
-        isOpen={modalPlaylistMoreOptions}
+        isOpen={modalPlaylistOpen}
         onClose={closePlaylistModal}
         playlist={selectedPlaylist}
         deletePlaylist={deletePlaylist}
@@ -442,4 +355,4 @@ const PlaylistPage = () => {
   )
 }
 
-export default PlaylistPage
+export default PlaylistPage;

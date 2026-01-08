@@ -9,6 +9,7 @@ const AddMusicPage = () => {
   const [musicUrl, setMusicUrl] = useState("")
   const [musicFile, setMusicFile] = useState(null)
   const [coverFile, setCoverFile] = useState(null)
+  const [style, setStyle] = useState("")
   const [type, setType] = useState("MUSIC")
   const [year, setYear] = useState("")
   const [status, setStatus] = useState("")
@@ -81,6 +82,7 @@ const AddMusicPage = () => {
       !status ||
       !year ||
       !type ||
+      !style ||
       artistsIds.length === 0
     ) {
       alert("Preencha os campos obrigatórios.")
@@ -103,6 +105,7 @@ const AddMusicPage = () => {
         type,
         year,
         status,
+        style,
         artistsIds
       }
 
@@ -121,6 +124,7 @@ const AddMusicPage = () => {
       setType("")
       setYear("")
       setStatus("")
+      setStyle("")
       setMusicFile(null)
       setArtistsIds([])
     } catch {
@@ -171,18 +175,20 @@ const AddMusicPage = () => {
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-panorama"></i>
-                <h2>Capa da Musica</h2>
+                <h2>Capa da Música</h2>
               </div>
+
               <div className="inputArea">
-                <label htmlFor="file-upload" className="custom-file-upload">
-                  <i className="fas fa-cloud-upload-alt"></i> 
-                  {coverFile ? coverFile.name : "Escolher arquivo"}
+                <label htmlFor="cover-upload" className="custom-file-upload">
+                  <i className="fas fa-cloud-upload-alt"></i>{" "}
+                  {coverFile ? coverFile.name : "Escolher capa"}
                 </label>
+
                 <input
-                  id="file-upload"
+                  id="cover-upload"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setCover(e.target.files[0])}
+                  onChange={(e) => setCoverFile(e.target.files[0])}
                 />
               </div>
             </div>
@@ -193,8 +199,13 @@ const AddMusicPage = () => {
                 <i className="fa-solid fa-pencil"></i>
                 <h2>Duração</h2>
               </div>
+
               <div className="inputArea">
-                <input value={duration} onChange={(e) => setDuration(e.target.value)} />
+                <input
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="Ex: 3:45"
+                />
               </div>
             </div>
 
@@ -266,16 +277,46 @@ const AddMusicPage = () => {
               </div>
             </div>
 
-            {/* Música (UPLOAD) */}
+            {/* Status */}
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-pencil"></i>
-                <h2>Musica</h2>
+                <h2>Estilo</h2>
               </div>
               <div className="inputArea">
+                <select
+                  className="form-input"
+                  value={style}
+                  onChange={(e) => setStyle(e.target.value)}
+                >
+                  <option value="">Selecione o Estilo</option>
+                  <option value="POP">POP</option>
+                  <option value="K_POP">K-POP</option>
+                  <option value="ROCK">ROCK</option>
+                  <option value="CLASSIC">CLASSICA</option>
+                  <option value="COUNTRY">COUNTRY</option>
+                </select>
+
+              </div>
+            </div>
+
+            {/* Música */}
+            <div className="inputBox">
+              <div className="textLogo">
+                <i className="fa-solid fa-music"></i>
+                <h2>Música</h2>
+              </div>
+
+              <div className="inputArea">
+                <label htmlFor="music-upload" className="custom-file-upload">
+                  <i className="fas fa-cloud-upload-alt"></i>{" "}
+                  {musicFile ? musicFile.name : "Escolher música"}
+                </label>
+
                 <input
+                  id="music-upload"
                   type="file"
-                  accept="audio/mp3"
+                  accept="audio/*"
                   onChange={(e) => setMusicFile(e.target.files[0])}
                 />
               </div>

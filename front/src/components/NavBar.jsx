@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { usePlayer } from '../components/PlayerContext';
 
-const NavBar = ({ setPlaylist, setCurrentIndex }) => {
+const NavBar = () => {
+  const navigate = useNavigate();
+  const { setPlaylist, setCurrentIndex } = usePlayer();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [name, setName] = useState('');
   const [idUser, setUserId] = useState('');
   const [users, setUsers] = useState([]);
 
@@ -21,6 +24,7 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
   const [filteredArtists, setFilteredArtists] = useState([]);
   const [filteredAlbums, setFilteredAlbums] = useState([]);
 
+  // Lógica de Busca
   function search(value) {
     setSearchTerm(value);
 
@@ -45,14 +49,14 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
     );
   }
 
-  const closeSearch = () => setModalSearchHome(false);
+  const closeSearch = () => {
+    setModalSearchHome(false);
+    setSearchTerm("");
+  };
 
-  const handlePlay = (song, list) => {
-    if (!setPlaylist || !setCurrentIndex) return;
-
-    setPlaylist(list);
-    const index = list.findIndex(s => s.id === song.id);
-    setCurrentIndex(index !== -1 ? index : 0);
+  const playFromSearch = (song) => {
+    setPlaylist([song]);
+    setCurrentIndex(0);
     closeSearch();
   };
 
@@ -60,7 +64,7 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
     fetch(`${API_URL}/users`)
       .then(res => res.json())
       .then(setUsers)
-      .catch(console.error);
+      .catch(err => console.error("Erro ao carregar usuários:", err));
   }, []);
 
   useEffect(() => {
@@ -74,7 +78,7 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
         setSongs(songsData);
         setAlbums(albumsData);
       })
-      .catch(console.error);
+      .catch(err => console.error("Erro ao carregar dados da busca:", err));
   }, []);
 
   useEffect(() => {
@@ -85,105 +89,113 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
       const user = JSON.parse(storedUser);
       setIsAuthenticated(true);
       setIsAdmin(user.role === 'ADMIN');
-      setName(user.name || '');
       setUserId(user.id || '');
     } catch (err) {
-      console.error("Erro ao ler usuário", err);
+      console.error("Erro ao ler usuário do localStorage", err);
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
     setIsAuthenticated(false);
+    setIsAdmin(false);
+    navigate('/login');
   };
 
   return (
-    <div>
-      <div className="navBarContainer">
-        <div className="navBarBox">
+    <div className="navBarContainer">
+      <div className="navBarBox">
 
-          <div className="optionsNavBar">
-            <a href="/"><i className="fa-solid fa-angle-left"></i></a>
+        <div className="optionsNavBar">
+          <a onClick={() => navigate(-1)} className="nav-arrow">
+            <i className="fa-solid fa-angle-left"></i>
+          </a>
+          <a onClick={() => navigate(1)} className="nav-arrow">
             <i className="fa-solid fa-angle-right"></i>
+          </a>
+        </div>
+
+        <div className="searchContainer">
+          <div className="inputItemSearch">
+            <Link to="/"><button className="home-btn"><i className="fa-solid fa-house"></i></button></Link>
+            <input
+              value={searchTerm}
+              onChange={(e) => search(e.target.value)}
+              placeholder="O que você quer ouvir hoje?"
+              type="text"
+            />
           </div>
 
-          <div className="searchContainer">
-            <div className="inputItemSearch">
-              <input
-                value={searchTerm}
-                onChange={(e) => search(e.target.value)}
-                placeholder="O que você quer ouvir hoje?"
-                type="text"
-              />
-            </div>
+          {modalSearchHome && (
+            <div className="modalSearchHomeContainer">
+              <div className="modalSearchScroll">
 
-            {modalSearchHome && (
-              <div className="modalSearchHomeContainer">
-                <div className="modalSearchScroll">
-
-                  {filteredArtists.map(artist => (
-                    <Link
-                      key={artist.id}
-                      to={`/artists/${artist.id}`}
-                      onClick={closeSearch}
-                      className="artistHomeSearch"
-                    >
-                      <img src={artist.profilePhoto} alt={artist.name} />
-                      <div className="columnArtist">
-                        <span>{artist.name}</span>
-                        <p>Artista</p>
-                      </div>
-                    </Link>
-                  ))}
-
-                  {filteredSongs.map(song => (
-                    <div
-                      key={song.id}
-                      className="songHomeSearch"
-                      onClick={() => handlePlay(song, filteredSongs)}
-                    >
-                      <img src={song.cover} alt={song.name} />
-                      <div className="songInfo">
-                        <span>{song.name}</span>
-                        <p>Song • {song.artistsNames?.map(a => a.name).join(', ')}</p>
-                      </div>
+                {/* Resultados de Artistas */}
+                {filteredArtists.map(artist => (
+                  <Link
+                    key={artist.id}
+                    to={`/artists/${artist.id}`}
+                    onClick={closeSearch}
+                    className="artistHomeSearch"
+                  >
+                    <img src={artist.profilePhoto} alt={artist.name} />
+                    <div className="columnArtist">
+                      <span>{artist.name}</span>
+                      <p>Artista</p>
                     </div>
-                  ))}
+                  </Link>
+                ))}
 
-                  {filteredAlbums.map(album => (
-                    <Link
-                      key={album.id}
-                      to={`/albums/${album.id}`}
-                      onClick={closeSearch}
-                      className="albumHomeSearch"
-                    >
-                      <img src={album.cover} alt={album.name} />
-                      <div className="songInfo">
-                        <span>{album.name}</span>
-                        <p>Álbum</p>
-                      </div>
-                    </Link>
-                  ))}
+                {/* Resultados de Músicas */}
+                {filteredSongs.map(song => (
+                  <div
+                    key={song.id}
+                    className="songHomeSearch"
+                    onClick={() => playFromSearch(song)}
+                  >
+                    <img src={song.cover} alt={song.name} />
+                    <div className="songInfo">
+                      <span>{song.name}</span>
+                      <p>Música • {song.artistsNames?.map(a => a.name).join(', ')}</p>
+                    </div>
+                  </div>
+                ))}
 
-                  {filteredArtists.length === 0 &&
-                    filteredSongs.length === 0 &&
-                    filteredAlbums.length === 0 && (
-                      <p className="noResults">Nenhum resultado encontrado.</p>
-                    )}
+                {/* Resultados de Álbuns */}
+                {filteredAlbums.map(album => (
+                  <Link
+                    key={album.id}
+                    to={`/albums/${album.id}`}
+                    onClick={closeSearch}
+                    className="albumHomeSearch"
+                  >
+                    <img src={album.cover} alt={album.name} />
+                    <div className="songInfo">
+                      <span>{album.name}</span>
+                      <p>Álbum</p>
+                    </div>
+                  </Link>
+                ))}
 
-                </div>
+                {/* Fallback caso não encontre nada */}
+                {filteredArtists.length === 0 &&
+                  filteredSongs.length === 0 &&
+                  filteredAlbums.length === 0 && (
+                    <p className="noResults">Nenhum resultado encontrado.</p>
+                  )}
+
               </div>
-            )}
-          </div>
-
-          {!isAuthenticated && (
-            <div className="loginBox">
-              <i className="fa-solid fa-user"></i>
-              <a href="/login"><h2>Login</h2></a>
             </div>
           )}
+        </div>
 
-          {isAuthenticated && (
+        <div className="navBarRight">
+          {!isAuthenticated ? (
+            <div className="loginBox">
+              <i className="fa-solid fa-user"></i>
+              <Link to="/login"><h2>Login</h2></Link>
+            </div>
+          ) : (
             <div className="userBox">
               <i className="fa-regular fa-bell"></i>
 
@@ -197,21 +209,21 @@ const NavBar = ({ setPlaylist, setCurrentIndex }) => {
                 />
               </div>
 
-              <div className="logout" onClick={handleLogout}>
+              <div className="logout" onClick={handleLogout} title="Sair">
                 <i className="fa-solid fa-right-from-bracket"></i>
               </div>
 
               {isAdmin && (
                 <div className="adminButton">
-                  <a href="/adminPage">
-                    <button>Pagina de Admin</button>
-                  </a>
+                  <Link to="/adminPage">
+                    <button>Painel Admin</button>
+                  </Link>
                 </div>
               )}
             </div>
           )}
-
         </div>
+
       </div>
     </div>
   );

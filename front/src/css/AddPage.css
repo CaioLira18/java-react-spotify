@@ -1,12 +1,9 @@
 
-/* Container principal - alinhado com layout Spotify */
 .containerItem {
   min-height: 100vh;
   padding: 24px;
-  margin-top: 200px;
 }
 
-/* Cabeçalho da página */
 h1:first-child {
   font-size: 2rem;
   font-weight: 700;
@@ -15,7 +12,6 @@ h1:first-child {
   letter-spacing: -0.04em;
 }
 
-/* Box do formulário - card estilo Spotify */
 .boxItem {
   background: #181818;
   border-radius: 8px;

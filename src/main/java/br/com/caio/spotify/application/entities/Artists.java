@@ -29,6 +29,7 @@ public class Artists {
     private String profilePhoto;
     private String bannerPhoto;
     private String description;
+
     private StatusArtist status;
 
     @ManyToMany(mappedBy = "artistsNames")

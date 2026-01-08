@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
 import br.com.caio.spotify.application.entities.enums.StatusMusic;
+import br.com.caio.spotify.application.entities.enums.StyleMusic;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +32,10 @@ public class Music {
     private String duration;
     private String cover;
     private String year;
+
     private StatusMusic status;
+
+    private StyleMusic style;
     
     @ManyToMany
     @JsonIgnoreProperties({"musicas", "listMusic"})

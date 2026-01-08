@@ -120,6 +120,29 @@
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+.headerAdminPageOptions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.headerAdminPageOptions button {
+    width: 50px;
+    height: 50px;
+    font-size: 15px;
+    background-color: rgb(30, 91, 30);
+    border-radius: 50%;
+    border: none;
+    transition: 0.3s all ease-in-out;
+}
+
+.headerAdminPageOptions button:hover {
+    background-color: rgb(49, 120, 49);
+    cursor: pointer;
+}
+
 @keyframes borderPulse {
     0%, 100% {
         opacity: 0.3;

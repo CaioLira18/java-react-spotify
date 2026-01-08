@@ -26,7 +26,6 @@ public class SpotifyController {
     private final Map<String, String> albumCache = new ConcurrentHashMap<>();
     private final Map<String, String> artistCache = new ConcurrentHashMap<>();
 
-    // MANTIDO ORIGINAL
     @GetMapping("/listeners-by-name/{name}")
     public ResponseEntity<?> getListenersByName(@PathVariable String name) {
         if (artistCache.containsKey(name.toLowerCase())) {
@@ -67,10 +66,8 @@ public class SpotifyController {
         }
     }
 
-    // IMPLEMENTADO MOCK PARA ÁLBUM
     @GetMapping("/album-by-id/{id}")
     public ResponseEntity<?> getAlbumById(@PathVariable String id) {
-        // Mock que atende tanto a estrutura local quanto a do Spotify23
         String mockJson = "{"
             + "\"id\": \"" + id + "\","
             + "\"name\": \"Álbum (Modo Desenvolvimento)\","

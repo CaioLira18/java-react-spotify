@@ -126,7 +126,7 @@
   grid-template-columns: 24px 48px 1fr auto;
   gap: 16px;
   align-items: center;
-  padding: 10px 16px;
+  padding: 10px 26px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -184,12 +184,15 @@
   background-color: #181818;
   border-radius: 8px;
   padding: 16px;
-  max-width: 200px;
+  width: 180px; 
   cursor: pointer;
   transition: background-color 0.3s ease;
   border: none;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
+  box-sizing: border-box; 
 }
 
 .albumContainer:hover {
@@ -224,24 +227,39 @@
 /* ===========================
    INFO DA MÚSICA
 =========================== */
-
 .songInformation {
-  min-width: 0;
-}
-
-.songInformation h1 {
-  font-size: 15px;
-  font-weight: 500;
-  color: white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  width: 100%;
 }
 
 .songInformation p {
+  width: auto;
   font-size: 13px;
   color: #b3b3b3;
   margin-top: 4px;
+}
+
+.songInformation a {
+  text-decoration: none;
+  color: inherit;      
+  transition: border-bottom 0.2s ease;
+  border-bottom: 1px solid transparent; 
+}
+
+.songInformation a:hover {
+  border-bottom: 1px solid gray;
+  cursor: pointer;
+}
+
+.songInformation a {
+  text-decoration: none; 
+  color: inherit;      
+  transition: border-bottom 0.2s ease; 
+  border-bottom: 1px solid transparent;
+}
+
+.songInformation a:hover {
+  border-bottom: 1px solid gray;
+  cursor: pointer;
 }
 
 .playlistInformation {
@@ -250,6 +268,8 @@
 
 .albumInformation {
   text-align: left;
+  width: 100%; 
+  overflow: hidden;
 }
 
 .albumInformation h4 {
@@ -260,6 +280,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block; 
+  width: 100%;
 }
 
 .albumInformation p {
@@ -269,6 +291,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+  width: 100%;
 }
 
 .albumCredits {

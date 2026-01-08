@@ -47,6 +47,7 @@ public class MusicController {
         music.setYear(dto.getYear());
         music.setType(dto.getType());
         music.setStatus(dto.getStatus());
+        music.setStyle(dto.getStyle());
 
         return ResponseEntity.ok(
                 musicService.createMusic(music, dto.getArtistsIds()));
@@ -65,6 +66,7 @@ public class MusicController {
         music.setType(dto.getType());
         music.setYear(dto.getYear());
         music.setStatus(dto.getStatus());
+        music.setStyle(dto.getStyle());
 
         Optional<Music> updatedItem = musicService.updateMusic(id, music, dto.getArtistsIds());
 

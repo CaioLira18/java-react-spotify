@@ -21,14 +21,18 @@ import ViewAlbumPage from './pages/ViewAlbumPage'
 import LikedSongsPage from './pages/LikedSongsPage'
 import AddPlaylistPage from './pages/AddPlaylistPage'
 import PlaylistPage from './pages/PlaylistPage'
+import NavBar from './components/NavBar'
+import AdminPageHeader from './components/AdminPageHeader'
 
 
 
 function App() {
-  
+
   return (
     <div>
       <Routes>
+
+
         <Route element={<AppLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/artists/:id" element={<ArtistPage />} />
@@ -36,22 +40,26 @@ function App() {
           <Route path="/playlists/:id" element={<PlaylistPage />} />
           <Route path="/likedSongs" element={<LikedSongsPage />} />
         </Route>
-        <Route path="/music" element={<AddMusicPage />} />
-        <Route path="/artist" element={<AddArtistPage />} />
-        <Route path="/album" element={<AddAlbumPage />} />
-        <Route path="/playlist" element={<AddPlaylistPage />} />
-        <Route path="/adminPage" element={<AdminPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
-        <Route path="/deleteArtist" element={<DeleteArtistPage />} />
-        <Route path="/deleteMusic" element={<DeleteMusicPage />} />
-        <Route path="/updateArtist" element={<UpdateArtistPage />} />
-        <Route path="/updateMusic" element={<UpdateMusicPage />} />
-        <Route path="/updateAlbum" element={<UpdateAlbumPage />} />
-        <Route path="/viewArtists" element={<ViewArtistsPage />} />
-        <Route path="/viewMusics" element={<ViewMusicPage />} />
-        <Route path="/viewAlbums" element={<ViewAlbumPage />} />
+
+        <Route element={<AdminPageHeader />}>
+          <Route path="/music" element={<AddMusicPage />} />
+          <Route path="/artist" element={<AddArtistPage />} />
+          <Route path="/album" element={<AddAlbumPage />} />
+          <Route path="/playlist" element={<AddPlaylistPage />} />
+          <Route path="/adminPage" element={<AdminPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
+          <Route path="/deleteArtist" element={<DeleteArtistPage />} />
+          <Route path="/deleteMusic" element={<DeleteMusicPage />} />
+          <Route path="/updateArtist" element={<UpdateArtistPage />} />
+          <Route path="/updateMusic" element={<UpdateMusicPage />} />
+          <Route path="/updateAlbum" element={<UpdateAlbumPage />} />
+          <Route path="/viewArtists" element={<ViewArtistsPage />} />
+          <Route path="/viewMusics" element={<ViewMusicPage />} />
+          <Route path="/viewAlbums" element={<ViewAlbumPage />} />
+        </Route>
+
       </Routes>
     </div>
   )

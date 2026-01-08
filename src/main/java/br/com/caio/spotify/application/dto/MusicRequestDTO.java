@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.caio.spotify.application.entities.enums.ContentEnum;
 import br.com.caio.spotify.application.entities.enums.StatusMusic;
+import br.com.caio.spotify.application.entities.enums.StyleMusic;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,5 +19,6 @@ public class MusicRequestDTO {
     private String year;
     private ContentEnum type;
     private StatusMusic status;
+    private StyleMusic style;
     private List<String> artistsIds;
 }

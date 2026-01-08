@@ -10,7 +10,7 @@ import './css/LoginPage.css'
 import './css/MusicPlayer.css'
 import './css/AppLayout.css'
 import './css/AdminPage.css'
-import './css/AddArtistPage.css'
+import './css/AddPage.css'
 import './css/ModalMusic.css'
 import './css/Album.css'
 import './css/deletePages.css'
@@ -22,12 +22,14 @@ import './utils/Fonts.css'
 
 import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom";
-
+import { PlayerProvider } from './components/PlayerContext';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <StrictMode>
-      <App />
+      <PlayerProvider> {/* Envolva aqui */}
+        <App />
+      </PlayerProvider>
     </StrictMode>
   </BrowserRouter>
 )

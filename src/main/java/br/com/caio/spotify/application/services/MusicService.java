@@ -45,6 +45,7 @@ public class MusicService {
             item.setType(updatedMusic.getType());
             item.setYear(updatedMusic.getYear());
             item.setStatus(updatedMusic.getStatus());
+            item.setStyle(updatedMusic.getStyle());
             item.setMusicUrl(updatedMusic.getMusicUrl());
 
             if (artistsIds != null) {
@@ -59,17 +60,13 @@ public class MusicService {
     @Transactional
     public boolean deleteMusic(String id) {
         return musicRepository.findById(id).map(music -> {
-            // 1. Remover dos favoritos (query direta)
             musicRepository.removeMusicFromAllFavorites(id);
             
-            // 2. Remover dos Albums (query direta)
             musicRepository.removeMusicFromAlbum(id);
 
-            // 2. Limpar relacionamento com artistas
             music.getArtistsNames().clear();
             musicRepository.save(music);
 
-            // 3. Deletar a música
             musicRepository.delete(music);
             return true;
         }).orElse(false);

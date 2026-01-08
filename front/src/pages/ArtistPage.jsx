@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Toast from '../components/Modal/Toast';
 import MusicaModal from '../components/Modal/MusicaModal';
 import ModalAlbum from '../components/Modal/ModalAlbum';
+import { usePlayer } from '../components/PlayerContext'; 
 
 const ArtistPage = () => {
     const { id } = useParams();
-    const { setPlaylist, setCurrentIndex } = useOutletContext();
+    
+    // Consumindo o contexto global do Player
+    const { setPlaylist, setCurrentIndex, playlist, currentIndex } = usePlayer();
 
     const [artistaLocal, setArtistaLocal] = useState(null);
     const [songs, setSongs] = useState([]);
@@ -20,7 +23,6 @@ const ArtistPage = () => {
 
     const [modalOpenAlbum, setModalOpenAlbum] = useState(false);
     const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false);
-    const [modalOpenArtist, setModalOpenArtist] = useState(false);
     const [selectedAlbum, setSelectedAlbum] = useState(null);
 
     const [favoritesListSongs, setFavoritesListSongs] = useState([]);
@@ -32,6 +34,7 @@ const ArtistPage = () => {
 
     const isArtistFavorite = favoritesListArtists.some(artist => artist.id === id);
 
+    // Carregar dados do usuário logado
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData && userData.id) {
@@ -42,6 +45,7 @@ const ArtistPage = () => {
         }
     }, []);
 
+    // Buscar dados do artista e músicas
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -66,6 +70,7 @@ const ArtistPage = () => {
         if (id) fetchInitialData();
     }, [id]);
 
+    // Buscar dados extras do Spotify (Ouvintes, Banner)
     useEffect(() => {
         const fetchSpotifyInfo = async () => {
             if (!artistaLocal?.name) return;
@@ -87,36 +92,62 @@ const ArtistPage = () => {
         fetchSpotifyInfo();
     }, [artistaLocal]);
 
-    const spotifyAlbums =
-        spotifyData?.discography?.popularReleases?.items
-            ?.flatMap(item => item.releases?.items || []) || [];
+    // Filtra músicas apenas deste artista
+    const artistSongs = songs.filter(s => s.artistsNames?.some(a => a.name === artistaLocal?.name));
+
+    // FUNÇÃO CORRIGIDA: Toca a música sem resetar se for a mesma
+    const handlePlayMusic = (songIndex, list) => {
+        const selected = list[songIndex];
+        // Se a música clicada já é a que está tocando agora, não faz nada (deixa o PlayerContext decidir)
+        if (playlist[currentIndex]?.id === selected.id) return;
+
+        setPlaylist(list); 
+        setCurrentIndex(songIndex); 
+    };
+
+    // --- LOGICA DE FAVORITOS E AUXILIARES ---
+    const updateLocalStorage = (key, data) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            user[key] = data;
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+    };
+
+    const showToast = (message, type = 'success') => {
+        const toastId = Date.now();
+        setToasts(prev => [...prev, { id: toastId, message, type }]);
+        setTimeout(() => removeToast(toastId), 5000);
+    };
+
+    const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id));
 
     const addMusicToFavorites = async () => {
-        if (!selectedSong || !userID) return
+        if (!selectedSong || !userID) return;
         try {
-            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'POST' })
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'POST' });
             if (res.ok) {
-                const updated = [...favoritesListSongs, selectedSong]
-                setFavoritesListSongs(updated)
-                updateLocalStorage('listMusic', updated)
-                showToast("Música adicionada aos favoritos!")
-                closeMusicModal()
+                const updated = [...favoritesListSongs, selectedSong];
+                setFavoritesListSongs(updated);
+                updateLocalStorage('listMusic', updated);
+                showToast("Música adicionada aos favoritos!");
+                closeMusicModal();
             }
-        } catch (err) { showToast("Erro ao adicionar", "error") }
-    }
+        } catch (err) { showToast("Erro ao adicionar", "error"); }
+    };
 
     const deleteMusicToFavorites = async () => {
         try {
-            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'DELETE' })
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'DELETE' });
             if (res.ok) {
-                const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id)
-                setFavoritesListSongs(updated)
-                updateLocalStorage('listMusic', updated)
-                showToast("Música removida dos favoritos!")
-                closeMusicModal()
+                const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id);
+                setFavoritesListSongs(updated);
+                updateLocalStorage('listMusic', updated);
+                showToast("Música removida dos favoritos!");
+                closeMusicModal();
             }
-        } catch (err) { showToast("Erro ao remover", "error") }
-    }
+        } catch (err) { showToast("Erro ao remover", "error"); }
+    };
 
     const addArtistToFavorite = async () => {
         if (!id || !userID) return;
@@ -128,9 +159,7 @@ const ArtistPage = () => {
                 updateLocalStorage('listArtists', updated);
                 showToast("Seguindo esse Artista");
             }
-        } catch (error) {
-            showToast("Erro ao salvar Artista", "error");
-        }
+        } catch (error) { showToast("Erro ao salvar Artista", "error"); }
     };
 
     const deleteArtistFromFavorite = async () => {
@@ -143,92 +172,42 @@ const ArtistPage = () => {
                 updateLocalStorage('listArtists', updated);
                 showToast("Você não segue mais este artista");
             }
-        } catch (error) {
-            showToast("Erro ao remover Artista", "error");
-        }
+        } catch (error) { showToast("Erro ao remover Artista", "error"); }
     };
 
-    const showToast = (message, type = 'success') => {
-        const toastId = Date.now();
-        setToasts(prev => [...prev, { id: toastId, message, type }]);
-        setTimeout(() => removeToast(toastId), 5000);
+    const addAlbumToFavorites = async () => {
+        if (!selectedAlbum || !userID) return;
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'POST' });
+            if (res.ok) {
+                const updated = [...favoritesListAlbums, selectedAlbum];
+                setFavoritesListAlbums(updated);
+                updateLocalStorage('listAlbums', updated);
+                showToast("Álbum adicionado!"); closeAlbumModal();
+            }
+        } catch (err) { showToast("Erro ao adicionar", "error"); }
     };
 
-    const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id));
-    const updateLocalStorage = (key, data) => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            user[key] = data;
-            localStorage.setItem('user', JSON.stringify(user));
-        }
+    const deleteAlbumToFavorites = async () => {
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                const updated = favoritesListAlbums.filter(a => a.id !== selectedAlbum.id);
+                setFavoritesListAlbums(updated);
+                updateLocalStorage('listAlbums', updated);
+                showToast("Álbum removido!"); closeAlbumModal();
+            }
+        } catch (err) { showToast("Erro ao remover", "error"); }
     };
 
     const closeMusicModal = () => { setModalOpen(false); setSelectedSong(null); setModalOpenPlaylistAdd(false); };
     const openAlbumModal = (album, e) => { e.stopPropagation(); setSelectedAlbum(album); setModalOpenAlbum(true); };
     const closeAlbumModal = () => { setModalOpenAlbum(false); setSelectedAlbum(null); };
 
-    const addMusicToPlaylist = async (playlistId) => {
-        if (!selectedSong) return
-        try {
-            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, { method: 'POST' })
-            if (res.ok) {
-                showToast("Música adicionada à playlist!")
-                setModalOpenPlaylistAdd(false)
-                closeMusicModal()
-            } else {
-                showToast("Erro ao adicionar na playlist", "error")
-            }
-        } catch (err) { showToast("Erro de conexão", "error") }
-    }
-
-    const removeMusicFromPlaylist = async (playlistId, songId) => {
-        if (!songId || !playlistId) {
-            showToast("Erro: dados incompletos", "error");
-            return;
-        }
-        try {
-            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { method: 'DELETE' });
-            if (res.ok) {
-                showToast("Música excluída da playlist!");
-                closeMusicModal();
-            } else {
-                showToast("Erro ao excluir da playlist", "error");
-            }
-        } catch (err) {
-            console.error("Erro ao remover música:", err);
-            showToast("Erro de conexão", "error");
-        }
-    };
-
-    const addAlbumToFavorites = async () => {
-        if (!selectedAlbum || !userID) return
-        try {
-            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'POST' })
-            if (res.ok) {
-                const updated = [...favoritesListAlbums, selectedAlbum]
-                setFavoritesListAlbums(updated)
-                updateLocalStorage('listAlbums', updated)
-                showToast("Álbum adicionado!"); closeAlbumModal()
-            }
-        } catch (err) { showToast("Erro ao adicionar", "error") }
-    }
-
-    const deleteAlbumToFavorites = async () => {
-        try {
-            const res = await fetch(`${API_URL}/users/${userID}/favorites/album/${selectedAlbum.id}`, { method: 'DELETE' })
-            if (res.ok) {
-                const updated = favoritesListAlbums.filter(a => a.id !== selectedAlbum.id)
-                setFavoritesListAlbums(updated)
-                updateLocalStorage('listAlbums', updated)
-                showToast("Álbum removido!"); closeAlbumModal()
-            }
-        } catch (err) { showToast("Erro ao remover", "error") }
-    }
-
     if (!artistaLocal) return <div className="loading">Carregando perfil...</div>;
 
-    const artistSongs = songs.filter(s => s.artistsNames?.some(a => a.name === artistaLocal.name));
     const bannerUrl = spotifyData?.visuals?.headerImage?.sources?.[0]?.url || artistaLocal.bannerPhoto;
+    const spotifyAlbums = spotifyData?.discography?.popularReleases?.items?.flatMap(item => item.releases?.items || []) || [];
 
     return (
         <>
@@ -247,19 +226,15 @@ const ArtistPage = () => {
                 </div>
 
                 <div className="playlist-action-bar">
-                    <button className="playlist-play-button" onClick={() => { setPlaylist(artistSongs); setCurrentIndex(0); }}>
+                    <button className="playlist-play-button" onClick={() => handlePlayMusic(0, artistSongs)}>
                         <i className="fa-solid fa-play"></i>
                     </button>
-                    <button
-                        className="playlist-action-btn"
-                        onClick={isArtistFavorite ? deleteArtistFromFavorite : addArtistToFavorite}
-                    >
-                        <div className="followButton">
-                            <button className={isArtistFavorite ? "following" : ""}>
-                                {isArtistFavorite ? "Seguindo" : "Seguir"}
-                            </button>
-                        </div>
-                    </button>
+                    
+                    <div className="followButton" onClick={isArtistFavorite ? deleteArtistFromFavorite : addArtistToFavorite}>
+                        <button className={isArtistFavorite ? "following" : ""}>
+                            {isArtistFavorite ? "Seguindo" : "Seguir"}
+                        </button>
+                    </div>
 
                     <button className="playlist-action-btn">
                         <i className="fa-solid fa-ellipsis"></i>
@@ -270,12 +245,19 @@ const ArtistPage = () => {
                     <h2 className="sectionTitle">Músicas Populares</h2>
                     {artistSongs.length > 0 ? artistSongs.map((song, index) => (
                         <div className="musicsArtistPage" key={song.id || index}>
-                            <div className="songContainer" onClick={() => { setPlaylist(artistSongs); setCurrentIndex(index); }}>
+                            <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
                                 <h4>{index + 1}</h4>
                                 <img src={song.cover} alt={song.name} />
                                 <div className="songInformation">
                                     <h4>{song.name}</h4>
-                                    <p>{song.artistsNames?.map(a => a.name).join(', ')}</p>
+                                    {song.artistsNames?.map((artist, i) => (
+                                        <span key={artist.id || i}>
+                                            <Link to={`/artists/${artist.id}`} className="artist-link" onClick={(e) => e.stopPropagation()}>
+                                                {artist.name}
+                                            </Link>
+                                            {i < song.artistsNames.length - 1 && ", "}
+                                        </span>
+                                    ))}
                                 </div>
                                 <div className="otherInformation">
                                     <p>{song.duration}</p>
@@ -303,12 +285,12 @@ const ArtistPage = () => {
                                 <div className="albumsArtistPage" key={album.id}>
                                     <div className="albumContainer">
                                         <div className="albumImage">
-                                            <a href={`/albums/${album.id}`}>
+                                            <Link to={`/albums/${album.id}`}>
                                                 <img src={album.cover} alt={album.name} />
-                                            </a>
+                                            </Link>
                                         </div>
                                         <div className="albumInformation">
-                                            <a href={`/albums/${album.id}`}><h4>{album.name}</h4></a>
+                                            <Link to={`/albums/${album.id}`}><h4>{album.name}</h4></Link>
                                             <div className="albumCredits">
                                                 <p>Álbum • {album.year}</p>
                                                 <p onClick={(e) => openAlbumModal(album, e)} style={{ cursor: 'pointer' }}>
@@ -323,26 +305,19 @@ const ArtistPage = () => {
                     </div>
                 </div>
 
-                {/* DISCOGRAFIA SPOTIFY */}
                 <div className="albumsContainer">
-                    <h2 className="sectionTitle">Discografia Completa</h2>
+                    <h2 className="sectionTitle">Discografia Completa (Spotify)</h2>
                     <div className="flexAlbums">
                         {spotifyAlbums.map((album, idx) => (
                             <div className="albumsArtistPage" key={album.id || idx}>
                                 <div className="albumContainer">
-                                    <img
-                                        src={
-                                            album.coverArt?.sources?.[0]?.url ||
-                                            album.coverArt?.sources?.slice(-1)[0]?.url
-                                        }
-                                        alt={album.name}
+                                    <img 
+                                        src={album.coverArt?.sources?.[0]?.url} 
+                                        alt={album.name} 
                                     />
-
                                     <div className="albumInformation">
                                         <h4>{album.name}</h4>
-                                        <p>
-                                            Álbum • {album.date?.year || '—'}
-                                        </p>
+                                        <p>Álbum • {album.date?.year || '—'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -350,7 +325,6 @@ const ArtistPage = () => {
                     </div>
                 </div>
             </div>
-
 
             <MusicaModal
                 isOpen={modalOpen}
