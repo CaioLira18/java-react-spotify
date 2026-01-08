@@ -38,7 +38,7 @@ const Home = () => {
                 setPlaylists(userData.listPlaylists || []);
                 setName(userData.name);
                 localStorage.setItem('user', JSON.stringify(userData));
-                
+
                 // Dispara a IA assim que temos o ID do usuário
                 fetchAiRecommendations(userData.id);
             })
@@ -128,6 +128,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            <div className="space"></div>
+
 
             {artistsOn.length === 0 && (
                 <div className="withoutArtists">
