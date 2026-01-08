@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 const MusicaModal = ({
   isOpen,
   onClose,
-  isOpenPlaylistAdd,
+  isOpenPlaylistAdd, // Propriedade recebida do pai
   onOpenPlaylistAdd,
   onCloseOpenPlaylistAdd,
   song,
@@ -13,31 +13,30 @@ const MusicaModal = ({
   onDeleteFavorite,
   onMusicToPlaylist,
   onRemoveFromPlaylist,
-  updateCover,
   API_URL,
 }) => {
-
   const [playlists, setPlaylists] = useState([]);
   const [currentPlaylist, setCurrentPlaylist] = useState(null);
   const { id: playlistIdFromUrl } = useParams();
 
   useEffect(() => {
-    fetch(`${API_URL}/playlists`)
-      .then(response => response.json())
-      .then(data => {
-        setPlaylists(data);
-        if (playlistIdFromUrl) {
-          const current = data.find(p => p.id === playlistIdFromUrl);
-          setCurrentPlaylist(current);
-        }
-      })
-  }, [API_URL, playlistIdFromUrl])
+    if (isOpen) {
+      fetch(`${API_URL}/playlists`)
+        .then(response => response.json())
+        .then(data => {
+          setPlaylists(data);
+          if (playlistIdFromUrl) {
+            const current = data.find(p => p.id === playlistIdFromUrl);
+            setCurrentPlaylist(current);
+          }
+        })
+        .catch(err => console.error("Erro ao carregar playlists", err));
+    }
+  }, [isOpen, API_URL, playlistIdFromUrl]);
 
   if (!isOpen || !song) return null;
 
   const isFavorite = favoritesListSongs.some(fav => fav.id === song.id);
-  
-  // Verificar se está em uma playlist do usuário (não do Spotify)
   const isUserPlaylist = currentPlaylist && currentPlaylist.type !== "SPOTIFY_PLAYLIST";
 
   return (
@@ -59,6 +58,8 @@ const MusicaModal = ({
             </div>
           </div>
 
+          <hr style={{ border: '0.5px solid #333', margin: '10px 0' }} />
+
           {isFavorite ? (
             <button className="modal-action-option" onClick={onDeleteFavorite}>
               <i className="fa-solid fa-heart" style={{ color: '#1db954' }}></i>
@@ -76,36 +77,43 @@ const MusicaModal = ({
             <span>Adicionar em uma Playlist</span>
           </button>
 
-          {playlistIdFromUrl && isUserPlaylist && onRemoveFromPlaylist && (
+          {playlistIdFromUrl && isUserPlaylist && (
             <button
               className="modal-action-option"
               onClick={() => onRemoveFromPlaylist(playlistIdFromUrl, song.id)}
             >
               <i className="fa-solid fa-minus-circle"></i>
-              <span>Remover da Playlist</span>
+              <span>Remover desta Playlist</span>
             </button>
           )}
 
+          {/* SESSÃO DE SELEÇÃO DE PLAYLIST */}
           {isOpenPlaylistAdd && (
-            <div className="playlist-selector-container">
-              <p>Escolha a Playlist:</p>
+            <div className="playlist-selector-container" style={{ marginTop: '15px', padding: '15px', backgroundColor: '#282828', borderRadius: '8px' }}>
+              <p style={{ marginBottom: '10px', fontSize: '14px' }}>Escolha a Playlist:</p>
               <select
                 className="playlist-select"
                 onChange={(e) => {
                   if (e.target.value) onMusicToPlaylist(e.target.value);
                 }}
                 defaultValue=""
+                style={{ width: '100%', padding: '10px', borderRadius: '4px', backgroundColor: '#333', color: 'white', border: 'none' }}
               >
                 <option value="" disabled>Selecionar...</option>
-                {playlists.map(playlist => (
-                  playlist.type !== "SPOTIFY_PLAYLIST" && (
+                {playlists
+                  .filter(p => p.type !== "SPOTIFY_PLAYLIST")
+                  .map(playlist => (
                     <option key={playlist.id} value={playlist.id}>
                       {playlist.name}
                     </option>
-                  )
-                ))}
+                  ))}
               </select>
-              <button onClick={onCloseOpenPlaylistAdd}>Cancelar</button>
+              <button 
+                onClick={onCloseOpenPlaylistAdd}
+                style={{ marginTop: '10px', width: '100%', padding: '8px', cursor: 'pointer', background: 'transparent', color: '#b3b3b3', border: 'none' }}
+              >
+                Cancelar
+              </button>
             </div>
           )}
         </div>

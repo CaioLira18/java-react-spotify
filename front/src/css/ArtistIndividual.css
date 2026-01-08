@@ -124,28 +124,30 @@
 .songContainer {
   display: grid;
   grid-template-columns: 24px 48px 1fr auto;
-  gap: 16px;
+  gap: 10px;
   align-items: center;
   padding: 10px 26px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   margin-top: 20px;
+  width: 95%;
+  margin-left: 50px;
 }
 
 .songContainer:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-.songContainer > h1 {
+.songContainer > h4 {
   font-size: 14px;
   color: #b3b3b3;
   text-align: center;
 }
 
 .songContainer img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: cover;
   border-radius: 4px;
 }
@@ -231,35 +233,15 @@
   width: 100%;
 }
 
-.songInformation p {
+.songInformation h4 {
+  font-size: 14px;
+}
+
+.songInformation span {
   width: auto;
   font-size: 13px;
   color: #b3b3b3;
   margin-top: 4px;
-}
-
-.songInformation a {
-  text-decoration: none;
-  color: inherit;      
-  transition: border-bottom 0.2s ease;
-  border-bottom: 1px solid transparent; 
-}
-
-.songInformation a:hover {
-  border-bottom: 1px solid gray;
-  cursor: pointer;
-}
-
-.songInformation a {
-  text-decoration: none; 
-  color: inherit;      
-  transition: border-bottom 0.2s ease; 
-  border-bottom: 1px solid transparent;
-}
-
-.songInformation a:hover {
-  border-bottom: 1px solid gray;
-  cursor: pointer;
 }
 
 .playlistInformation {

@@ -3,12 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import Toast from '../components/Modal/Toast';
 import MusicaModal from '../components/Modal/MusicaModal';
 import ModalAlbum from '../components/Modal/ModalAlbum';
-import { usePlayer } from '../components/PlayerContext'; 
+import { usePlayer } from '../components/PlayerContext';
 
 const ArtistPage = () => {
     const { id } = useParams();
-    
-    // Consumindo o contexto global do Player
     const { setPlaylist, setCurrentIndex, playlist, currentIndex } = usePlayer();
 
     const [artistaLocal, setArtistaLocal] = useState(null);
@@ -34,7 +32,6 @@ const ArtistPage = () => {
 
     const isArtistFavorite = favoritesListArtists.some(artist => artist.id === id);
 
-    // Carregar dados do usuário logado
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData && userData.id) {
@@ -45,7 +42,6 @@ const ArtistPage = () => {
         }
     }, []);
 
-    // Buscar dados do artista e músicas
     useEffect(() => {
         const fetchInitialData = async () => {
             try {
@@ -70,7 +66,6 @@ const ArtistPage = () => {
         if (id) fetchInitialData();
     }, [id]);
 
-    // Buscar dados extras do Spotify (Ouvintes, Banner)
     useEffect(() => {
         const fetchSpotifyInfo = async () => {
             if (!artistaLocal?.name) return;
@@ -92,20 +87,15 @@ const ArtistPage = () => {
         fetchSpotifyInfo();
     }, [artistaLocal]);
 
-    // Filtra músicas apenas deste artista
     const artistSongs = songs.filter(s => s.artistsNames?.some(a => a.name === artistaLocal?.name));
 
-    // FUNÇÃO CORRIGIDA: Toca a música sem resetar se for a mesma
     const handlePlayMusic = (songIndex, list) => {
         const selected = list[songIndex];
-        // Se a música clicada já é a que está tocando agora, não faz nada (deixa o PlayerContext decidir)
         if (playlist[currentIndex]?.id === selected.id) return;
-
-        setPlaylist(list); 
-        setCurrentIndex(songIndex); 
+        setPlaylist(list);
+        setCurrentIndex(songIndex);
     };
 
-    // --- LOGICA DE FAVORITOS E AUXILIARES ---
     const updateLocalStorage = (key, data) => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
@@ -200,6 +190,36 @@ const ArtistPage = () => {
         } catch (err) { showToast("Erro ao remover", "error"); }
     };
 
+    const addMusicToPlaylist = async (playlistId) => {
+        if (!selectedSong) return
+        try {
+            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${selectedSong.id}`, {
+                method: 'POST'
+            })
+            if (res.ok) {
+                showToast("Música adicionada à playlist!")
+                setModalOpenPlaylistAdd(false)
+                closeMusicModal()
+            } else {
+                showToast("Erro ao adicionar na playlist", "error")
+            }
+        } catch (err) {
+            showToast("Erro de conexão", "error")
+        }
+    }
+
+    const removeMusicFromPlaylist = async (playlistId, songId) => {
+        try {
+            const res = await fetch(`${API_URL}/playlists/${playlistId}/music/${songId}`, { method: 'DELETE' })
+            if (res.ok) {
+                showToast("Música removida da playlist!")
+                closeMusicModal()
+            }
+        } catch (err) {
+            showToast("Erro de conexão", "error")
+        }
+    }
+
     const closeMusicModal = () => { setModalOpen(false); setSelectedSong(null); setModalOpenPlaylistAdd(false); };
     const openAlbumModal = (album, e) => { e.stopPropagation(); setSelectedAlbum(album); setModalOpenAlbum(true); };
     const closeAlbumModal = () => { setModalOpenAlbum(false); setSelectedAlbum(null); };
@@ -207,6 +227,8 @@ const ArtistPage = () => {
     if (!artistaLocal) return <div className="loading">Carregando perfil...</div>;
 
     const bannerUrl = spotifyData?.visuals?.headerImage?.sources?.[0]?.url || artistaLocal.bannerPhoto;
+    
+    // CORREÇÃO: Pegamos os álbuns do Spotify corretamente
     const spotifyAlbums = spotifyData?.discography?.popularReleases?.items?.flatMap(item => item.releases?.items || []) || [];
 
     return (
@@ -229,7 +251,7 @@ const ArtistPage = () => {
                     <button className="playlist-play-button" onClick={() => handlePlayMusic(0, artistSongs)}>
                         <i className="fa-solid fa-play"></i>
                     </button>
-                    
+
                     <div className="followButton" onClick={isArtistFavorite ? deleteArtistFromFavorite : addArtistToFavorite}>
                         <button className={isArtistFavorite ? "following" : ""}>
                             {isArtistFavorite ? "Seguindo" : "Seguir"}
@@ -260,6 +282,7 @@ const ArtistPage = () => {
                                     ))}
                                 </div>
                                 <div className="otherInformation">
+                                    {/* CORREÇÃO: Não renderizamos o objeto puro aqui */}
                                     <p>{song.duration}</p>
                                     <i className="fa-solid fa-ellipsis" onClick={e => {
                                         e.stopPropagation();
@@ -311,9 +334,9 @@ const ArtistPage = () => {
                         {spotifyAlbums.map((album, idx) => (
                             <div className="albumsArtistPage" key={album.id || idx}>
                                 <div className="albumContainer">
-                                    <img 
-                                        src={album.coverArt?.sources?.[0]?.url} 
-                                        alt={album.name} 
+                                    <img
+                                        src={album.coverArt?.sources?.[0]?.url}
+                                        alt={album.name}
                                     />
                                     <div className="albumInformation">
                                         <h4>{album.name}</h4>
@@ -336,6 +359,8 @@ const ArtistPage = () => {
                 isOpenPlaylistAdd={modalOpenPlaylistAdd}
                 onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
                 onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
+                onMusicToPlaylist={addMusicToPlaylist}
+                onRemoveFromPlaylist={removeMusicFromPlaylist}
                 API_URL={API_URL}
             />
 
