@@ -60,4 +60,16 @@ public class User {
     @ManyToMany
     @JoinTable(name = "tb_user_favorite_playlists", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "playlist_id"))
     private List<Playlist> listPlaylists = new ArrayList<>();
+
+    public List<Music> getListMusic() {
+        return listMusic;
+    }
+
+    public void setListMusic(List<Music> listMusic) {
+        this.listMusic = listMusic;
+    }
+
+    
+
+
 }

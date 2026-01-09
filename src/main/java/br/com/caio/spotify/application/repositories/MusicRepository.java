@@ -26,5 +26,4 @@ public interface MusicRepository extends JpaRepository<Music, String> {
     @Query(value = "DELETE FROM tb_album_musics WHERE music_id = :musicId", nativeQuery = true)
     void removeMusicFromAlbum(@Param("musicId") String musicId);
 
-    List<Music> findTop20ByStyleInAndYearBetween(List<StyleMusic> styles, String startYear, String endYear);
 }

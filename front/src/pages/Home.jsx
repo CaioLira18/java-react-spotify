@@ -105,29 +105,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Seção de Inteligência Artificial (Gemini) */}
-            <div className="secctionHomeContainer">
-                <div className="secctionHomeBox">
-                    <div className="secctionHomeHeader">
-                        <h1>✨ Seu Mix IA (Gemini)</h1>
-                    </div>
-                    <div className="aiBoxContent" style={{
-                        background: 'linear-gradient(135deg, #1db95422, #191414)',
-                        padding: '20px',
-                        borderRadius: '12px',
-                        border: '1px solid #1db95444',
-                        marginTop: '15px'
-                    }}>
-                        {loadingAi ? (
-                            <div className="loaderIA">Gerando recomendações personalizadas...</div>
-                        ) : (
-                            <p style={{ color: '#e0e0e0', fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
-                                {aiRecommendations || "Comece a ouvir para habilitar as sugestões da IA."}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </div>
             <div className="space"></div>
 
 

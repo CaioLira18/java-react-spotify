@@ -43,4 +43,12 @@ public class Music {
     private List<Artists> artistsNames;
 
     private String musicUrl;
+
+    public String getName() {
+        return name;
+    }
+
+    public StyleMusic getStyle() {
+        return style;
+    }
 }
