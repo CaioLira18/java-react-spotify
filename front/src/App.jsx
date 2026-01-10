@@ -23,6 +23,7 @@ import AddPlaylistPage from './pages/AddPlaylistPage'
 import PlaylistPage from './pages/PlaylistPage'
 import NavBar from './components/NavBar'
 import AdminPageHeader from './components/AdminPageHeader'
+import MusicPage from './pages/MusicPage'
 
 
 
@@ -38,14 +39,15 @@ function App() {
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/albums/:id" element={<AlbumPage />} />
           <Route path="/playlists/:id" element={<PlaylistPage />} />
+          <Route path="/song/:id" element={<MusicPage />} />
           <Route path="/likedSongs" element={<LikedSongsPage />} />
         </Route>
 
         <Route element={<AdminPageHeader />}>
-          <Route path="/music" element={<AddMusicPage />} />
-          <Route path="/artist" element={<AddArtistPage />} />
-          <Route path="/album" element={<AddAlbumPage />} />
-          <Route path="/playlist" element={<AddPlaylistPage />} />
+          <Route path="/addMusic" element={<AddMusicPage />} />
+          <Route path="/addArtist" element={<AddArtistPage />} />
+          <Route path="/addAlbum" element={<AddAlbumPage />} />
+          <Route path="/addPlaylist" element={<AddPlaylistPage />} />
           <Route path="/adminPage" element={<AdminPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

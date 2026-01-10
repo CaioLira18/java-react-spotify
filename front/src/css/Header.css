@@ -211,6 +211,9 @@
 .boxInformations {
   flex: 1;
   min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .boxInformations a {
@@ -358,7 +361,7 @@
     height: auto;
     position: relative;
   }
-  
+
   .titleHeader {
     margin-top: 0;
   }

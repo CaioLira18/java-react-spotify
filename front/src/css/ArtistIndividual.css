@@ -47,7 +47,7 @@
 =========================== */
 
 .artistInformation {
-  position: absolute;       /* 👈 SOBRE O BANNER */
+  position: absolute;       
   z-index: 2;
   color: white;
   max-width: 70%;
@@ -158,27 +158,28 @@
   margin-bottom: 24px;
 }
 
-.flexAlbums {
+.flexItems {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 16px;
   padding-bottom: 16px;
+  margin-top: 50px;
 }
 
-.flexAlbums::-webkit-scrollbar {
+.flexItems::-webkit-scrollbar {
   height: 8px;
 }
 
-.flexAlbums::-webkit-scrollbar-track {
+.flexItems::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.flexAlbums::-webkit-scrollbar-thumb {
+.flexItems::-webkit-scrollbar-thumb {
   background: #555;
   border-radius: 4px;
 }
 
-.flexAlbums::-webkit-scrollbar-thumb:hover {
+.flexItems::-webkit-scrollbar-thumb:hover {
   background: #888;
 }
 
@@ -332,6 +333,33 @@
   cursor: pointer;
 }
 
+.discografiaOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.discografiaOptions button {
+  background-color: #282828;
+  width: 100px;
+  height: 30px;
+  padding: 0px 20px;
+  border: none;
+  border-radius: 50px;
+}
+
+.discografiaOptions button:hover {
+  background-color: #3f3f3f;
+  cursor: pointer;
+}
+
+.discografiaButtons {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  gap: 20px;
+}
+
 /* ===========================
    RESPONSIVO
 =========================== */
@@ -354,19 +382,19 @@
     padding: 16px;
   }
 
-  .flexAlbums {
+  .flexItems {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .flexAlbums {
+  .flexItems {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (min-width: 1025px) and (max-width: 1440px) {
-  .flexAlbums {
+  .flexItems {
     grid-template-columns: repeat(6, 1fr);
   }
 }

@@ -28,6 +28,9 @@ const ArtistPage = () => {
     const [favoritesListArtists, setFavoritesListArtists] = useState([]);
     const [userID, setUserID] = useState(null);
 
+    // Estado do filtro: "ALL", "ALBUM" ou "MUSIC"
+    const [type, setType] = useState("ALL");
+
     const API_URL = 'http://localhost:8080/api';
 
     const isArtistFavorite = favoritesListArtists.some(artist => artist.id === id);
@@ -87,7 +90,10 @@ const ArtistPage = () => {
         fetchSpotifyInfo();
     }, [artistaLocal]);
 
-    const artistSongs = songs.filter(s => s.artistsNames?.some(a => a.name === artistaLocal?.name));
+    // Filtro para as músicas populares (apenas as que o artista participa)
+    const artistSongs = songs.filter(s => 
+        s.artistsNames?.some(a => a.name === artistaLocal?.name) && s.status !== "NOT_RELEASED"
+    );
 
     const handlePlayMusic = (songIndex, list) => {
         const selected = list[songIndex];
@@ -227,8 +233,6 @@ const ArtistPage = () => {
     if (!artistaLocal) return <div className="loading">Carregando perfil...</div>;
 
     const bannerUrl = spotifyData?.visuals?.headerImage?.sources?.[0]?.url || artistaLocal.bannerPhoto;
-
-    // CORREÇÃO: Pegamos os álbuns do Spotify corretamente
     const spotifyAlbums = spotifyData?.discography?.popularReleases?.items?.flatMap(item => item.releases?.items || []) || [];
 
     return (
@@ -263,52 +267,92 @@ const ArtistPage = () => {
                     </button>
                 </div>
 
+                {/* SEÇÃO: MÚSICAS POPULARES */}
                 <div className="songsContainer">
                     <h2 className="sectionTitle">Músicas Populares</h2>
                     {artistSongs.length > 0 ? artistSongs.map((song, index) => (
-                        song.status != "NOT_RELEASED" && (
-                            <div className="musicsArtistPage" key={song.id || index}>
-                                <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
-                                    <h4>{index + 1}</h4>
-                                    <img src={song.cover} alt={song.name} />
-                                    <div className="songInformation">
-                                        <h4>{song.name}</h4>
-                                        {song.artistsNames?.map((artist, i) => (
-                                            <span key={artist.id || i}>
-                                                <Link to={`/artists/${artist.id}`} className="artist-link" onClick={(e) => e.stopPropagation()}>
-                                                    {artist.name}
-                                                </Link>
-                                                {i < song.artistsNames.length - 1 && ", "}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="otherInformation">
-                                        {/* CORREÇÃO: Não renderizamos o objeto puro aqui */}
-                                        <p>{song.duration}</p>
-                                        <i className="fa-solid fa-ellipsis" onClick={e => {
-                                            e.stopPropagation();
-                                            setSelectedSong(song);
-                                            setModalOpen(true);
-                                        }}></i>
-                                    </div>
+                        <div className="musicsArtistPage" key={song.id}>
+                            <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
+                                <h4>{index + 1}</h4>
+                                <img src={song.cover} alt={song.name} />
+                                <div className="songInformation">
+                                    <h4>{song.name}</h4>
+                                    {song.artistsNames?.map((artist, i) => (
+                                        <span key={artist.id || i}>
+                                            <Link to={`/artists/${artist.id}`} className="artist-link" onClick={(e) => e.stopPropagation()}>
+                                                {artist.name}
+                                            </Link>
+                                            {i < song.artistsNames.length - 1 && ", "}
+                                        </span>
+                                    ))}
+                                </div>
+                                <div className="otherInformation">
+                                    <p>{song.duration}</p>
+                                    <i className="fa-solid fa-ellipsis" onClick={e => {
+                                        e.stopPropagation();
+                                        setSelectedSong(song);
+                                        setModalOpen(true);
+                                    }}></i>
                                 </div>
                             </div>
-                        )
+                        </div>
                     )) : (
                         <div className="withoutSong">
                             <h1>Nenhuma música encontrada.</h1>
                         </div>
                     )}
-
                 </div>
 
-
+                {/* SEÇÃO: DISCOGRAFIA COM FILTROS */}
                 <div className="albumsContainer">
-                    <h2 className='sectionTitle'>Álbuns Disponíveis</h2>
-                    <div className="flexAlbums">
-                        {albums.map((album) => (
-                            album.artistsNames?.some(a => a.name === artistaLocal.name) &&
-                            album.status !== 'NOT_RELEASED' && (
+                    <div className="discografiaOptions">
+                        <h2 className='sectionTitle'>Discografia</h2>
+                        <div className="discografiaButtons">
+                            <button 
+                                className={type === "ALL" ? "active" : ""} 
+                                onClick={() => setType("ALL")}
+                            > Tudo </button>
+                            <button 
+                                className={type === "ALBUM" ? "active" : ""} 
+                                onClick={() => setType("ALBUM")}
+                            > Álbum </button>
+                            <button 
+                                className={type === "MUSIC" ? "active" : ""} 
+                                onClick={() => setType("MUSIC")}
+                            > Singles </button>
+                        </div>
+                    </div>
+
+                    <div className="flexItems">
+                        {/* Renderiza Singles se o filtro for MUSIC ou ALL */}
+                        {(type === "MUSIC" || type === "ALL") && songs
+                            .filter(s => s.artistsNames?.some(a => a.name === artistaLocal.name) && s.status !== 'NOT_RELEASED')
+                            .map((song) => (
+                                <div className="albumsArtistPage" key={song.id}>
+                                    <div className="albumContainer">
+                                        <div className="albumImage">
+                                            <Link to={`/song/${song.id}`}>
+                                                <img src={song.cover} alt={song.name} />
+                                            </Link>
+                                        </div>
+                                        <div className="albumInformation">
+                                            <Link to={`/song/${song.id}`}><h4>{song.name}</h4></Link>
+                                            <div className="albumCredits">
+                                                <p>Single • {song.year}</p>
+                                                <p onClick={(e) => openAlbumModal(song, e)} style={{ cursor: 'pointer' }}>
+                                                    <i className="fa-solid fa-ellipsis"></i>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+
+                        {/* Renderiza Álbuns se o filtro for ALBUM ou ALL */}
+                        {(type === "ALBUM" || type === "ALL") && albums
+                            .filter(a => a.artistsNames?.some(art => art.name === artistaLocal.name) && a.status !== 'NOT_RELEASED')
+                            .map((album) => (
                                 <div className="albumsArtistPage" key={album.id}>
                                     <div className="albumContainer">
                                         <div className="albumImage">
@@ -325,26 +369,20 @@ const ArtistPage = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        {album.length <= 0 && (
-                                            <div>
-                                                <span>Nenhum Album Disponivel</span>
-                                            </div>
-                                        )}
                                     </div>
-
-
                                 </div>
-                            )
-                        ))}
+                            ))
+                        }
                     </div>
                 </div>
 
+                {/* SEÇÃO: FUTUROS LANÇAMENTOS */}
                 <div className="albumsContainer">
                     <h2 className='sectionTitle'>Futuros Lançamentos</h2>
                     <div className="flexAlbums">
-                        {albums.map((album) => (
-                            album.artistsNames?.some(a => a.name === artistaLocal.name) &&
-                            album.status == 'NOT_RELEASED' && (
+                        {albums
+                            .filter(album => album.artistsNames?.some(a => a.name === artistaLocal.name) && album.status === 'NOT_RELEASED')
+                            .map((album) => (
                                 <div className="albumsArtistPage" key={album.id}>
                                     <div className="albumContainer">
                                         <div className="albumImage">
@@ -363,14 +401,15 @@ const ArtistPage = () => {
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        ))}
+                            ))
+                        }
                     </div>
                 </div>
 
+                {/* SEÇÃO: SPOTIFY */}
                 <div className="albumsContainer">
                     <h2 className="sectionTitle">Discografia Completa (Spotify)</h2>
-                    <div className="flexAlbums">
+                    <div className="flexItems">
                         {spotifyAlbums.map((album, idx) => (
                             <div className="albumsArtistPage" key={album.id || idx}>
                                 <div className="albumContainer">
@@ -389,6 +428,7 @@ const ArtistPage = () => {
                 </div>
             </div>
 
+            {/* MODAIS E TOASTS */}
             <MusicaModal
                 isOpen={modalOpen}
                 onClose={closeMusicModal}

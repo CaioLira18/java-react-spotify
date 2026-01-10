@@ -180,18 +180,26 @@ body {
 
 .secctionHomeContent {
     display: flex;
-    align-items: start;
+    align-items: center;
     justify-content: start;
     flex-direction: column;
     max-width: 200px;
     padding: 10px;
     transition: 0.3s all ease-in-out;
     border-radius: 8px;
+    gap: 10px;
 }
 
 .secctionHomeContent:hover {
     background-color: #282828;
     cursor: pointer;
+}
+
+.secctionHomeContentImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 }
 
 .secctionHomeContentImage img {
@@ -202,11 +210,13 @@ body {
 .secctionHomeContainerArtists {
     display: flex;
     align-items: start;
-    justify-content: start;
+    justify-content: left;
     text-align: left;
     flex-direction: column;
-    width: 80%;
-
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;    
+    text-overflow: ellipsis;
 }
 
 .secctionHomeContainerArtists h1 {
