@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class AlbumRequestDTO {
     private String name;
-    private String duration;
     private String cover;
     private ContentEnum type;
     private StatusMusic status;

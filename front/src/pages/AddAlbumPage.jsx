@@ -1,40 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 const AddAlbumPage = () => {
   const API_URL = "http://localhost:8080/api";
 
   const [name, setName] = useState("");
-  const [duration, setDuration] = useState("");
-  const [cover, setCover] = useState("");
   const [year, setYear] = useState("");
-  const [musicUrl, setMusicUrl] = useState("");
   const [type, setType] = useState("ALBUM");
+  const [status, setStatus] = useState("");
   const [artists, setArtists] = useState([]);
   const [songs, setSongs] = useState([]);
   const [artistsIds, setArtistsIds] = useState([]);
-  const [status, setStatus] = useState("")
   const [songsIds, setSongsIds] = useState([]);
-  const [coverFile, setCoverFile] = useState(null)
+  const [coverFile, setCoverFile] = useState(null);
 
-  async function uploadCoverToCloudinary() {
-    const formData = new FormData()
-    formData.append("file", coverFile)
-    formData.append("upload_preset", "Covers")
-
-    const response = await fetch(
-      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
-      {
-        method: "POST",
-        body: formData
-      }
-    )
-
-    if (!response.ok) throw new Error()
-
-    const data = await response.json()
-    return data.secure_url
-  }
-
+  // Busca lista de artistas
   useEffect(() => {
     fetch(`${API_URL}/artists`)
       .then(response => {
@@ -45,6 +24,7 @@ const AddAlbumPage = () => {
       .catch(() => alert("Erro ao buscar Artistas."));
   }, []);
 
+  // Busca lista de músicas
   useEffect(() => {
     fetch(`${API_URL}/songs`)
       .then(response => {
@@ -52,59 +32,80 @@ const AddAlbumPage = () => {
         return response.json();
       })
       .then(data => setSongs(data))
-      .catch(() => alert("Erro ao buscar Artistas."));
+      .catch(() => alert("Erro ao buscar Músicas."));
   }, []);
+
+  async function uploadCoverToCloudinary() {
+    const formData = new FormData();
+    formData.append("file", coverFile);
+    formData.append("upload_preset", "Covers");
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/dthgw4q5d/image/upload",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+
+    if (!response.ok) throw new Error("Erro no upload para o Cloudinary");
+
+    const data = await response.json();
+    return data.secure_url;
+  }
 
   async function addItem() {
     if (
       !name.trim() ||
-      !duration.trim() ||
       !coverFile ||
       !status ||
       !year ||
       !type ||
+      
       artistsIds.length === 0
     ) {
-      alert("Preencha os campos obrigatórios.")
-      return
+      alert("Preencha todos os campos obrigatórios, incluindo a imagem.");
+      return;
     }
 
     try {
+      // 1. Faz o upload da imagem primeiro
+      const uploadedCoverUrl = await uploadCoverToCloudinary();
 
-      const uploadedCoverUrl = await uploadCoverToCloudinary()
-      setCover(uploadedCoverUrl)
-
+      // 2. Monta o payload usando a URL retornada diretamente
       const payload = {
         name,
-        duration,
         cover: uploadedCoverUrl,
         type,
         year,
         status,
         songsIds,
         artistsIds
-      }
+      };
 
-      await fetch(`${API_URL}/albums`, {
+      // 3. Envia para o seu backend
+      const response = await fetch(`${API_URL}/albums`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      })
+      });
 
-      alert("Adicionado com sucesso!")
+      if (!response.ok) throw new Error("Erro ao salvar álbum no servidor");
 
-      setName("")
-      setDuration("")
-      setCover("")
-      setMusicUrl("")
-      setType("")
-      setYear("")
-      setStatus("")
-      setSongsIds([])
-      setArtistsIds([])
-    } catch {
-      alert("Erro ao adicionar.")
-    } finally {
+      alert("Álbum adicionado com sucesso!");
+
+      // Limpa os campos após o sucesso
+      setName("");
+      setCoverFile(null);
+      setType("ALBUM");
+      setYear("");
+      setStatus("");
+      setSongsIds([]);
+      setArtistsIds([]);
+      
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao adicionar álbum. Verifique o console para mais detalhes.");
     }
   }
 
@@ -116,7 +117,7 @@ const AddAlbumPage = () => {
             <div className="logoBox">
               <img
                 src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1764390583/Spotify_logo_with_text.svg_mg0kr2.webp"
-                alt=""
+                alt="Logo"
               />
             </div>
 
@@ -126,41 +127,31 @@ const AddAlbumPage = () => {
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-pencil"></i>
-                <h2>Name</h2>
+                <h2>Nome do Álbum</h2>
               </div>
               <div className="inputArea">
                 <input value={name} onChange={(e) => setName(e.target.value)} />
               </div>
             </div>
 
-            {/* Cover */}
+            {/* Cover (Corrigido para usar coverFile) */}
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-panorama"></i>
-                <h2>Capa da Musica</h2>
+                <h2>Capa do Álbum</h2>
               </div>
               <div className="inputArea">
                 <label htmlFor="file-upload" className="custom-file-upload">
                   <i className="fas fa-cloud-upload-alt"></i>
-                  {coverFile ? coverFile.name : "Escolher arquivo"}
+                  {coverFile ? `Selecionado: ${coverFile.name}` : " Escolher arquivo"}
                 </label>
                 <input
                   id="file-upload"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setCover(e.target.files[0])}
+                  style={{ display: 'none' }}
+                  onChange={(e) => setCoverFile(e.target.files[0])}
                 />
-              </div>
-            </div>
-
-            {/* Duração */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Duração</h2>
-              </div>
-              <div className="inputArea">
-                <input value={duration} onChange={(e) => setDuration(e.target.value)} />
               </div>
             </div>
 
@@ -175,12 +166,11 @@ const AddAlbumPage = () => {
               </div>
             </div>
 
-
             {/* Artistas */}
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-pencil"></i>
-                <h2>Artistas</h2>
+                <h2>Selecionar Artistas</h2>
               </div>
               <div className="inputArea">
                 <select
@@ -188,43 +178,34 @@ const AddAlbumPage = () => {
                   className="form-input"
                   value={artistsIds}
                   onChange={(e) => {
-                    const values = Array.from(
-                      e.target.selectedOptions,
-                      option => option.value
-                    );
+                    const values = Array.from(e.target.selectedOptions, option => option.value);
                     setArtistsIds(values);
                   }}
                 >
                   {artists.map(artist => (
-                    <option key={artist.id} value={artist.id}>
-                      {artist.name}
-                    </option>
+                    <option key={artist.id} value={artist.id}>{artist.name}</option>
                   ))}
                 </select>
               </div>
             </div>
 
-            {/* Artistas Selecionados */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Artistas Selecionados</h2>
-              </div>
-              <div className="inputArea">
+            {/* Lista de Artistas Selecionados para Visualização */}
+            {artistsIds.length > 0 && (
+              <div className="inputBox">
+                <h2>Artistas Selecionados:</h2>
                 <ul>
-                  {artistsIds.map(id => {
-                    const artist = artists.find(a => a.id === id);
-                    return <li key={id}>{artist?.name}</li>;
-                  })}
+                  {artistsIds.map(id => (
+                    <li key={id}>{artists.find(a => String(a.id) === String(id))?.name}</li>
+                  ))}
                 </ul>
               </div>
-            </div>
+            )}
 
             {/* Musicas */}
             <div className="inputBox">
               <div className="textLogo">
                 <i className="fa-solid fa-pencil"></i>
-                <h2>Musicas</h2>
+                <h2>Selecionar Músicas</h2>
               </div>
               <div className="inputArea">
                 <select
@@ -232,47 +213,13 @@ const AddAlbumPage = () => {
                   className="form-input"
                   value={songsIds}
                   onChange={(e) => {
-                    const values = Array.from(
-                      e.target.selectedOptions,
-                      option => option.value
-                    );
+                    const values = Array.from(e.target.selectedOptions, option => option.value);
                     setSongsIds(values);
                   }}
                 >
                   {songs.map(song => (
-                    <option key={song.id} value={song.id}>
-                      {song.name}
-                    </option>
+                    <option key={song.id} value={song.id}>{song.name}</option>
                   ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Musicas Selecionadas */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Musicas Selecionadas</h2>
-              </div>
-              <div className="inputArea">
-                <ul>
-                  {songsIds.map(id => {
-                    const song = songs.find(s => s.id === id);
-                    return <li key={id}>{song?.name}</li>;
-                  })}
-                </ul>
-              </div>
-            </div>
-
-            {/* Tipo */}
-            <div className="inputBox">
-              <div className="textLogo">
-                <i className="fa-solid fa-pencil"></i>
-                <h2>Role</h2>
-              </div>
-              <div className="inputArea">
-                <select className='form-input' value={type} onChange={(e) => setType(e.target.value)}>
-                  <option value="ALBUM">Album</option>
                 </select>
               </div>
             </div>
@@ -290,15 +237,14 @@ const AddAlbumPage = () => {
                   onChange={(e) => setStatus(e.target.value)}
                 >
                   <option value="">Selecione o status</option>
-                  <option value="RELEASED">Lançada</option>
-                  <option value="NOT_RELEASED">Não Lançada</option>
+                  <option value="RELEASED">Lançado</option>
+                  <option value="NOT_RELEASED">Não Lançado</option>
                 </select>
               </div>
             </div>
 
-
             <div className="addItemButton">
-              <button onClick={addItem}>Adicionar</button>
+              <button onClick={addItem}>Adicionar Álbum</button>
             </div>
 
           </div>

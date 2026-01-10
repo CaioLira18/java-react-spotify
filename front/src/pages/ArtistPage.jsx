@@ -227,7 +227,7 @@ const ArtistPage = () => {
     if (!artistaLocal) return <div className="loading">Carregando perfil...</div>;
 
     const bannerUrl = spotifyData?.visuals?.headerImage?.sources?.[0]?.url || artistaLocal.bannerPhoto;
-    
+
     // CORREÇÃO: Pegamos os álbuns do Spotify corretamente
     const spotifyAlbums = spotifyData?.discography?.popularReleases?.items?.flatMap(item => item.releases?.items || []) || [];
 
@@ -266,38 +266,42 @@ const ArtistPage = () => {
                 <div className="songsContainer">
                     <h2 className="sectionTitle">Músicas Populares</h2>
                     {artistSongs.length > 0 ? artistSongs.map((song, index) => (
-                        <div className="musicsArtistPage" key={song.id || index}>
-                            <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
-                                <h4>{index + 1}</h4>
-                                <img src={song.cover} alt={song.name} />
-                                <div className="songInformation">
-                                    <h4>{song.name}</h4>
-                                    {song.artistsNames?.map((artist, i) => (
-                                        <span key={artist.id || i}>
-                                            <Link to={`/artists/${artist.id}`} className="artist-link" onClick={(e) => e.stopPropagation()}>
-                                                {artist.name}
-                                            </Link>
-                                            {i < song.artistsNames.length - 1 && ", "}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="otherInformation">
-                                    {/* CORREÇÃO: Não renderizamos o objeto puro aqui */}
-                                    <p>{song.duration}</p>
-                                    <i className="fa-solid fa-ellipsis" onClick={e => {
-                                        e.stopPropagation();
-                                        setSelectedSong(song);
-                                        setModalOpen(true);
-                                    }}></i>
+                        song.status != "NOT_RELEASED" && (
+                            <div className="musicsArtistPage" key={song.id || index}>
+                                <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
+                                    <h4>{index + 1}</h4>
+                                    <img src={song.cover} alt={song.name} />
+                                    <div className="songInformation">
+                                        <h4>{song.name}</h4>
+                                        {song.artistsNames?.map((artist, i) => (
+                                            <span key={artist.id || i}>
+                                                <Link to={`/artists/${artist.id}`} className="artist-link" onClick={(e) => e.stopPropagation()}>
+                                                    {artist.name}
+                                                </Link>
+                                                {i < song.artistsNames.length - 1 && ", "}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="otherInformation">
+                                        {/* CORREÇÃO: Não renderizamos o objeto puro aqui */}
+                                        <p>{song.duration}</p>
+                                        <i className="fa-solid fa-ellipsis" onClick={e => {
+                                            e.stopPropagation();
+                                            setSelectedSong(song);
+                                            setModalOpen(true);
+                                        }}></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )
                     )) : (
                         <div className="withoutSong">
                             <h1>Nenhuma música encontrada.</h1>
                         </div>
                     )}
+
                 </div>
+
 
                 <div className="albumsContainer">
                     <h2 className='sectionTitle'>Álbuns Disponíveis</h2>
@@ -305,6 +309,42 @@ const ArtistPage = () => {
                         {albums.map((album) => (
                             album.artistsNames?.some(a => a.name === artistaLocal.name) &&
                             album.status !== 'NOT_RELEASED' && (
+                                <div className="albumsArtistPage" key={album.id}>
+                                    <div className="albumContainer">
+                                        <div className="albumImage">
+                                            <Link to={`/albums/${album.id}`}>
+                                                <img src={album.cover} alt={album.name} />
+                                            </Link>
+                                        </div>
+                                        <div className="albumInformation">
+                                            <Link to={`/albums/${album.id}`}><h4>{album.name}</h4></Link>
+                                            <div className="albumCredits">
+                                                <p>Álbum • {album.year}</p>
+                                                <p onClick={(e) => openAlbumModal(album, e)} style={{ cursor: 'pointer' }}>
+                                                    <i className="fa-solid fa-ellipsis"></i>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {album.length <= 0 && (
+                                            <div>
+                                                <span>Nenhum Album Disponivel</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+
+                                </div>
+                            )
+                        ))}
+                    </div>
+                </div>
+
+                <div className="albumsContainer">
+                    <h2 className='sectionTitle'>Futuros Lançamentos</h2>
+                    <div className="flexAlbums">
+                        {albums.map((album) => (
+                            album.artistsNames?.some(a => a.name === artistaLocal.name) &&
+                            album.status == 'NOT_RELEASED' && (
                                 <div className="albumsArtistPage" key={album.id}>
                                     <div className="albumContainer">
                                         <div className="albumImage">

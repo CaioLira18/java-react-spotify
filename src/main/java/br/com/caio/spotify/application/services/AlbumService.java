@@ -59,7 +59,6 @@ public class AlbumService {
 
             item.setName(updatedAlbum.getName());
             item.setCover(updatedAlbum.getCover());
-            item.setDuration(updatedAlbum.getDuration());
             item.setType(updatedAlbum.getType());
             item.setStatus(updatedAlbum.getStatus());
             item.setYear(updatedAlbum.getYear());

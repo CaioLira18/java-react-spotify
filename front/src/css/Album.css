@@ -178,6 +178,18 @@
   position: relative;
 }
 
+.playlist-song-item-not-released {
+  display: grid;
+  grid-template-columns: 40px 3fr 2fr 1fr 80px;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  position: relative;
+  opacity: 0.4;
+}
+
 .playlist-song-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }

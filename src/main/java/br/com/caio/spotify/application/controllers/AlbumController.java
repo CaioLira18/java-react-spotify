@@ -42,7 +42,6 @@ public class AlbumController {
     public ResponseEntity<Album> createPlaylist(@RequestBody AlbumRequestDTO dto) {
         Album playlist = new Album();
         playlist.setName(dto.getName());
-        playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
         playlist.setStatus(dto.getStatus());
@@ -60,7 +59,6 @@ public class AlbumController {
         Album playlist = new Album();
 
         playlist.setName(dto.getName());
-        playlist.setDuration(dto.getDuration());
         playlist.setCover(dto.getCover());
         playlist.setType(dto.getType());
         playlist.setStatus(dto.getStatus());

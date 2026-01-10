@@ -28,7 +28,6 @@ public class Album {
     private String id;
     private String name;
     private String cover;
-    private String duration;
     private String year;
     private ContentEnum type;
     private StatusMusic status;
