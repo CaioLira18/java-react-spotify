@@ -6,7 +6,6 @@ import { usePlayer } from '../components/PlayerContext';
 
 const MusicPage = () => {
     const { id } = useParams();
-    // Adicionado setPlaylist para que o player reconheça a música
     const { setPlaylist, setCurrentIndex } = usePlayer();
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -20,7 +19,6 @@ const MusicPage = () => {
 
     const API_URL = "http://localhost:8080/api";
 
-    // Função para formatar o tempo (ex: 1.54 -> 1min 54s)
     const formatDuration = (duration) => {
         if (!duration) return "0s";
         const timeStr = String(duration).replace(':', '.');
@@ -67,11 +65,10 @@ const MusicPage = () => {
         setModalOpenPlaylistAdd(false);
     };
 
-    // CORREÇÃO: Agora envia a música para a playlist global do player
     const handlePlayMusic = (song) => {
         if (song.status === "NOT_RELEASED") return;
-        setPlaylist([song]); // Define uma playlist de uma música só
-        setCurrentIndex(0);   // Toca o primeiro item dessa playlist
+        setPlaylist([song]);
+        setCurrentIndex(0);
     };
 
     const modalMoreOptions = (song, e) => {
@@ -91,13 +88,19 @@ const MusicPage = () => {
                         <span className="playlist-label-type">Single</span>
                         <h1 className="playlist-main-title">{songData.name}</h1>
                         <div className="playlist-meta-info">
-                            <img
-                                // Ajustado para pegar a foto do primeiro artista da lista
-                                src={songData.artistsNames?.[0]?.profilePhoto || 'https://via.placeholder.com/50'}
-                                alt="Artist"
-                                className="playlist-artist-avatar"
-                            />
-                            <span className="playlist-artist-name">
+                            <div className="playlist-artists-photos" style={{ display: 'flex', alignItems: 'center' }}>
+                                {songData.artistsNames?.map((artist) => (
+                                    <img
+                                        key={artist.id}
+                                        src={artist.profilePhoto || 'https://via.placeholder.com/50'}
+                                        alt={artist.name}
+                                        className="playlist-artist-avatar"
+                                        style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
+                                    />
+                                ))}
+                            </div>
+                            
+                            <span className="playlist-artist-name" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '0' }}>
                                 {songData.artistsNames?.map((a, index) => (
                                     <React.Fragment key={a.id}>
                                         <a href={`/artists/${a.id}`}>{a.name}</a>
@@ -105,7 +108,6 @@ const MusicPage = () => {
                                     </React.Fragment>
                                 ))}
                             </span>
-                            {/* Tempo formatado no Header */}
                             <span> • {songData.year} • 1 música, {formatDuration(songData.duration)}</span>
                         </div>
                     </div>

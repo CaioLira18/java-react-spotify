@@ -69,7 +69,7 @@
   cursor: pointer;
 }
 
-.playlist-artist-name:hover {
+.playlist-artist-name a:hover {
   text-decoration: underline;
 }
 
