@@ -145,13 +145,22 @@ const AlbumPage = () => {
                         <span className="playlist-label-type">Álbum</span>
                         <h1 className="playlist-main-title">{playlistData.name}</h1>
                         <div className="playlist-meta-info">
-                            <img
-                                src={playlistData.artistsNames?.[0]?.profilePhoto || 'https://via.placeholder.com/50'}
-                                alt="Artist"
-                                className="playlist-artist-avatar"
-                            />
-                            <span className="playlist-artist-name">
-                                <a href={`/artists/${playlistData.artistsNames?.map(a => a.id)}`}>{playlistData.artistsNames?.map(a => a.name).join(', ')}</a>
+                            {playlistData.artistsNames?.map((artist) => (
+                                <img
+                                    key={artist.id}
+                                    src={artist.profilePhoto || 'https://via.placeholder.com/50'}
+                                    alt={artist.name}
+                                    className="playlist-artist-avatar"
+                                    style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
+                                />
+                            ))}
+                            <span className="playlist-artist-name" style={{ marginLeft: playlistData.artistsNames?.length > 1 ? '15px' : '0' }}>
+                                {playlistData.artistsNames?.map((a, index) => (
+                                    <React.Fragment key={a.id}>
+                                        <a href={`/artists/${a.id}`}>{a.name}</a>
+                                        {index < playlistData.artistsNames.length - 1 && ' • '}
+                                    </React.Fragment>
+                                ))}
                             </span>
                             <span> • {playlistData.year} • {playlistSongs.length} músicas</span>
                         </div>

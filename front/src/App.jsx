@@ -43,14 +43,15 @@ function App() {
           <Route path="/likedSongs" element={<LikedSongsPage />} />
         </Route>
 
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
         <Route element={<AdminPageHeader />}>
           <Route path="/addMusic" element={<AddMusicPage />} />
           <Route path="/addArtist" element={<AddArtistPage />} />
           <Route path="/addAlbum" element={<AddAlbumPage />} />
           <Route path="/addPlaylist" element={<AddPlaylistPage />} />
           <Route path="/adminPage" element={<AdminPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
           <Route path="/deleteAlbum" element={<DeleteAlbumPage />} />
           <Route path="/deleteArtist" element={<DeleteArtistPage />} />
           <Route path="/deleteMusic" element={<DeleteMusicPage />} />
