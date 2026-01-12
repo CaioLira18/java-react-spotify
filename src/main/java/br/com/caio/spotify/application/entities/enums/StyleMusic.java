@@ -5,5 +5,6 @@ public enum StyleMusic {
     ROCK,
     K_POP,
     CLASSIC,
+    CHRISTMAS,
     COUNTRY;
 }

@@ -11,6 +11,31 @@ const DeleteAlbumPage = () => {
     const [filteredAlbums, setFilteredAlbums] = useState([])
     const API_URL = "http://localhost:8080/api"
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
+
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()
         setToasts(prev => [...prev, { id: toastId, message, type }])
@@ -156,7 +181,7 @@ const DeleteAlbumPage = () => {
 
             {/* Notificações Toast */}
             <Toast toasts={toasts} removeToast={removeToast} />
-           
+
         </div>
     )
 }

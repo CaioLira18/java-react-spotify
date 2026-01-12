@@ -15,6 +15,31 @@ const UpdateArtistPage = () => {
     const [bannerFile, setBannerFile] = useState(null)
     const [isUpdating, setIsUpdating] = useState(false)
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
+
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()
         setToasts(prev => [...prev, { id: toastId, message, type }])
@@ -173,12 +198,12 @@ const UpdateArtistPage = () => {
 
             const result = await response.json();
             console.log("Resposta da API:", result)
-            
+
             showToast("Artista atualizado com sucesso!", "success")
-            
+
             // Recarrega a lista de artistas
             await fetchArtists()
-            
+
             // Fecha o modal
             closeModalArtist()
 
@@ -193,11 +218,11 @@ const UpdateArtistPage = () => {
     return (
         <div>
             <div className="inputDeleteAlbumSearch">
-                <input 
-                    value={searchTerm} 
-                    onChange={(e) => search(e.target.value)} 
-                    placeholder='Digite o Nome do Artista' 
-                    type="text" 
+                <input
+                    value={searchTerm}
+                    onChange={(e) => search(e.target.value)}
+                    placeholder='Digite o Nome do Artista'
+                    type="text"
                 />
             </div>
 
@@ -206,11 +231,11 @@ const UpdateArtistPage = () => {
                     {filteredArtists.length === 0 && searchTerm === "" && (
                         <h1>Sem Artistas</h1>
                     )}
-                    
+
                     {filteredArtists.length === 0 && searchTerm !== "" && (
                         <h1>Sem Artistas Com Esse Nome</h1>
                     )}
-                    
+
                     {filteredArtists.map((artist) =>
                         <div key={artist.id} className="albumDeleteBox">
                             <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsArtists(artist, e)}>
@@ -244,7 +269,7 @@ const UpdateArtistPage = () => {
                                     <p>Artista</p>
                                 </div>
                             </div>
-                            
+
                             {/* Nome */}
                             <div className="inputBox">
                                 <div className="textLogo">
@@ -252,11 +277,11 @@ const UpdateArtistPage = () => {
                                     <h2>Nome</h2>
                                 </div>
                                 <div className="inputArea">
-                                    <input 
-                                        placeholder="Nome do artista" 
-                                        value={name} 
-                                        onChange={(e) => setName(e.target.value)} 
-                                        type="text" 
+                                    <input
+                                        placeholder="Nome do artista"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        type="text"
                                     />
                                 </div>
                             </div>
@@ -299,17 +324,17 @@ const UpdateArtistPage = () => {
                                     <h2>Descrição</h2>
                                 </div>
                                 <div className="inputArea">
-                                    <input 
-                                        placeholder="Descrição do artista" 
-                                        value={description} 
-                                        onChange={(e) => setDescription(e.target.value)} 
-                                        type="text" 
+                                    <input
+                                        placeholder="Descrição do artista"
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        type="text"
                                     />
                                 </div>
                             </div>
-                            
+
                             <div className="optionDeleteAlbum">
-                                <button 
+                                <button
                                     onClick={updateArtist}
                                     disabled={isUpdating}
                                 >

@@ -21,6 +21,31 @@ const UpdateMusicPage = () => {
     const [filtredSongs, setFiltredSongs] = useState([])
     const API_URL = "http://localhost:8080/api"
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
+
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()
         setToasts(prev => [...prev, { id: toastId, message, type }])
@@ -34,38 +59,38 @@ const UpdateMusicPage = () => {
     const modalMoreOptionsAlbum = (album, e) => {
         e.stopPropagation()
         setSelectedSong(album)
-        
+
         // Log para debug
         console.log("Status da música:", album.status)
         console.log("Música completa:", album)
-        
+
         // Preencher os campos com os valores atuais
         setName(album.name || "")
         setYear(album.year || "")
         setDuration(album.duration || "")
-        
+
         // Garantir que o status seja um dos valores válidos
-        const validStatus = album.status === "RELEASED" || album.status === "NOT_RELEASED" 
-            ? album.status 
+        const validStatus = album.status === "RELEASED" || album.status === "NOT_RELEASED"
+            ? album.status
             : "RELEASED"
         setStatus(validStatus)
         console.log("Status setado:", validStatus)
-        
+
         setType(album.type || "MUSIC")
-        
+
         // Se quiser preencher os artistas também
         if (album.artistsNames && Array.isArray(album.artistsNames)) {
             const ids = album.artistsNames.map(artist => artist.id).filter(id => id)
             setArtistsIds(ids)
         }
-        
+
         setModalOpenSong(true)
     }
 
     const closeModalSong = () => {
         setModalOpenSong(false)
         setSelectedSong(null)
-        
+
         // Limpar todos os campos
         setName("")
         setYear("")
@@ -183,14 +208,14 @@ const UpdateMusicPage = () => {
             console.log("Name:", name)
             console.log("Year:", year)
             console.log("Duration:", duration)
-            
+
             // Garantir que status nunca seja vazio ou null
             let finalStatus = status;
             if (!finalStatus || (finalStatus !== "RELEASED" && finalStatus !== "NOT_RELEASED")) {
                 finalStatus = "RELEASED";
                 console.warn("Status inválido, usando RELEASED como padrão");
             }
-            
+
             // Construir payload - usa valores dos states que foram preenchidos no modal
             const payload = {
                 name: name.trim() || selectedSong.name,
@@ -239,11 +264,11 @@ const UpdateMusicPage = () => {
 
             const result = await response.json();
             console.log("Resposta da API:", result)
-            
+
             showToast("Musica atualizada com sucesso!", "success")
-            
+
             await fetchSongs()
-            
+
             closeModalSong()
 
         } catch (error) {
@@ -316,10 +341,10 @@ const UpdateMusicPage = () => {
                                             <h2>Name</h2>
                                         </div>
                                         <div className="inputArea">
-                                            <input 
-                                                placeholder={selectedSong.name} 
-                                                value={name} 
-                                                onChange={(e) => setName(e.target.value)} 
+                                            <input
+                                                placeholder={selectedSong.name}
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -331,10 +356,10 @@ const UpdateMusicPage = () => {
                                             <h2>Ano da Musica</h2>
                                         </div>
                                         <div className="inputArea">
-                                            <input 
-                                                placeholder={selectedSong.year} 
-                                                value={year} 
-                                                onChange={(e) => setYear(e.target.value)} 
+                                            <input
+                                                placeholder={selectedSong.year}
+                                                value={year}
+                                                onChange={(e) => setYear(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -351,7 +376,7 @@ const UpdateMusicPage = () => {
                                                 accept="image/*"
                                                 onChange={(e) => setCoverFile(e.target.files[0])}
                                             />
-                                            {coverFile && <p style={{color: 'green', marginTop: '5px'}}>Arquivo selecionado: {coverFile.name}</p>}
+                                            {coverFile && <p style={{ color: 'green', marginTop: '5px' }}>Arquivo selecionado: {coverFile.name}</p>}
                                         </div>
                                     </div>
 
@@ -362,10 +387,10 @@ const UpdateMusicPage = () => {
                                             <h2>Duração</h2>
                                         </div>
                                         <div className="inputArea">
-                                            <input 
-                                                placeholder={selectedSong.duration} 
-                                                value={duration} 
-                                                onChange={(e) => setDuration(e.target.value)} 
+                                            <input
+                                                placeholder={selectedSong.duration}
+                                                value={duration}
+                                                onChange={(e) => setDuration(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -451,7 +476,7 @@ const UpdateMusicPage = () => {
                                                 <option value="RELEASED">Lançada</option>
                                                 <option value="NOT_RELEASED">Não Lançada</option>
                                             </select>
-                                            <p style={{color: 'yellow', marginTop: '5px'}}>Status atual: {status}</p>
+                                            <p style={{ color: 'yellow', marginTop: '5px' }}>Status atual: {status}</p>
                                         </div>
                                     </div>
 
@@ -467,7 +492,7 @@ const UpdateMusicPage = () => {
                                                 accept="audio/mp3"
                                                 onChange={(e) => setMusicFile(e.target.files[0])}
                                             />
-                                            {musicFile && <p style={{color: 'green', marginTop: '5px'}}>Arquivo selecionado: {musicFile.name}</p>}
+                                            {musicFile && <p style={{ color: 'green', marginTop: '5px' }}>Arquivo selecionado: {musicFile.name}</p>}
                                         </div>
                                     </div>
                                     <div className="optionDeleteAlbum">

@@ -3,8 +3,7 @@ import ArtistsSelect from '../components/ArtistsSelect'
 
 const AddMusicPage = () => {
   const API_URL = "http://localhost:8080/api"
-  
-  // TODOS OS SEUS INPUTS ORIGINAIS
+
   const [name, setName] = useState("")
   const [duration, setDuration] = useState("")
   const [musicFile, setMusicFile] = useState(null)
@@ -18,12 +17,58 @@ const AddMusicPage = () => {
   const [artistsIds, setArtistsIds] = useState([])
   const [selectedAlbumId, setSelectedAlbumId] = useState("")
   const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
   const [toasts, setToasts] = useState([])
+  const [filtredArtists, setFiltredArtists] = useState([]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsAuthenticated(true);
+        setIsAdmin(parsedUser.role === 'ADMIN');
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err);
+      }
+    }
+  }, []);
+
+  {
+    !isAdmin && (
+      navigate('/')
+    )
+  }
+
+  {
+    !isAuthenticated && (
+      navigate('/login')
+    )
+  }
+
+  function search(value) {
+    setSearchTerm(value);
+    const lower = value.toLowerCase();
+
+    if (!value.trim()) {
+      setFiltredArtists(artists.filter(a => a.status !== "OFF"));
+      return;
+    }
+
+    setFiltredArtists(
+      artists.filter(a => a.name.toLowerCase().includes(lower) && a.status !== "OFF")
+    );
+  }
 
   useEffect(() => {
     fetch(`${API_URL}/artists`)
       .then(res => res.json())
-      .then(data => setArtists(Array.isArray(data) ? data : []))
+      .then(data => {
+        const activeArtists = Array.isArray(data) ? data : [];
+        setArtists(activeArtists);
+        // Inicializa a lista filtrada com todos os artistas ativos
+        setFiltredArtists(activeArtists.filter(a => a.status !== "OFF"));
+      })
       .catch(() => console.error("Erro artistas"))
 
     fetch(`${API_URL}/albums`)
@@ -32,10 +77,9 @@ const AddMusicPage = () => {
       .catch(() => console.error("Erro álbuns"))
   }, [])
 
-  // LÓGICA DO ÁLBUM (CORRIGIDA PARA NÃO DAR ERRO DE MAP)
   const artistAlbums = useMemo(() => {
     if (!albums || !Array.isArray(albums)) return [];
-    return albums.filter(album => 
+    return albums.filter(album =>
       album.artistsNames?.some(artist => artistsIds.includes(String(artist.id)))
     );
   }, [albums, artistsIds]);
@@ -96,10 +140,10 @@ const AddMusicPage = () => {
       }
 
       showToast("Música adicionada com sucesso!");
-      
-      // Limpar campos
+
       setName(""); setDuration(""); setYear(""); setStatus(""); setStyle("");
       setMusicFile(null); setCoverFile(null); setArtistsIds([]); setSelectedAlbumId("");
+      setSearchTerm(""); // Limpa a busca
     } catch (error) {
       showToast("Erro ao adicionar", "error");
     } finally {
@@ -130,7 +174,7 @@ const AddMusicPage = () => {
             <div className="textLogo"><i className="fa-solid fa-panorama"></i><h2>Capa *</h2></div>
             <div className="inputArea">
               <label htmlFor="cover-upload" className="custom-file-upload">{coverFile ? coverFile.name : "Escolher capa *"}</label>
-              <input id="cover-upload" type="file" accept="image/*" style={{display:'none'}} onChange={(e) => setCoverFile(e.target.files[0])} />
+              <input id="cover-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => setCoverFile(e.target.files[0])} />
             </div>
           </div>
 
@@ -143,18 +187,52 @@ const AddMusicPage = () => {
             <div className="textLogo"><i className="fa-solid fa-music"></i><h2>Áudio</h2></div>
             <div className="inputArea">
               <label htmlFor="music-upload" className="custom-file-upload">{musicFile ? musicFile.name : "Escolher áudio"}</label>
-              <input id="music-upload" type="file" accept="audio/*" style={{display:'none'}} onChange={(e) => setMusicFile(e.target.files[0])} />
+              <input id="music-upload" type="file" accept="audio/*" style={{ display: 'none' }} onChange={(e) => setMusicFile(e.target.files[0])} />
             </div>
           </div>
 
           <div className="inputBox">
-            <div className="textLogo"><i className="fa-solid fa-user"></i><h2>Artistas *</h2></div>
-            <div className="inputArea">
-              <select multiple className="form-input" value={artistsIds} onChange={(e) => setArtistsIds(Array.from(e.target.selectedOptions, o => o.value))}>
-                {artists.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-              </select>
+            <div className="textLogo">
+              <i className="fa-solid fa-user"></i>
+              <h2>Artistas *</h2>
+              <input
+                className='inputArtist'
+                placeholder="Pesquisar artista..."
+                value={searchTerm}
+                onChange={(e) => search(e.target.value)}
+                type="text"
+              />
             </div>
           </div>
+
+          <div className="checkbox-group">
+            {filtredArtists.length > 0 ? (
+              filtredArtists.map(a => (
+                <label key={a.id}>
+                  <input
+                    type="checkbox"
+                    value={a.id}
+                    checked={artistsIds.includes(String(a.id))}
+                    onChange={(e) => {
+                      const id = String(a.id);
+                      if (e.target.checked) {
+                        setArtistsIds([...artistsIds, id]);
+                      } else {
+                        setArtistsIds(artistsIds.filter(item => item !== id));
+                      }
+                    }}
+                  />
+                  {a.name}
+                </label>
+              ))
+            ) : (
+              <div className="empty-state">
+                <div className="empty-state-icon">🔍</div>
+                <p className="empty-state-text">Nenhum artista encontrado</p>
+              </div>
+            )}
+          </div>
+
           <ArtistsSelect artistsIds={artistsIds} />
 
           <div className="inputBox">
@@ -174,7 +252,10 @@ const AddMusicPage = () => {
                 <option value="">Selecione</option>
                 <option value="POP">POP</option>
                 <option value="ROCK">ROCK</option>
-                <option value="SERTANEJO">SERTANEJO</option>
+                <option value="K_POP">K-POP</option>
+                <option value="CLASSIC">CLASSICA</option>
+                <option value="CHRISTMAS">CHRISTMAS</option>
+                <option value="COUNTRY">COUNTRY</option>
               </select>
             </div>
           </div>
@@ -194,6 +275,12 @@ const AddMusicPage = () => {
             <button onClick={addItem} disabled={loading}>{loading ? "Processando..." : "Adicionar Música"}</button>
           </div>
         </div>
+      </div>
+
+      <div className="toast-container">
+        {toasts.map(t => (
+          <div key={t.id} className={`toast toast-${t.type}`}>{t.message}</div>
+        ))}
       </div>
     </div>
   )

@@ -19,7 +19,32 @@ const UpdateAlbumPage = () => {
     const [songsIds, setSongsIds] = useState([]);
     const [status, setStatus] = useState("")
     const [coverFile, setCoverFile] = useState(null)
-    const API_URL = "http://localhost:8080/api"
+    const API_URL = "http://localhost:8080/api";
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()
@@ -35,18 +60,15 @@ const UpdateAlbumPage = () => {
         e.stopPropagation()
         setSelectedAlbum(album)
 
-        // Inicializar os campos com os valores atuais do álbum
         setName(album.name || "")
         setDuration(album.duration || "")
         setYear(album.year || "")
         setType(album.type || "ALBUM")
         setStatus(album.status || "RELEASED")
-        
-        // CORREÇÃO: Mapear os objetos que vêm do banco para pegar apenas os IDs (Strings)
-        // O Java retorna "artistsNames" e "musicsNames", o select precisa apenas dos IDs.
+
         setArtistsIds(album.artistsNames?.map(a => a.id) || [])
         setSongsIds(album.musicsNames?.map(m => m.id) || [])
-        
+
         setCoverFile(null)
         setModalOpenAlbum(true)
     }
@@ -103,8 +125,6 @@ const UpdateAlbumPage = () => {
                 finalStatus = selectedAlbum.status || "RELEASED";
             }
 
-            // CORREÇÃO: Garantir que as listas nunca sejam enviadas como null
-            // O Java requer listas (mesmo que vazias) para o findAllById
             const payload = {
                 name: name.trim() || selectedAlbum.name,
                 year: year || selectedAlbum.year,
@@ -112,7 +132,7 @@ const UpdateAlbumPage = () => {
                 status: finalStatus,
                 type: type || selectedAlbum.type,
                 cover: selectedAlbum.cover,
-                artistsIds: artistsIds || [], 
+                artistsIds: artistsIds || [],
                 songsIds: songsIds || []
             };
 
@@ -156,13 +176,13 @@ const UpdateAlbumPage = () => {
 
     useEffect(() => {
         fetchAlbums()
-        
+
         fetch(`${API_URL}/artists`)
             .then(res => res.json())
             .then(data => setArtists(data))
             .catch(() => console.error("Erro artistas"));
 
-        fetch(`${API_URL}/songs`) 
+        fetch(`${API_URL}/songs`)
             .then(res => res.json())
             .then(data => setSongs(data))
             .catch(() => console.error("Erro musicas"));

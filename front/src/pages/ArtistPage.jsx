@@ -27,6 +27,7 @@ const ArtistPage = () => {
     const [favoritesListAlbums, setFavoritesListAlbums] = useState([]);
     const [favoritesListArtists, setFavoritesListArtists] = useState([]);
     const [userID, setUserID] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // Estado do filtro: "ALL", "ALBUM" ou "MUSIC"
     const [type, setType] = useState("ALL");
@@ -42,8 +43,15 @@ const ArtistPage = () => {
             if (userData.listMusic) setFavoritesListSongs(userData.listMusic);
             if (userData.listAlbums) setFavoritesListAlbums(userData.listAlbums);
             if (userData.listArtists) setFavoritesListArtists(userData.listArtists);
+            setIsAuthenticated(true);
         }
     }, []);
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     useEffect(() => {
         const fetchInitialData = async () => {

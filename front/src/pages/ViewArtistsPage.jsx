@@ -9,9 +9,33 @@ const ViewArtistPage = () => {
     const [filteredArtists, setFilteredArtists] = useState([])
     const [songs, setSongs] = useState([])
 
-    const API_URL = "http://localhost:8080/api"
+    const API_URL = "http://localhost:8080/api";
 
-    // Busca músicas
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
+
     useEffect(() => {
         fetch(`${API_URL}/songs`)
             .then(response => response.json())
@@ -19,7 +43,6 @@ const ViewArtistPage = () => {
             .catch(() => alert("Erro ao buscar Músicas."))
     }, [])
 
-    // Busca artistas e inicializa a lista filtrada
     useEffect(() => {
         fetch(`${API_URL}/artists`)
             .then(response => response.json())

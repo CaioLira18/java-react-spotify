@@ -28,7 +28,7 @@ const LikedSongsPage = () => {
         setIsAuthenticated(true)
         setUserID(parsedUser.id)
         setName(parsedUser.name)
-        
+
         // Carrega as músicas curtidas que estão salvas no objeto do usuário
         const userSongs = parsedUser.listMusic || []
         setFavoritesListSongs(userSongs)
@@ -38,7 +38,12 @@ const LikedSongsPage = () => {
     }
   }, [])
 
-  // 2. Buscar lista de usuários (para a foto do perfil no cabeçalho)
+  {
+    !isAuthenticated && (
+      navigate('/login')
+    )
+  }
+
   useEffect(() => {
     fetch(`${API_URL}/users`)
       .then(res => res.json())
@@ -46,7 +51,6 @@ const LikedSongsPage = () => {
       .catch(console.error)
   }, [])
 
-  // 3. Buscar álbuns para identificar a qual álbum a música pertence
   useEffect(() => {
     fetch(`${API_URL}/albums`)
       .then(res => res.json())
@@ -54,11 +58,9 @@ const LikedSongsPage = () => {
       .catch(console.error)
   }, [])
 
-  // Função para dar play
   const playLikedSong = (index) => {
-    // Filtramos apenas músicas lançadas para a playlist do player
     const playableSongs = favoritesListSongs.filter(s => s.status !== "NOT_RELEASED");
-    setPlaylist(playableSongs); 
+    setPlaylist(playableSongs);
     setCurrentIndex(index);
   };
 
@@ -130,7 +132,7 @@ const LikedSongsPage = () => {
   }
 
   const findAlbumForSong = (songId) => {
-    const album = albums.find(album => 
+    const album = albums.find(album =>
       album.musicsNames?.some(music => music.id === songId)
     )
     return album ? album.name : '---'

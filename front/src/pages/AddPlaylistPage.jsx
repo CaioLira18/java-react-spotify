@@ -12,7 +12,33 @@ const AddPlaylistPage = () => {
   const [songs, setSongs] = useState([]);
   const [status, setStatus] = useState("");
   const [songsIds, setSongsIds] = useState([]);
-  const [coverFile, setCoverFile] = useState(null)
+  const [coverFile, setCoverFile] = useState(null);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsAuthenticated(true);
+        setIsAdmin(parsedUser.role === 'ADMIN');
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err);
+      }
+    }
+  }, []);
+
+  {!isAdmin && (
+      navigate('/')
+    )
+  }
+
+  {!isAuthenticated && (
+      navigate('/login')
+    )
+  }
 
   async function uploadCoverToCloudinary() {
     const formData = new FormData()
@@ -57,7 +83,6 @@ const AddPlaylistPage = () => {
     }
 
     try {
-
       const uploadedCoverUrl = await uploadCoverToCloudinary()
       setCover(uploadedCoverUrl)
 
@@ -137,7 +162,7 @@ const AddPlaylistPage = () => {
               </div>
               <div className="inputArea">
                 <label htmlFor="file-upload" className="custom-file-upload">
-                  <i className="fas fa-cloud-upload-alt"></i> 
+                  <i className="fas fa-cloud-upload-alt"></i>
                   {coverFile ? coverFile.name : "Escolher arquivo"}
                 </label>
                 <input

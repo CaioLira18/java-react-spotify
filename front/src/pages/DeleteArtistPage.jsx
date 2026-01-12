@@ -9,7 +9,32 @@ const DeleteArtistPage = () => {
     const [modalOpenArtist, setModalOpenArtist] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [filteredArtists, setFilteredArtists] = useState([])
-    const API_URL = "http://localhost:8080/api"
+    const API_URL = "http://localhost:8080/api";
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()
@@ -109,16 +134,16 @@ const DeleteArtistPage = () => {
                 <div className="deleteAlbumContainer">
                     {filteredArtists.map((artist) =>
                         artist.status != "OFF" && (
-                        <div className="albumDeleteBox">
-                            <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsArtists(artist, e)}>
-                                <div className="albumDeleteImage">
-                                    <img src={artist.profilePhoto} alt="" />
-                                </div>
-                                <div className="albumDeleteNames">
-                                    <h4>{artist.name}</h4>
+                            <div className="albumDeleteBox">
+                                <div className="albumDeleteInformations" onClick={(e) => modalMoreOptionsArtists(artist, e)}>
+                                    <div className="albumDeleteImage">
+                                        <img src={artist.profilePhoto} alt="" />
+                                    </div>
+                                    <div className="albumDeleteNames">
+                                        <h4>{artist.name}</h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         )
                     )}
                 </div>

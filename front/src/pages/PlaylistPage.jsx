@@ -8,7 +8,7 @@ import { usePlayer } from '../components/PlayerContext' // Importação do conte
 const PlaylistPage = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  
+
   // Usando o hook do Player global em vez do OutletContext
   const { setPlaylist, setCurrentIndex } = usePlayer()
 
@@ -33,6 +33,7 @@ const PlaylistPage = () => {
   const [isAdmin, setIsAdmin] = useState(false)
   const [name, setName] = useState("")
   const [coverKey, setCoverKey] = useState(0)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const API_URL = "http://localhost:8080/api"
 
@@ -43,9 +44,16 @@ const PlaylistPage = () => {
       setUserID(parsedUser.id)
       setIsAdmin(parsedUser.role === 'ADMIN')
       setName(parsedUser.name)
+      setIsAuthenticated(true);
       setFavoritesListSongs(parsedUser.listMusic || [])
     }
   }, [])
+
+  {
+    !isAuthenticated && (
+      navigate('/login')
+    )
+  }
 
   useEffect(() => {
     fetch(`${API_URL}/users`).then(r => r.json()).then(setUsers)
@@ -255,7 +263,7 @@ const PlaylistPage = () => {
     return `${Math.floor(totalSeconds / 60)} min ${totalSeconds % 60} s`
   }
 
-  if (!playlistData) return <h1 style={{color: 'white', padding: '20px'}}>Carregando Playlist...</h1>
+  if (!playlistData) return <h1 style={{ color: 'white', padding: '20px' }}>Carregando Playlist...</h1>
 
   const playlistSongs = songs.filter(song =>
     playlistData.musicsNames?.some(m => m.id === song.id)
@@ -274,9 +282,9 @@ const PlaylistPage = () => {
             <h1 className="playlist-main-title">{playlistData.name}</h1>
             <p>{playlistData.description}</p>
             <div className="playlist-meta-info">
-              <img 
-                src={playlistData.type === "SPOTIFY_PLAYLIST" ? "https://res.cloudinary.com/dthgw4q5d/image/upload/v1764399202/Spotify_logo_without_text.svg_b0pw0i.png" : userPhoto} 
-                className="playlist-artist-avatar" 
+              <img
+                src={playlistData.type === "SPOTIFY_PLAYLIST" ? "https://res.cloudinary.com/dthgw4q5d/image/upload/v1764399202/Spotify_logo_without_text.svg_b0pw0i.png" : userPhoto}
+                className="playlist-artist-avatar"
                 alt="Owner"
               />
               <span>{playlistData.type === "SPOTIFY_PLAYLIST" ? "Spotify" : name}</span>

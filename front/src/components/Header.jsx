@@ -201,7 +201,7 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
                       </div>
                       <div className="boxInformations">
                         <span>{album.name}</span>
-                        <p>Album • {album.artistsNames.map(artist => artist.name)}</p>
+                        <p>Album • {album.artistsNames.map(artist => artist.name).join(' • ')}</p>
                       </div>
                     </div>
                   </a>

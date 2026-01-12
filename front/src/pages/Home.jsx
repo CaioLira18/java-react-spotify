@@ -7,44 +7,26 @@ const Home = () => {
     const [artistsOn, setArtistsOn] = useState([]);
     const [name, setName] = useState("");
     const [playlists, setPlaylists] = useState([]);
-    const [aiRecommendations, setAiRecommendations] = useState("");
-    const [loadingAi, setLoadingAi] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Função para buscar recomendações da IA baseada no usuário
-    const fetchAiRecommendations = async (userId) => {
-        setLoadingAi(true);
-        try {
-            const res = await fetch(`${API_URL}/recommendations/${userId}`);
-            if (res.ok) {
-                const data = await res.text();
-                setAiRecommendations(data);
-            }
-        } catch (err) {
-            console.error("Erro ao buscar recomendações IA:", err);
-        } finally {
-            setLoadingAi(false);
-        }
-    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (!storedUser) return;
         const parsedUser = JSON.parse(storedUser);
 
-        // 1. Busca dados atualizados do Usuário e Recomendações
         fetch(`${API_URL}/users/${parsedUser.id}`)
             .then(res => res.json())
             .then(userData => {
                 setPlaylists(userData.listPlaylists || []);
                 setName(userData.name);
+                setIsAuthenticated(true);
                 localStorage.setItem('user', JSON.stringify(userData));
 
-                // Dispara a IA assim que temos o ID do usuário
                 fetchAiRecommendations(userData.id);
             })
             .catch(err => console.error("Erro User Fetch:", err));
 
-        // 2. Busca Artistas Populares/Online
         fetch(`${API_URL}/artists`)
             .then(res => res.json())
             .then(artistsData => {
@@ -53,6 +35,12 @@ const Home = () => {
             })
             .catch(err => console.error("Erro Artists Fetch:", err));
     }, []);
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     return (
         <div className="homeFlex">

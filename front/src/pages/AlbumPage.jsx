@@ -42,7 +42,6 @@ const AlbumPage = () => {
                 const parsedUser = JSON.parse(storedUser);
                 setUserID(parsedUser.id);
                 setFavoritesListSongs(parsedUser.listMusic || []);
-                // CORREÇÃO: O seu JSON usa 'listAlbums' para álbuns favoritos
                 setFavoritesListAlbums(parsedUser.listAlbums || []);
             } catch (err) {
                 console.error("Erro ao processar usuário", err);
@@ -50,6 +49,12 @@ const AlbumPage = () => {
         }
         fetchData();
     }, [id]);
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     const playlistSongs = allSongs.filter(song =>
         playlistData?.musicsNames?.some(m => m.id === song.id)
@@ -98,10 +103,8 @@ const AlbumPage = () => {
                     showToast("Álbum adicionado aos favoritos!");
                 }
 
-                // Atualiza o estado local para renderização imediata
                 setFavoritesListAlbums(updatedFavorites);
 
-                // Sincroniza com o localStorage para persistência entre navegações
                 const storedUser = JSON.parse(localStorage.getItem('user'));
                 if (storedUser) {
                     storedUser.listAlbums = updatedFavorites;
@@ -114,8 +117,6 @@ const AlbumPage = () => {
             showToast("Erro de conexão", "error");
         }
     };
-
-    // --- RESTANTE DO COMPONENTE ---
 
     const addMusicToPlaylist = async (playlistId) => {
         if (!selectedSong) return;

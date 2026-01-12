@@ -10,7 +10,32 @@ const ViewMusicPage = () => {
     const [songs, setSongs] = useState([])
     const [albums, setAlbums] = useState([])
 
-    const API_URL = "http://localhost:8080/api"
+    const API_URL = "http://localhost:8080/api";
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     useEffect(() => {
         fetch(`${API_URL}/songs`)

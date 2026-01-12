@@ -9,7 +9,32 @@ const DeleteMusicPage = () => {
     const [modalOpenSong, setModalOpenSong] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [filtredSongs, setFiltredSongs] = useState([])
-    const API_URL = "http://localhost:8080/api"
+    const API_URL = "http://localhost:8080/api";
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setIsAuthenticated(true);
+                setIsAdmin(parsedUser.role === 'ADMIN');
+            } catch (err) {
+                console.error("Erro ao processar usuário do localStorage", err);
+            }
+        }
+    }, []);
+
+    {
+        !isAdmin && (
+            navigate('/')
+        )
+    }
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     const showToast = (message, type = 'success') => {
         const toastId = Date.now()

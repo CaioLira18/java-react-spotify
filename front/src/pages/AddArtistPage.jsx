@@ -10,6 +10,31 @@ const AddArtistPage = () => {
 
   const API_URL = "http://localhost:8080/api";
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsAuthenticated(true);
+        setIsAdmin(parsedUser.role === 'ADMIN');
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err);
+      }
+    }
+  }, []);
+
+  {
+    !isAdmin && (
+      navigate('/')
+    )
+  }
+
+  {
+    !isAuthenticated && (
+      navigate('/login')
+    )
+  }
+
   const showToast = (message, type = 'success') => {
     const toastId = Date.now()
     setToasts(prev => [...prev, { id: toastId, message, type }])
@@ -161,7 +186,7 @@ const AddArtistPage = () => {
               </div>
               <div className="inputArea">
                 <label htmlFor="banner-upload" className="custom-file-upload">
-                  <i className="fas fa-cloud-upload-alt"></i> 
+                  <i className="fas fa-cloud-upload-alt"></i>
                   {bannerFile ? bannerFile.name : "Escolher arquivo"}
                 </label>
                 <input

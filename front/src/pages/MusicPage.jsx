@@ -16,6 +16,8 @@ const MusicPage = () => {
     const [favoritesListSongs, setFavoritesListSongs] = useState([]);
     const [favoritesListAlbums, setFavoritesListAlbums] = useState([]);
     const [userID, setUserID] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+
 
     const API_URL = "http://localhost:8080/api";
 
@@ -44,12 +46,19 @@ const MusicPage = () => {
                 setUserID(parsedUser.id);
                 setFavoritesListSongs(parsedUser.listMusic || []);
                 setFavoritesListAlbums(parsedUser.listAlbums || []);
+                setIsAuthenticated(true);
             } catch (err) {
                 console.error("Erro ao processar usuário", err);
             }
         }
         fetchData();
     }, [id]);
+
+    {
+        !isAuthenticated && (
+            navigate('/login')
+        )
+    }
 
     const showToast = (message, type = 'success') => {
         const toastId = Date.now();
@@ -99,7 +108,7 @@ const MusicPage = () => {
                                     />
                                 ))}
                             </div>
-                            
+
                             <span className="playlist-artist-name" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '0' }}>
                                 {songData.artistsNames?.map((a, index) => (
                                     <React.Fragment key={a.id}>
@@ -114,9 +123,9 @@ const MusicPage = () => {
                 </div>
 
                 <div className="playlist-action-bar">
-                    <button 
-                        className="playlist-play-button" 
-                        onClick={() => handlePlayMusic(songData)} 
+                    <button
+                        className="playlist-play-button"
+                        onClick={() => handlePlayMusic(songData)}
                         disabled={songData.status === "NOT_RELEASED"}
                     >
                         <i className="fa-solid fa-play"></i>
@@ -131,8 +140,8 @@ const MusicPage = () => {
                         <div className="table-col-duration">Duração</div>
                     </div>
 
-                    <div 
-                        className={`playlist-song-row ${songData.status === "NOT_RELEASED" ? "disabled" : ""}`} 
+                    <div
+                        className={`playlist-song-row ${songData.status === "NOT_RELEASED" ? "disabled" : ""}`}
                         onClick={() => handlePlayMusic(songData)}
                     >
                         <div className={songData.status !== "NOT_RELEASED" ? "playlist-song-item" : "playlist-song-item-not-released"}>

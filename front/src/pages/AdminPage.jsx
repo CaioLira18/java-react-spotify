@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
   const [name, setName] = useState('');
@@ -18,6 +19,16 @@ const AdminPage = () => {
       }
     }
   }, []);
+
+  const navigate = useNavigate()
+
+  {!isAdmin && (
+    navigate('/')
+  )}
+
+  {!isAuthenticated && (
+    navigate('/login')
+  )}
 
   return (
     <div>

@@ -13,7 +13,31 @@ const AddAlbumPage = () => {
   const [songsIds, setSongsIds] = useState([]);
   const [coverFile, setCoverFile] = useState(null);
 
-  // Busca lista de artistas
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setIsAuthenticated(true);
+        setIsAdmin(parsedUser.role === 'ADMIN');
+      } catch (err) {
+        console.error("Erro ao processar usuário do localStorage", err);
+      }
+    }
+  }, []);
+
+  {
+    !isAdmin && (
+      navigate('/')
+    )
+  }
+
+  {
+    !isAuthenticated && (
+      navigate('/login')
+    )
+  }
+
   useEffect(() => {
     fetch(`${API_URL}/artists`)
       .then(response => {
@@ -24,7 +48,6 @@ const AddAlbumPage = () => {
       .catch(() => alert("Erro ao buscar Artistas."));
   }, []);
 
-  // Busca lista de músicas
   useEffect(() => {
     fetch(`${API_URL}/songs`)
       .then(response => {
@@ -61,7 +84,7 @@ const AddAlbumPage = () => {
       !status ||
       !year ||
       !type ||
-      
+
       artistsIds.length === 0
     ) {
       alert("Preencha todos os campos obrigatórios, incluindo a imagem.");
@@ -102,7 +125,7 @@ const AddAlbumPage = () => {
       setStatus("");
       setSongsIds([]);
       setArtistsIds([]);
-      
+
     } catch (error) {
       console.error(error);
       alert("Erro ao adicionar álbum. Verifique o console para mais detalhes.");
