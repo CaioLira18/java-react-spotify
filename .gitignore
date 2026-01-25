@@ -33,6 +33,5 @@ build/
 .vscode/
 
 # Configurações de ambiente (ADICIONE ISSO)
-application.properties
 application.yml
 .env
