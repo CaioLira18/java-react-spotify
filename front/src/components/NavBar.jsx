@@ -15,6 +15,7 @@ const NavBar = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalSearchHome, setModalSearchHome] = useState(false);
+  const [modalProfile, setModalProfile] = useState(false);
 
   const [songs, setSongs] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -47,6 +48,14 @@ const NavBar = () => {
     setFilteredAlbums(
       albums.filter(a => a.name.toLowerCase().includes(lower) && a.status !== "NOT_RELEASED")
     );
+  }
+
+  const handleModalProfileOpen = () => {
+    setModalProfile(true);
+  }
+
+  const handleModalProfileClose = () => {
+    setModalProfile(false);
   }
 
   const closeSearch = () => {
@@ -199,7 +208,7 @@ const NavBar = () => {
             <div className="userBox">
               <i className="fa-regular fa-bell"></i>
 
-              <div className="userImage">
+              <div className="userImage" onClick={handleModalProfileOpen}>
                 <img
                   src={
                     users.find(u => u.id === idUser)?.image ||
@@ -209,21 +218,30 @@ const NavBar = () => {
                 />
               </div>
 
-              <div className="logout" onClick={handleLogout} title="Sair">
-                <i className="fa-solid fa-right-from-bracket"></i>
-              </div>
-
-              {isAdmin && (
-                <div className="adminButton">
-                  <Link to="/adminPage">
-                    <button>Painel Admin</button>
-                  </Link>
+              {modalProfile && (
+                <div className="modalProfileContainer">
+                  {/* Overlay opcional para fechar ao clicar fora */}
+                  <div className="modalOverlayHeader" onClick={handleModalProfileClose}></div>
+                  <div className="modalProfileBox">
+                    <Link to="/edit" className="modalItem">
+                      <span>Editar Perfil</span>
+                    </Link>
+                    {isAdmin && (
+                      <Link to="/adminPage" className="modalItem">
+                        <span>Painel de Admin</span>
+                      </Link>
+                    )}
+                    <Link onClick={handleModalProfileClose} className="modalItem">
+                      <span>Fechar</span>
+                    </Link>
+                    <div className="modalDivider"></div>
+                    <span className="modalItem" onClick={handleLogout}>Sair</span>
+                  </div>
                 </div>
               )}
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AddAlbumPage = () => {
   const API_URL = "http://localhost:8080/api";
@@ -12,6 +13,9 @@ const AddAlbumPage = () => {
   const [artistsIds, setArtistsIds] = useState([]);
   const [songsIds, setSongsIds] = useState([]);
   const [coverFile, setCoverFile] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');

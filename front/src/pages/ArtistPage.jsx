@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import Toast from '../components/Modal/Toast';
 import MusicaModal from '../components/Modal/MusicaModal';
 import ModalAlbum from '../components/Modal/ModalAlbum';
@@ -8,6 +8,7 @@ import { usePlayer } from '../components/PlayerContext';
 const ArtistPage = () => {
     const { id } = useParams();
     const { setPlaylist, setCurrentIndex, playlist, currentIndex } = usePlayer();
+    const navigate = useNavigate();
 
     const [artistaLocal, setArtistaLocal] = useState(null);
     const [songs, setSongs] = useState([]);
@@ -44,14 +45,10 @@ const ArtistPage = () => {
             if (userData.listAlbums) setFavoritesListAlbums(userData.listAlbums);
             if (userData.listArtists) setFavoritesListArtists(userData.listArtists);
             setIsAuthenticated(true);
+        } else {
+            navigate('/login');
         }
-    }, []);
-
-    {
-        !isAuthenticated && (
-            navigate('/login')
-        )
-    }
+    }, [navigate]);
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -278,7 +275,7 @@ const ArtistPage = () => {
                 {/* SEÇÃO: MÚSICAS POPULARES */}
                 <div className="songsContainer">
                     <h2 className="sectionTitle">Músicas Populares</h2>
-                    {artistSongs.length > 0 ? artistSongs.map((song, index) => (
+                    {artistSongs.length > 0 ? artistSongs.slice(0, 10).map((song, index) => (
                         <div className="musicsArtistPage" key={song.id}>
                             <div className="songContainer" onClick={() => handlePlayMusic(index, artistSongs)}>
                                 <h4>{index + 1}</h4>
@@ -334,7 +331,11 @@ const ArtistPage = () => {
                     <div className="flexItems">
                         {/* Renderiza Singles se o filtro for MUSIC ou ALL */}
                         {(type === "MUSIC" || type === "ALL") && songs
-                            .filter(s => s.artistsNames?.some(a => a.name === artistaLocal.name) && s.status !== 'NOT_RELEASED')
+                            .filter(s => 
+                                s.artistsNames?.some(a => a.name === artistaLocal.name) && 
+                                s.status !== 'NOT_RELEASED' &&
+                                !albums.some(album => album.musicsNames?.some(m => m.id === s.id))
+                            )
                             .map((song) => (
                                 <div className="albumsArtistPage" key={song.id}>
                                     <div className="albumContainer">
@@ -387,7 +388,7 @@ const ArtistPage = () => {
                 {/* SEÇÃO: FUTUROS LANÇAMENTOS */}
                 <div className="albumsContainer">
                     <h2 className='sectionTitle'>Futuros Lançamentos</h2>
-                    <div className="flexAlbums">
+                    <div className="flexItems">
                         {albums
                             .filter(album => album.artistsNames?.some(a => a.name === artistaLocal.name) && album.status === 'NOT_RELEASED')
                             .map((album) => (
@@ -421,10 +422,12 @@ const ArtistPage = () => {
                         {spotifyAlbums.map((album, idx) => (
                             <div className="albumsArtistPage" key={album.id || idx}>
                                 <div className="albumContainer">
-                                    <img
-                                        src={album.coverArt?.sources?.[0]?.url}
-                                        alt={album.name}
-                                    />
+                                    <div className="albumImage">
+                                        <img
+                                            src={album.coverArt?.sources?.[0]?.url}
+                                            alt={album.name}
+                                        />
+                                    </div>
                                     <div className="albumInformation">
                                         <h4>{album.name}</h4>
                                         <p>Álbum • {album.date?.year || '—'}</p>

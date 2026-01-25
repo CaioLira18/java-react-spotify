@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SlideHome from "../components/SlideHome";
 
 const Home = () => {
@@ -8,6 +8,7 @@ const Home = () => {
     const [name, setName] = useState("");
     const [playlists, setPlaylists] = useState([]);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -22,8 +23,6 @@ const Home = () => {
                 setName(userData.name);
                 setIsAuthenticated(true);
                 localStorage.setItem('user', JSON.stringify(userData));
-
-                fetchAiRecommendations(userData.id);
             })
             .catch(err => console.error("Erro User Fetch:", err));
 
@@ -36,12 +35,6 @@ const Home = () => {
             .catch(err => console.error("Erro Artists Fetch:", err));
     }, []);
 
-    {
-        !isAuthenticated && (
-            navigate('/login')
-        )
-    }
-
     return (
         <div className="homeFlex">
             <SlideHome />
@@ -50,7 +43,8 @@ const Home = () => {
             <div className="artistas">
                 <h1>Artistas Populares</h1>
                 <div className="containerArtists">
-                    {artistsOn.map((artista) => (
+                    {/* Corta o array do índice 0 ao 14 antes de renderizar */}
+                    {artistsOn.slice(0, 14).map((artista) => (
                         <div className="artistsBox" key={artista.id}>
                             <div className="imageArtist">
                                 <img src={artista.profilePhoto} alt={artista.name} />
@@ -68,32 +62,34 @@ const Home = () => {
             </div>
 
             {/* Seção de Playlists do Usuário */}
-            <div className="secctionHomeContainer">
-                <div className="secctionHomeBox">
-                    <div className="secctionHomeHeader">
-                        <h1>Suas Playlists</h1>
-                        <Link to="/playlists"><p>Mostrar Tudo</p></Link>
-                    </div>
+            {playlists.length != 0 && (
+                <div className="secctionHomeContainer">
+                    <div className="secctionHomeBox">
+                        <div className="secctionHomeHeader">
+                            <h1>Suas Playlists</h1>
+                        </div>
 
-                    <div className="gridMyPlaylists">
-                        {playlists.map((playlist) => (
-                            <Link to={`/playlists/${playlist.id}`} key={playlist.id} className="playlistLink">
-                                <div className="secctionHomeContent">
-                                    <div className="secctionHomeContentImage">
-                                        <img src={playlist.cover} alt={playlist.name} />
+                        <div className="gridMyPlaylists">
+                            {playlists.map((playlist) => (
+                                <Link to={`/playlists/${playlist.id}`} key={playlist.id} className="playlistLink">
+                                    <div className="secctionHomeContent">
+                                        <div className="secctionHomeContentImage">
+                                            <img src={playlist.cover} alt={playlist.name} />
+                                        </div>
+                                        <div className="secctionHomeContainerArtists">
+                                            <h4>{playlist.name}</h4>
+                                            <p>De {name}</p>
+                                        </div>
                                     </div>
-                                    <div className="secctionHomeContainerArtists">
-                                        <h4>{playlist.name}</h4>
-                                        <p>De {name}</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
+                        </div>
+                        <div className="space"></div>
                     </div>
                 </div>
-            </div>
+            )}
 
-            <div className="space"></div>
+
 
 
             {artistsOn.length === 0 && (

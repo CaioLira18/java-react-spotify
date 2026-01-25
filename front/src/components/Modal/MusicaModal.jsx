@@ -13,6 +13,7 @@ const MusicaModal = ({
   onDeleteFavorite,
   onMusicToPlaylist,
   onRemoveFromPlaylist,
+  addMusicToPlaylist,
   API_URL,
 }) => {
   const [playlists, setPlaylists] = useState([]);
@@ -94,7 +95,7 @@ const MusicaModal = ({
               <select
                 className="playlist-select"
                 onChange={(e) => {
-                  if (e.target.value) onMusicToPlaylist(e.target.value);
+                  if (e.target.value) addMusicToPlaylist(e.target.value);
                 }}
                 defaultValue=""
                 style={{ width: '100%', padding: '10px', borderRadius: '4px', backgroundColor: '#333', color: 'white', border: 'none' }}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MusicaModal from '../components/Modal/MusicaModal';
 import Toast from '../components/Modal/Toast';
 import { usePlayer } from '../components/PlayerContext';
@@ -14,11 +14,13 @@ const AlbumPage = () => {
     const [allSongs, setAllSongs] = useState([]);
     const [toasts, setToasts] = useState([]);
     const [selectedSong, setSelectedSong] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [favoritesListSongs, setFavoritesListSongs] = useState([]);
     const [favoritesListAlbums, setFavoritesListAlbums] = useState([]); // Esta lista armazenará os objetos de álbuns
     const [userID, setUserID] = useState(null);
 
     const API_URL = "http://localhost:8080/api";
+    const navigate = useNavigate();
 
     const fetchData = async () => {
         try {
@@ -43,6 +45,7 @@ const AlbumPage = () => {
                 setUserID(parsedUser.id);
                 setFavoritesListSongs(parsedUser.listMusic || []);
                 setFavoritesListAlbums(parsedUser.listAlbums || []);
+                setIsAuthenticated(true)
             } catch (err) {
                 console.error("Erro ao processar usuário", err);
             }
@@ -162,8 +165,8 @@ const AlbumPage = () => {
                                         {index < playlistData.artistsNames.length - 1 && ' • '}
                                     </React.Fragment>
                                 ))}
+                                <span> • {playlistData.year} • {playlistSongs.length} músicas</span>
                             </span>
-                            <span> • {playlistData.year} • {playlistSongs.length} músicas</span>
                         </div>
                     </div>
                 </div>
@@ -217,6 +220,7 @@ const AlbumPage = () => {
                 onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
                 onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
                 song={selectedSong}
+                addMusicToPlaylist={addMusicToPlaylist}
                 favoritesListSongs={favoritesListSongs}
                 API_URL={API_URL}
             />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const UpdateAlbumPage = () => {
 
@@ -6,6 +7,8 @@ const UpdateAlbumPage = () => {
     const [selectedAlbum, setSelectedAlbum] = useState(null)
     const [toasts, setToasts] = useState([])
     const [modalOpenAlbum, setModalOpenAlbum] = useState(false)
+    const [isAdmin, setIsAdmin] = useState(false)
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [filteredAlbums, setFilteredAlbums] = useState([])
     const [name, setName] = useState("");
@@ -19,6 +22,7 @@ const UpdateAlbumPage = () => {
     const [songsIds, setSongsIds] = useState([]);
     const [status, setStatus] = useState("")
     const [coverFile, setCoverFile] = useState(null)
+    const navigate = useNavigate();
     const API_URL = "http://localhost:8080/api";
 
     useEffect(() => {

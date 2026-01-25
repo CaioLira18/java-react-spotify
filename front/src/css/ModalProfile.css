@@ -1,0 +1,84 @@
+.modalProfileContainer {
+  position: absolute;
+  top: 80px; 
+  right: 0;
+  z-index: 1000;
+}
+
+/* O Modal propriamente dito */
+.modalProfileBox {
+  background-color: #282828; /* Cor sólida, sem transparência/blur */
+  width: 190px; /* Largura reduzida */
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Sombra mais nítida e curta */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Borda fina para definir o limite */
+}
+
+/* Itens do menu */
+.modalItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px; /* Padding reduzido para ficar mais baixo */
+  color: #e0e0e0;
+  text-decoration: none;
+  font-size: 13px; /* Fonte menor */
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background-color 0.1s;
+}
+
+.modalItem:hover {
+  background-color: #3e3e3e; /* Destaque sólido no hover */
+  color: #fff;
+}
+
+/* Ícones pequenos de link externo */
+.modalItem i {
+  font-size: 10px;
+  color: #b3b3b3;
+}
+
+/* Linha divisória fina */
+.modalDivider {
+  height: 1px;
+  background-color: #3e3e3e;
+  margin: 4px 8px;
+}
+
+/* Seção de Atualizações compacta */
+.modalUpdates {
+  padding: 8px 12px;
+}
+
+.updatesTitle {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.updateContent {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.updateSquare {
+  width: 24px; /* Miniatura bem menor */
+  height: 24px;
+  background-color: #333;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.updateContent p {
+  font-size: 11px;
+  color: #b3b3b3;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Corta o texto se for muito longo */
+}

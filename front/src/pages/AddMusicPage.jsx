@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import ArtistsSelect from '../components/ArtistsSelect'
+import { useNavigate } from 'react-router-dom'
 
 const AddMusicPage = () => {
   const API_URL = "http://localhost:8080/api"
@@ -20,6 +21,10 @@ const AddMusicPage = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [toasts, setToasts] = useState([])
   const [filtredArtists, setFiltredArtists] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');

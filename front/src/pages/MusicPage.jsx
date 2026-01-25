@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MusicaModal from '../components/Modal/MusicaModal';
 import Toast from '../components/Modal/Toast';
 import { usePlayer } from '../components/PlayerContext';
@@ -7,6 +7,7 @@ import { usePlayer } from '../components/PlayerContext';
 const MusicPage = () => {
     const { id } = useParams();
     const { setPlaylist, setCurrentIndex } = usePlayer();
+    const navigate = useNavigate()
 
     const [modalOpen, setModalOpen] = useState(false);
     const [modalOpenPlaylistAdd, setModalOpenPlaylistAdd] = useState(false);
@@ -96,27 +97,27 @@ const MusicPage = () => {
                     <div className="playlist-header-info">
                         <span className="playlist-label-type">Single</span>
                         <h1 className="playlist-main-title">{songData.name}</h1>
-                        <div className="playlist-meta-info">
-                            <div className="playlist-artists-photos" style={{ display: 'flex', alignItems: 'center' }}>
-                                {songData.artistsNames?.map((artist) => (
-                                    <img
-                                        key={artist.id}
-                                        src={artist.profilePhoto || 'https://via.placeholder.com/50'}
-                                        alt={artist.name}
-                                        className="playlist-artist-avatar"
-                                        style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
-                                    />
-                                ))}
-                            </div>
+                            <div className="playlist-meta-info">
+                                <div className="playlist-artists-photos" style={{ display: 'flex', alignItems: 'center' }}>
+                                    {songData.artistsNames?.map((artist) => (
+                                        <img
+                                            key={artist.id}
+                                            src={artist.profilePhoto || 'https://via.placeholder.com/50'}
+                                            alt={artist.name}
+                                            className="playlist-artist-avatar"
+                                            style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
+                                        />
+                                    ))}
+                                </div>
 
-                            <span className="playlist-artist-name" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '0' }}>
-                                {songData.artistsNames?.map((a, index) => (
-                                    <React.Fragment key={a.id}>
-                                        <a href={`/artists/${a.id}`}>{a.name}</a>
-                                        {index < songData.artistsNames.length - 1 && ' • '}
-                                    </React.Fragment>
-                                ))}
-                            </span>
+                                <span className="playlist-artist-name" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '0' }}>
+                                    {songData.artistsNames?.map((a, index) => (
+                                        <React.Fragment key={a.id}>
+                                            <a href={`/artists/${a.id}`}>{a.name}</a>
+                                            {index < songData.artistsNames.length - 1 && ' • '}
+                                        </React.Fragment>
+                                    ))}
+                                </span>
                             <span> • {songData.year} • 1 música, {formatDuration(songData.duration)}</span>
                         </div>
                     </div>

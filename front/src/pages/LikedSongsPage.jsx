@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { usePlayer } from '../components/PlayerContext';
 
 const LikedSongsPage = () => {
   const { id } = useParams()
   // Usando o contexto global para não parar a música ao navegar
   const { setPlaylist, setCurrentIndex } = usePlayer();
+  const navigate = useNavigate();
 
   const [toasts, setToasts] = useState([])
   const [modalOpen, setModalOpen] = useState(false)

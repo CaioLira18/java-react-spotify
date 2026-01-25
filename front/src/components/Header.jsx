@@ -146,19 +146,22 @@ const Header = ({ setPlaylist, setCurrentIndex }) => {
             </div>
           </div>
 
-          <div className="likedSongs">
-            <a href="/likedSongs">
-              <div className="boxOption">
-                <div className="boxImage">
-                  <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="Liked" />
+          {type == "ALL" && (
+            <div className="likedSongs">
+              <a href="/likedSongs">
+                <div className="boxOption">
+                  <div className="boxImage">
+                    <img src="https://res.cloudinary.com/dthgw4q5d/image/upload/v1767141711/ab67706c0000da84587ecba4a27774b2f6f07174_tsu1dm.jpg" alt="Liked" />
+                  </div>
+                  <div className="informationsLikedSongBox">
+                    <span>Músicas Curtidas</span>
+                    <span>{songs.length} Músicas</span>
+                  </div>
                 </div>
-                <div className="informationsLikedSongBox">
-                  <span>Músicas Curtidas</span>
-                  <span>{songs.length} Músicas</span>
-                </div>
-              </div>
-            </a>
-          </div>
+              </a>
+            </div>
+          )}
+
 
           {(type == "ALL" || type == "PLAYLIST") && (
             <div className="playlistsListContainer">
