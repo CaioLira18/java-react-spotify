@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react'
 import ReactDOM from 'react-dom'
 
 const Header = ({ setPlaylist, setCurrentIndex }) => {
-  const API_URL = "http://localhost:8080/api"
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
   const [name, setName] = useState("")
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
