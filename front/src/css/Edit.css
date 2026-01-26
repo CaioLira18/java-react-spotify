@@ -1,0 +1,341 @@
+/* Edit Profile Page */
+.editProfilePage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  padding: 100px 20px 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editProfileContainer {
+  width: 100%;
+  max-width: 800px;
+}
+
+.editProfileBox {
+  background: rgba(30, 30, 30, 0.95);
+  border-radius: 24px;
+  padding: 50px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.editProfileTitle {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
+}
+
+/* Profile Photo Section */
+.profilePhotoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.profilePhotoWrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.profilePhoto {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.profilePhotoOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+}
+
+.profilePhotoWrapper:hover .profilePhotoOverlay {
+  opacity: 1;
+}
+
+.profilePhotoWrapper:hover .profilePhoto {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.profilePhotoOverlay i {
+  font-size: 24px;
+}
+
+.profilePhotoOverlay span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.photoSelectedText {
+  color: #4caf50;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.photoSelectedText i {
+  font-size: 16px;
+}
+
+/* Form Grid */
+.editFormGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputGroup.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.inputGroup label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inputWithIcon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputWithIcon i {
+  position: absolute;
+  right: 18px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.inputWithIcon input {
+  width: 100%;
+  padding: 16px 50px 16px 18px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.inputWithIcon input:focus {
+  outline: none;
+  border-color: #0071eb;
+  background: rgba(20, 20, 20, 0.95);
+  box-shadow: 0 0 0 4px rgba(0, 113, 235, 0.1);
+}
+
+.inputWithIcon input:focus + i {
+  color: #0071eb;
+}
+
+.inputWithIcon input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Save Button */
+.saveButton {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(135deg, #0071eb 0%, #0056b3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 20px rgba(0, 113, 235, 0.3);
+}
+
+.saveButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0056b3 0%, #003d82 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 113, 235, 0.4);
+}
+
+.saveButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 6px 15px rgba(0, 113, 235, 0.3);
+}
+
+.saveButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.saveButton i {
+  font-size: 18px;
+}
+
+/* Feedback Message */
+.feedbackMessage {
+  margin-top: 25px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+.feedbackMessage.success {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.feedbackMessage.error {
+  background: rgba(244, 67, 54, 0.15);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.feedbackMessage i {
+  font-size: 20px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #000;
+}
+
+.loadingText p {
+  color: white;
+  font-size: 18px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .editProfilePage {
+    padding: 80px 15px 30px;
+  }
+
+  .editProfileBox {
+    padding: 30px 20px;
+  }
+
+  .editProfileTitle {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+
+  .editFormGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .inputGroup.fullWidth {
+    grid-column: 1;
+  }
+
+  .profilePhotoWrapper {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profilePhoto {
+    width: 120px;
+    height: 120px;
+  }
+
+  .saveButton {
+    padding: 16px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .editProfileBox {
+    padding: 25px 15px;
+    border-radius: 16px;
+  }
+
+  .editProfileTitle {
+    font-size: 1.4rem;
+  }
+
+  .profilePhotoWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profilePhoto {
+    width: 100px;
+    height: 100px;
+  }
+
+  .inputWithIcon input {
+    padding: 14px 45px 14px 16px;
+    font-size: 14px;
+  }
+
+  .inputGroup label {
+    font-size: 13px;
+  }
+
+  .saveButton {
+    padding: 14px;
+    font-size: 14px;
+  }
+}

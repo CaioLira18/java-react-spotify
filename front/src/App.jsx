@@ -24,6 +24,7 @@ import PlaylistPage from './pages/PlaylistPage'
 import NavBar from './components/NavBar'
 import AdminPageHeader from './components/AdminPageHeader'
 import MusicPage from './pages/MusicPage'
+import Edit from './pages/Edit'
 
 
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/playlists/:id" element={<PlaylistPage />} />
           <Route path="/song/:id" element={<MusicPage />} />
           <Route path="/likedSongs" element={<LikedSongsPage />} />
+          <Route path="/edit" element={<Edit />} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />
