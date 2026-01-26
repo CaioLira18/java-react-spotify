@@ -224,7 +224,7 @@ const NavBar = () => {
                   {/* Overlay opcional para fechar ao clicar fora */}
                   <div className="modalOverlayHeader" onClick={handleModalProfileClose}></div>
                   <div className="modalProfileBox">
-                    <Link to="/edit" className="modalItem">
+                    <Link className="modalItem">
                       <span>Editar Perfil</span>
                     </Link>
                     {isAdmin && (
