@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import ModalPlaylist from './Modal/ModalPlaylist';
 
 const SlideHome = () => {
-    const API_URL = "http://localhost:8080/api";
+    // const API_URL = "http://localhost:8080/api";
+    const API_URL = "https://java-react-spotify.onrender.com/api";
     const [playlists, setPlaylists] = useState([]);
     const [modalPlaylistOpen, setModalPlaylistOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
