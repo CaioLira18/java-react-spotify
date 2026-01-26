@@ -75,6 +75,7 @@
   gap: 8px;
   font-weight: 700;
   cursor: pointer;
+  padding-left: 10px;
 }
 
 .playlist-artist-name a:hover {
