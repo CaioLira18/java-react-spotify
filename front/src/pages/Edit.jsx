@@ -143,6 +143,10 @@ const Edit = () => {
     }
   };
 
+  const handlePhotoClick = () => {
+    fileInputRef.current.click();
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="loading">

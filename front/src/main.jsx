@@ -19,6 +19,7 @@ import './css/SlideHome.css'
 import './css/Playlist.css'
 import './css/EditPlaylist.css'
 import './css/ModalProfile.css'
+import './css/Edit.css'
 import './utils/Fonts.css'
 
 import App from './App.jsx'

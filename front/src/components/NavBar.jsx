@@ -10,6 +10,7 @@ const NavBar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [idUser, setUserId] = useState('');
   const [users, setUsers] = useState([]);
+  const [name, setName] = useState("")
 
   // const API_URL = "http://localhost:8080/api";
   const API_URL = "https://java-react-spotify.onrender.com/api";
@@ -100,6 +101,7 @@ const NavBar = () => {
       setIsAuthenticated(true);
       setIsAdmin(user.role === 'ADMIN');
       setUserId(user.id || '');
+      setName(user.name || '')
     } catch (err) {
       console.error("Erro ao ler usuário do localStorage", err);
     }
@@ -225,6 +227,10 @@ const NavBar = () => {
                   <div className="modalOverlayHeader" onClick={handleModalProfileClose}></div>
                   <div className="modalProfileBox">
                     <Link onClick={handleModalProfileClose} to="/edit" className="modalItem">
+                      <span><strong>{name}</strong></span>
+                    </Link>
+                    <div className="modalDivider"></div>
+                    <Link onClick={handleModalProfileClose} to="/edit" className="modalItem">
                       <span>Editar Perfil</span>
                     </Link>
                     {isAdmin && (
@@ -236,7 +242,7 @@ const NavBar = () => {
                       <span>Fechar</span>
                     </Link>
                     <div className="modalDivider"></div>
-                    <span className="modalItem" onClick={handleLogout}>Sair</span>
+                    <span className="modalItem" onClick={handleLogout}><strong>Sair</strong></span>
                   </div>
                 </div>
               )}
