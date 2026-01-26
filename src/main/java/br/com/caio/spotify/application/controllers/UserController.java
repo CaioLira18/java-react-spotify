@@ -20,7 +20,6 @@ import br.com.caio.spotify.application.services.UserService;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin("https://java-react-spotify.onrender.com/")
 public class UserController {
 
     @Autowired

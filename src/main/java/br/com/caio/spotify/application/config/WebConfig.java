@@ -11,11 +11,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                    "*"                                 
+                    "http://localhost:5173",
+                    "https://java-react-spotify.vercel.app" // Add this line
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
                 .allowedHeaders("*")
                 .exposedHeaders("*")
-                .allowCredentials(false);
+                .allowCredentials(true); // Usually better to set to true if you'll use cookies/auth later
     }
 }
