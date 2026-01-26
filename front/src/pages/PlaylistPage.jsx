@@ -38,7 +38,6 @@ const PlaylistPage = () => {
   // const API_URL = "http://localhost:8080/api";
   const API_URL = "https://java-react-spotify.onrender.com/api";
 
-
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (storedUser) {
@@ -283,7 +282,7 @@ const PlaylistPage = () => {
             <span className="playlist-label-type">Playlist</span>
             <h1 className="playlist-main-title">{playlistData.name}</h1>
             <p>{playlistData.description}</p>
-            <div className="playlist-meta-info">
+            <div className="playlist-meta-info" style={{'gap': 6}}>
               <img
                 src={playlistData.type === "SPOTIFY_PLAYLIST" ? "https://res.cloudinary.com/dthgw4q5d/image/upload/v1764399202/Spotify_logo_without_text.svg_b0pw0i.png" : userPhoto}
                 className="playlist-artist-avatar"

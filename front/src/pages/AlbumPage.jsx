@@ -21,7 +21,7 @@ const AlbumPage = () => {
 
     // const API_URL = "http://localhost:8080/api";
     const API_URL = "https://java-react-spotify.onrender.com/api";
-   
+
     const navigate = useNavigate();
 
     const fetchData = async () => {
@@ -150,26 +150,26 @@ const AlbumPage = () => {
                     <div className="playlist-header-info">
                         <span className="playlist-label-type">Álbum</span>
                         <h1 className="playlist-main-title">{playlistData.name}</h1>
-                        <div className="playlist-meta-info">
-                            {playlistData.artistsNames?.map((artist) => (
-                                <img
-                                    key={artist.id}
-                                    src={artist.profilePhoto || 'https://via.placeholder.com/50'}
-                                    alt={artist.name}
-                                    className="playlist-artist-avatar"
-                                    style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
-                                />
-                            ))}
-                            <span className="playlist-artist-name" style={{ marginLeft: playlistData.artistsNames?.length > 1 ? '15px' : '0' }}>
-                                {playlistData.artistsNames?.map((a, index) => (
-                                    <React.Fragment key={a.id}>
-                                        <a href={`/artists/${a.id}`}>{a.name}</a>
-                                        {index < playlistData.artistsNames.length - 1 && ' • '}
-                                    </React.Fragment>
+                            <div className="playlist-meta-info">
+                                {playlistData.artistsNames?.map((artist) => (
+                                    <img
+                                        key={artist.id}
+                                        src={artist.profilePhoto || 'https://via.placeholder.com/50'}
+                                        alt={artist.name}
+                                        className="playlist-artist-avatar"
+                                        style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
+                                    />
                                 ))}
-                                <span> • {playlistData.year} • {playlistSongs.length} músicas</span>
-                            </span>
-                        </div>
+                                <span className="playlist-artist-name" style={{ marginLeft: playlistData.artistsNames?.length > 1 ? '15px' : '0' }}>
+                                    {playlistData.artistsNames?.map((a, index) => (
+                                        <React.Fragment key={a.id}>
+                                            <a href={`/artists/${a.id}`}>{a.name}</a>
+                                            {index < playlistData.artistsNames.length - 1 && ' • '}
+                                        </React.Fragment>
+                                    ))}
+                                    <span> • {playlistData.year} • {playlistSongs.length} músicas</span>
+                                </span>
+                            </div>
                     </div>
                 </div>
 

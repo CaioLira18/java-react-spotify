@@ -39,6 +39,33 @@ const MusicPage = () => {
         }
     };
 
+    const addMusicToFavorites = async () => {
+        if (!selectedSong || !userID) return;
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'POST' });
+            if (res.ok) {
+                const updated = [...favoritesListSongs, selectedSong];
+                setFavoritesListSongs(updated);
+                updateLocalStorage('listMusic', updated);
+                showToast("Música adicionada aos favoritos!");
+                closeMusicModal();
+            }
+        } catch (err) { }
+    };
+
+    const deleteMusicToFavorites = async () => {
+        try {
+            const res = await fetch(`${API_URL}/users/${userID}/favorites/music/${selectedSong.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                const updated = favoritesListSongs.filter(s => s.id !== selectedSong.id);
+                setFavoritesListSongs(updated);
+                updateLocalStorage('listMusic', updated);
+                showToast("Música removida dos favoritos!");
+                closeMusicModal();
+            }
+        } catch (err) {}
+    };
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
@@ -97,27 +124,27 @@ const MusicPage = () => {
                     <div className="playlist-header-info">
                         <span className="playlist-label-type">Single</span>
                         <h1 className="playlist-main-title">{songData.name}</h1>
-                            <div className="playlist-meta-info">
-                                <div className="playlist-artists-photos" style={{ display: 'flex', alignItems: 'center' }}>
-                                    {songData.artistsNames?.map((artist) => (
-                                        <img
-                                            key={artist.id}
-                                            src={artist.profilePhoto || 'https://via.placeholder.com/50'}
-                                            alt={artist.name}
-                                            className="playlist-artist-avatar"
-                                            style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
-                                        />
-                                    ))}
-                                </div>
 
-                                <span className="playlist-artist-name" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '0' }}>
-                                    {songData.artistsNames?.map((a, index) => (
-                                        <React.Fragment key={a.id}>
-                                            <a href={`/artists/${a.id}`}>{a.name}</a>
-                                            {index < songData.artistsNames.length - 1 && ' • '}
-                                        </React.Fragment>
-                                    ))}
-                                </span>
+                        <div className="playlist-meta-info">
+                            <div className="playlist-artists-photos" style={{ display: 'flex', alignItems: 'center' }}>
+                                {songData.artistsNames?.map((artist) => (
+                                    <img
+                                        key={artist.id}
+                                        src={artist.profilePhoto || 'https://via.placeholder.com/50'}
+                                        alt={artist.name}
+                                        className="playlist-artist-avatar"
+                                        style={{ marginRight: '-10px', border: '2px solid #121212' }} // Estilo sobreposto opcional
+                                    />
+                                ))}
+                            </div>
+                            <span className="playlist-artist-name music" style={{ marginLeft: songData.artistsNames?.length > 1 ? '15px' : '15px' }}>
+                                {songData.artistsNames?.map((a, index) => (
+                                    <React.Fragment key={a.id}>
+                                        <a href={`/artists/${a.id}`}>{a.name}</a>
+                                        {index < songData.artistsNames.length - 1 && ' • '}
+                                    </React.Fragment>
+                                ))}
+                            </span>
                             <span> • {songData.year} • 1 música, {formatDuration(songData.duration)}</span>
                         </div>
                     </div>
@@ -157,7 +184,7 @@ const MusicPage = () => {
                             <div className="song-album-name">{songData.name}</div>
                             <div className="song-duration-section">
                                 <p className="song-time-text">
-                                    {songData.status !== "NOT_RELEASED" ? formatDuration(songData.duration) : "Bloqueado"}
+                                    {songData.status !== "NOT_RELEASED" ? songData.duration : "Bloqueado"}
                                 </p>
                                 <button className="song-options-btn" onClick={(e) => modalMoreOptions(songData, e)}>⋮</button>
                             </div>
@@ -174,6 +201,8 @@ const MusicPage = () => {
                 onOpenPlaylistAdd={() => setModalOpenPlaylistAdd(true)}
                 onCloseOpenPlaylistAdd={() => setModalOpenPlaylistAdd(false)}
                 song={selectedSong}
+                onAddFavorite={addMusicToFavorites}
+                onDeleteFavorite={deleteMusicToFavorites}
                 favoritesListSongs={favoritesListSongs}
                 API_URL={API_URL}
             />
