@@ -11,7 +11,8 @@ const NavBar = () => {
   const [idUser, setUserId] = useState('');
   const [users, setUsers] = useState([]);
 
-  const API_URL = "http://localhost:8080/api";
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [modalSearchHome, setModalSearchHome] = useState(false);
