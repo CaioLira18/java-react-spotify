@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import SlideHome from "../components/SlideHome";
 
 const Home = () => {
-    const API_URL = "http://localhost:8080/api";
+    // const API_URL = "http://localhost:8080/api";
+    const API_URL = "https://java-react-spotify.onrender.com/api";
     const [artistsOn, setArtistsOn] = useState([]);
     const [name, setName] = useState("");
     const [playlists, setPlaylists] = useState([]);

@@ -10,7 +10,9 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:8080/api";
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
+
 
   const handleLogin = async () => {
     setLoading(true);

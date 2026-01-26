@@ -19,8 +19,8 @@ const MusicPage = () => {
     const [userID, setUserID] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-
-    const API_URL = "http://localhost:8080/api";
+    // const API_URL = "http://localhost:8080/api";
+    const API_URL = "https://java-react-spotify.onrender.com/api";
 
     const formatDuration = (duration) => {
         if (!duration) return "0s";

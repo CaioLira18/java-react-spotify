@@ -18,7 +18,8 @@ const LikedSongsPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [name, setName] = useState("")
 
-  const API_URL = "http://localhost:8080/api"
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
 
   // 1. Carregar dados do usuário logado
   useEffect(() => {

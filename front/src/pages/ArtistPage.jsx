@@ -33,7 +33,9 @@ const ArtistPage = () => {
     // Estado do filtro: "ALL", "ALBUM" ou "MUSIC"
     const [type, setType] = useState("ALL");
 
-    const API_URL = 'http://localhost:8080/api';
+    // const API_URL = 'http://localhost:8080/api';
+    const API_URL = "https://java-react-spotify.onrender.com/api";
+
 
     const isArtistFavorite = favoritesListArtists.some(artist => artist.id === id);
 

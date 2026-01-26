@@ -19,7 +19,9 @@ const AlbumPage = () => {
     const [favoritesListAlbums, setFavoritesListAlbums] = useState([]); // Esta lista armazenará os objetos de álbuns
     const [userID, setUserID] = useState(null);
 
-    const API_URL = "http://localhost:8080/api";
+    // const API_URL = "http://localhost:8080/api";
+    const API_URL = "https://java-react-spotify.onrender.com/api";
+   
     const navigate = useNavigate();
 
     const fetchData = async () => {

@@ -35,7 +35,9 @@ const PlaylistPage = () => {
   const [coverKey, setCoverKey] = useState(0)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
-  const API_URL = "http://localhost:8080/api"
+  // const API_URL = "http://localhost:8080/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
+
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
