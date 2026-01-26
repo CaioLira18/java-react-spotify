@@ -17,7 +17,7 @@ const Edit = () => {
   const [photoPreview, setPhotoPreview] = useState('');
   const fileInputRef = useRef(null);
 
-  const API_URL = "https://java-react-plataformstreaming-8f2k.onrender.com/api";
+  const API_URL = "https://java-react-spotify.onrender.com/api";
   const navigate = useNavigate();
 
   useEffect(() => {
